@@ -1,0 +1,6 @@
+{
+  "name": "Adarsh Motors Admin Portal",
+  "description": "Operations, inventory, leads CRM, digital billing, branch management, dynamic CMS, and multi-role staff portal for Adarsh Motors.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
