@@ -6,17 +6,34 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  AreaChart,
+  Area,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip as RechartsTooltip,
+  Legend,
+  CartesianGrid,
+  Cell,
+  PieChart,
+  Pie
+} from 'recharts';
+import {
   ShieldCheck, Phone, KeyRound, ArrowRight, Crown, UserCheck,
   LayoutDashboard, Bike, PhoneCall, Receipt, MapPin, Sliders,
-  Users, LogOut, Search, Plus, RefreshCw, TrendingUp,
-  ArrowUpRight, IndianRupee, UserPlus, CheckCircle, AlertCircle,
+  Users, LogOut, Search, Plus, RefreshCw, TrendingUp, TrendingDown,
+  ArrowUpRight, ArrowDownRight, IndianRupee, UserPlus, CheckCircle, AlertCircle,
   Bell, MessageCircle, PackageOpen, Pencil, Trash2, Printer,
   X, Save, Copy, Database, Menu, Navigation, Eye, EyeOff,
   Upload, Image as ImageIcon, Camera, FolderOpen, Download,
   FileText, FileCheck, Zap, Check, ExternalLink, Sparkles, Car, FileBadge,
   History, Fuel, Calendar, Gauge, Timer, Layers, ChevronLeft, ChevronRight,
   Settings2, SlidersHorizontal, Info, Award, CheckCheck, Compass, Eye as EyeIcon, Cog,
-  CheckCircle2
+  CheckCircle2, Calculator, Wallet, Percent, BarChart3, AlertTriangle, PieChart as PieChartIcon, Edit2, Lock, DollarSign
 } from 'lucide-react';
 
 // SUPABASE CONFIGURATION
@@ -63,6 +80,11 @@ export interface BikeItem {
   addon_gear_name?: string; // e.g. "Ducati Corse Riding Leather"
   addon_gear_price?: number;// e.g. 38500
   warranty_badge?: string;  // e.g. "Adarsh Verified: 120-Point Inspection, Clear Title & 1-Year Engine Warranty."
+  // Dealership Financial Procurement & Margin Controls (Owner Confidential)
+  purchase_cost?: number;   // Procurement / Purchase cost in INR
+  repair_cost?: number;     // Workshop repairs & refurbishment charges in INR
+  procurement_date?: string;// Inward procurement date YYYY-MM-DD
+  repairs_note?: string;    // Notes on mechanical repairs & parts replaced
 }
 
 export interface AuditLogItem {
@@ -578,7 +600,19 @@ export default function App() {
   });
 
   // Navigation State
-  const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'leads' | 'billing' | 'branches' | 'settings' | 'staff' | 'audit'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'inventory' | 'leads' | 'billing' | 'branches' | 'settings' | 'staff' | 'audit' | 'pnl'>('overview');
+
+  // Profit & Loss (P&L) Dashboard State
+  const [pnlDateFilter, setPnlDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'quarter' | 'year' | 'fy' | 'custom'>('all');
+  const [pnlStatusFilter, setPnlStatusFilter] = useState<'ALL' | 'Sold' | 'Booked' | 'Available' | 'all' | 'available' | 'sold'>('ALL');
+  const [pnlMarginBandFilter, setPnlMarginBandFilter] = useState<'ALL' | 'HIGH' | 'NORMAL' | 'LOW' | 'LOSS' | 'all' | 'high' | 'normal' | 'thin' | 'loss'>('ALL');
+  const [pnlSearch, setPnlSearch] = useState('');
+  const [pnlCustomStart, setPnlCustomStart] = useState('');
+  const [pnlCustomEnd, setPnlCustomEnd] = useState('');
+  const [pnlChartMode, setPnlChartMode] = useState<'bar' | 'area' | 'line' | 'comparison' | 'distribution'>('bar');
+  const [showProcurementModal, setShowProcurementModal] = useState(false);
+  const [editingProcurementBike, setEditingProcurementBike] = useState<BikeItem | null>(null);
+  const [showPrintPnlModal, setShowPrintPnlModal] = useState(false);
 
   // Login Form State
   const [loginPhone, setLoginPhone] = useState('');
@@ -586,7 +620,7 @@ export default function App() {
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // Helper to ensure all rich specs exist on any bike
+  // Helper to ensure all rich specs and financial fields exist on any bike
   const mergeBikeDefaults = (b: any): BikeItem => ({
     id: b.id || Date.now(),
     name: b.name || "Custom Superbike",
@@ -618,7 +652,12 @@ export default function App() {
     ],
     addon_gear_name: b.addon_gear_name || "Ducati Corse Riding Leather",
     addon_gear_price: Number(b.addon_gear_price) || 38500,
-    warranty_badge: b.warranty_badge || "Adarsh Verified: 120-Point Inspection, Clear Title & 1-Year Engine Warranty."
+    warranty_badge: b.warranty_badge || "Adarsh Verified: 120-Point Inspection, Clear Title & 1-Year Engine Warranty.",
+    // Financial Procurement & Profit Margin Fields
+    purchase_cost: b.purchase_cost !== undefined ? Number(b.purchase_cost) : Math.round((Number(b.price) || 920000) * 0.81),
+    repair_cost: b.repair_cost !== undefined ? Number(b.repair_cost) : 30000,
+    procurement_date: b.procurement_date || '2026-10-15',
+    repairs_note: b.repairs_note || 'Workshop 120-pt fluid flush, brake pads, dyno diagnostics & clear title check'
   });
 
   // Data States
@@ -1354,6 +1393,11 @@ export default function App() {
     // Staff / Worker can NEVER access Staff Access or the Audit History
     if (module === 'staff' || module === 'audit') return false;
 
+    // Profit & Loss (P&L) is confidential to Owner, unless explicitly granted to trusted worker
+    if (module === 'pnl') {
+      return currentUser.permissions.includes('pnl');
+    }
+
     // Overview is strictly gated: only visible if explicitly in staff permissions
     if (module === 'overview') {
       return currentUser.permissions.includes('overview');
@@ -1405,6 +1449,355 @@ export default function App() {
       return matchesSearch && matchesStaff && matchesModule;
     });
   }, [auditLogs, auditSearch, auditStaffFilter, auditModuleFilter]);
+
+  // Profit & Loss (P&L) Filtering & Metrics
+  const filteredPnlBikes = useMemo(() => {
+    const q = pnlSearch.toLowerCase().trim();
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+
+    return bikes.filter(b => {
+      // 1. Search Query
+      if (q) {
+        const matchesName = (b.name || '').toLowerCase().includes(q);
+        const matchesBrand = (b.brand || '').toLowerCase().includes(q);
+        const matchesCategory = (b.category || '').toLowerCase().includes(q);
+        if (!matchesName && !matchesBrand && !matchesCategory) return false;
+      }
+
+      // 2. Status Filter
+      if (pnlStatusFilter !== 'ALL' && pnlStatusFilter !== 'all') {
+        const sLower = pnlStatusFilter.toLowerCase();
+        if (sLower === 'available' && b.status !== 'Available') return false;
+        if (sLower === 'sold' && b.status !== 'Sold') return false;
+        if (sLower === 'booked' && b.status !== 'Booked') return false;
+      }
+
+      // 3. Date Filter
+      const rawDate = b.procurement_date || '2026-10-15';
+      const itemDate = new Date(rawDate);
+
+      if (pnlDateFilter === 'today') {
+        if (rawDate !== todayStr) return false;
+      } else if (pnlDateFilter === 'week') {
+        const diffDays = (now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24);
+        if (diffDays < 0 || diffDays > 7) return false;
+      } else if (pnlDateFilter === 'month') {
+        const diffDays = (now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24);
+        if (diffDays < 0 || diffDays > 30) return false;
+      } else if (pnlDateFilter === 'quarter') {
+        const diffDays = (now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24);
+        if (diffDays < 0 || diffDays > 90) return false;
+      } else if (pnlDateFilter === 'fy' || pnlDateFilter === 'year') {
+        const yr = now.getFullYear();
+        const startFY = new Date(now.getMonth() >= 3 ? yr : yr - 1, 3, 1);
+        if (itemDate < startFY) return false;
+      } else if (pnlDateFilter === 'custom') {
+        if (pnlCustomStart && rawDate < pnlCustomStart) return false;
+        if (pnlCustomEnd && rawDate > pnlCustomEnd) return false;
+      }
+
+      // 4. Margin Band Filter
+      const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.81));
+      const repairs = Number(b.repair_cost ?? 30000);
+      const landed = purchase + repairs;
+      const asking = Number(b.price || 0);
+      const profit = asking - landed;
+      const roi = landed > 0 ? (profit / landed) * 100 : 0;
+
+      const bandLower = pnlMarginBandFilter.toLowerCase();
+      if ((pnlMarginBandFilter === 'HIGH' || bandLower === 'high') && roi < 20) return false;
+      if ((pnlMarginBandFilter === 'NORMAL' || bandLower === 'normal') && (roi < 10 || roi >= 20)) return false;
+      if ((pnlMarginBandFilter === 'LOW' || bandLower === 'thin') && (roi < 0 || roi >= 10)) return false;
+      if ((pnlMarginBandFilter === 'LOSS' || bandLower === 'loss') && roi >= 0) return false;
+
+      return true;
+    });
+  }, [bikes, pnlSearch, pnlStatusFilter, pnlDateFilter, pnlCustomStart, pnlCustomEnd, pnlMarginBandFilter]);
+
+  // Aggregated P&L Ledger Totals
+  const pnlTotals = useMemo(() => {
+    let totalPurchase = 0;
+    let totalRepairs = 0;
+    let totalInvested = 0;
+    let totalAsking = 0;
+    let targetProfit = 0;
+
+    let realizedRevenue = 0;
+    let realizedCogs = 0;
+    let realizedRepairs = 0;
+    let realizedCount = 0;
+
+    let pipelineCapital = 0;
+    let pipelineAsking = 0;
+    let pipelineCount = 0;
+
+    let highMarginCount = 0;
+    let normalMarginCount = 0;
+    let thinMarginCount = 0;
+    let lossCount = 0;
+
+    const highMarginBikes: BikeItem[] = [];
+    const lowMarginBikes: BikeItem[] = [];
+
+    bikes.forEach(b => {
+      const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.81));
+      const repairs = Number(b.repair_cost ?? 30000);
+      const landed = purchase + repairs;
+      const asking = Number(b.price || 0);
+      const profit = asking - landed;
+      const marginPct = landed > 0 ? (profit / landed) * 100 : 0;
+
+      if (profit < 0) {
+        lossCount++;
+      } else if (marginPct >= 20) {
+        highMarginCount++;
+        highMarginBikes.push(b);
+      } else if (marginPct >= 10) {
+        normalMarginCount++;
+      } else {
+        thinMarginCount++;
+        lowMarginBikes.push(b);
+      }
+
+      if (b.status === 'Sold') {
+        realizedRevenue += asking;
+        realizedCogs += purchase;
+        realizedRepairs += repairs;
+        realizedCount++;
+      } else {
+        pipelineCapital += landed;
+        pipelineAsking += asking;
+        pipelineCount++;
+      }
+    });
+
+    filteredPnlBikes.forEach(b => {
+      const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.81));
+      const repairs = Number(b.repair_cost ?? 30000);
+      const landed = purchase + repairs;
+      const asking = Number(b.price || 0);
+      const profit = asking - landed;
+
+      totalPurchase += purchase;
+      totalRepairs += repairs;
+      totalInvested += landed;
+      totalAsking += asking;
+      targetProfit += profit;
+    });
+
+    const realizedGrossProfit = realizedRevenue - realizedCogs;
+    const realizedOverheads = Math.round(realizedRevenue * 0.02);
+    const netRealizedProfit = realizedGrossProfit - realizedRepairs - realizedOverheads;
+    const netRealizedMarginPct = realizedRevenue > 0 ? ((netRealizedProfit / realizedRevenue) * 100).toFixed(1) : '0';
+
+    const pipelineProfit = pipelineAsking - pipelineCapital;
+    const pipelineRoiPct = pipelineCapital > 0 ? ((pipelineProfit / pipelineCapital) * 100).toFixed(1) : '0';
+    const averageMarginRoi = totalInvested > 0 ? ((targetProfit / totalInvested) * 100).toFixed(1) : '0';
+
+    return {
+      totalPurchase,
+      totalRepairs,
+      totalRepair: totalRepairs,
+      totalInvested,
+      totalLanded: totalInvested,
+      totalAsking,
+      targetProfit,
+      totalProfit: targetProfit,
+      realizedRevenue,
+      realizedCogs,
+      realizedRepairs,
+      realizedGrossProfit,
+      realizedOverheads,
+      netRealizedProfit,
+      realizedProfit: netRealizedProfit,
+      netRealizedMarginPct,
+      realizedCount,
+      soldCount: realizedCount,
+      pipelineCapital,
+      pipelineAsking,
+      pipelineProfit,
+      pipelineRoiPct,
+      pipelineCount,
+      availableCount: pipelineCount,
+      averageMarginRoi,
+      avgMarginPercent: Number(averageMarginRoi) || 0,
+      highMarginBikes,
+      lowMarginBikes,
+      highMarginCount,
+      normalMarginCount,
+      thinMarginCount,
+      lossCount
+    };
+  }, [bikes, filteredPnlBikes]);
+
+  // Recharts Dataset for Bar Chart & Breakdown
+  const pnlRechartsData = useMemo(() => {
+    return filteredPnlBikes.map(b => {
+      const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.81));
+      const repairs = Number(b.repair_cost ?? 30000);
+      const landed = purchase + repairs;
+      const asking = Number(b.price || 0);
+      const profit = asking - landed;
+      const roi = landed > 0 ? Number(((profit / landed) * 100).toFixed(1)) : 0;
+      const shortName = b.name.length > 14 ? b.name.slice(0, 13) + '…' : b.name;
+
+      return {
+        id: b.id,
+        name: shortName,
+        fullName: b.name,
+        purchase,
+        repairs,
+        landed,
+        asking,
+        profit,
+        roi,
+        status: b.status,
+        landedLakhs: Number((landed / 100000).toFixed(2)),
+        askingLakhs: Number((asking / 100000).toFixed(2)),
+        profitLakhs: Number((profit / 100000).toFixed(2)),
+        isLoss: profit < 0,
+        isHigh: roi >= 20
+      };
+    });
+  }, [filteredPnlBikes]);
+
+  // Composition Pie Data for Fleet Outlay
+  const pnlPieData = useMemo(() => {
+    const { totalPurchase, totalRepairs, totalAsking, targetProfit } = pnlTotals;
+    const overheads = Math.round(totalAsking * 0.02);
+    return [
+      { name: 'Vehicle Purchase Cost', value: Math.max(1, totalPurchase), color: '#64748B' },
+      { name: 'Workshop Repairs & Parts', value: Math.max(1, totalRepairs), color: '#06B6D4' },
+      { name: 'Dealership Overheads', value: Math.max(1, overheads), color: '#F59E0B' },
+      { name: 'Net Target Profit', value: Math.max(1, Math.max(0, targetProfit)), color: '#10B981' }
+    ];
+  }, [pnlTotals]);
+
+  // Export P&L Ledger to CSV
+  const exportPnlCsv = () => {
+    const headers = [
+      "Vehicle ID",
+      "Vehicle Name",
+      "Brand",
+      "Category",
+      "Inward Date",
+      "Purchase Cost (INR)",
+      "Repairs & Refurbishment (INR)",
+      "Total Landed Investment (INR)",
+      "Showroom Asking/Sale Price (INR)",
+      "Net Margin Profit/Loss (INR)",
+      "ROI Margin %",
+      "Accounting Status",
+      "Repairs Note"
+    ];
+
+    const rows = filteredPnlBikes.map(b => {
+      const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.81));
+      const repairs = Number(b.repair_cost ?? 30000);
+      const landed = purchase + repairs;
+      const asking = Number(b.price || 0);
+      const profit = asking - landed;
+      const roi = landed > 0 ? ((profit / landed) * 100).toFixed(1) : '0';
+
+      return [
+        b.id,
+        `"${(b.name || '').replace(/"/g, '""')}"`,
+        `"${(b.brand || '').replace(/"/g, '""')}"`,
+        `"${(b.category || '').replace(/"/g, '""')}"`,
+        b.procurement_date || '2026-10-15',
+        purchase,
+        repairs,
+        landed,
+        asking,
+        profit,
+        `${roi}%`,
+        b.status,
+        `"${(b.repairs_note || '').replace(/"/g, '""')}"`
+      ];
+    });
+
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Adarsh_Motors_Dealership_PnL_Report_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast("Dealership P&L report exported to CSV!");
+  };
+
+  // Quick Realize Profit: Mark Bike as Sold
+  const handleQuickMarkSold = async (bikeOrId: BikeItem | number) => {
+    const bikeId = typeof bikeOrId === 'object' ? bikeOrId.id : bikeOrId;
+    const b = bikes.find(item => item.id === bikeId);
+    if (!b) return;
+    const nextStatus = b.status === 'Sold' ? 'Available' : 'Sold';
+    if (!confirm(`Update "${b.name}" to "${nextStatus}"?`)) return;
+
+    const prevStatus = b.status;
+    const updated: BikeItem = { ...b, status: nextStatus };
+    setBikes(prev => prev.map(item => item.id === bikeId ? updated : item));
+    showToast(`Marked ${b.name} as ${nextStatus}!`);
+
+    logAuditAction(
+      'inventory_edit',
+      'Inventory',
+      `Owner marked ${b.name} as ${nextStatus}`,
+      b.id,
+      b.name,
+      { field: 'status', before: prevStatus, after: nextStatus, notes: 'P&L sales realization action' }
+    );
+
+    try {
+      await supabase.from('bikes').update({ status: nextStatus }).eq('id', bikeId);
+    } catch (err) {
+      console.warn("Supabase mark sold sync notice", err);
+    }
+  };
+
+  // Custom Recharts Tooltip Component
+  const PnlCustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-[#0B1320]/95 border border-white/15 p-3 rounded-xl shadow-2xl backdrop-blur-md text-xs font-sans min-w-[220px]">
+          <div className="font-bold text-white text-sm mb-1">{data.fullName}</div>
+          <div className="text-[10px] text-slate-400 font-mono mb-2">
+            Status: <span className="text-cyan-400 font-bold">{data.status}</span>
+          </div>
+          <div className="space-y-1 font-mono text-[11px] pt-1 border-t border-white/10">
+            <div className="flex justify-between text-slate-300">
+              <span>Inward Purchase:</span>
+              <span className="font-bold text-white">{formatINR(data.purchase)}</span>
+            </div>
+            <div className="flex justify-between text-slate-300">
+              <span>Refurbishment / Repairs:</span>
+              <span className="font-bold text-cyan-400">{formatINR(data.repairs)}</span>
+            </div>
+            <div className="flex justify-between text-slate-300 pt-0.5 border-t border-white/5">
+              <span>Total Landed Cost:</span>
+              <span className="font-bold text-white">{formatINR(data.landed)}</span>
+            </div>
+            <div className="flex justify-between text-slate-300">
+              <span>Showroom Asking Price:</span>
+              <span className="font-bold text-amber-300">{formatINR(data.asking)}</span>
+            </div>
+            <div className="flex justify-between items-center pt-1 border-t border-white/10 font-bold">
+              <span className={data.profit >= 0 ? "text-emerald-400" : "text-red-400"}>Net Margin (P&L):</span>
+              <span className={data.profit >= 0 ? "text-emerald-400 text-xs" : "text-red-400 text-xs"}>
+                {data.profit >= 0 ? '+' : ''}{formatINR(data.profit)} ({data.roi}%)
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   // WhatsApp Link Helper
   const getWhatsAppLink = (phone: string, name: string, bike: string) => {
@@ -1848,6 +2241,24 @@ export default function App() {
             </button>
           )}
 
+          {/* Owner Only / Authorized Manager: Profit & Loss (P&L) */}
+          {hasAccess('pnl') && (
+            <button
+              onClick={() => setActiveTab('pnl')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition ${
+                activeTab === 'pnl'
+                  ? 'bg-emerald-600/15 border border-emerald-500/30 text-emerald-400 font-semibold shadow-lg shadow-emerald-950/40'
+                  : 'text-slate-400 hover:text-white hover:bg-[#0F1A2C]'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <span>Profit & Loss (P&L)</span>
+              <span className="ml-auto text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+                Owner
+              </span>
+            </button>
+          )}
+
           {/* Owner Only: Staff Activity & Forensic Audit Log */}
           {currentUser.role === 'owner' && (
             <button
@@ -2004,6 +2415,20 @@ export default function App() {
           >
             <Receipt className="w-3.5 h-3.5" />
             <span>Billing</span>
+          </button>
+        )}
+
+        {hasAccess('pnl') && (
+          <button
+            onClick={() => setActiveTab('pnl')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 flex items-center gap-1.5 transition ${
+              activeTab === 'pnl'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                : 'bg-[#0F1A2C] text-emerald-400 hover:text-white border border-emerald-500/30'
+            }`}
+          >
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>P&L Dashboard</span>
           </button>
         )}
 
@@ -3951,6 +4376,674 @@ export default function App() {
             </div>
           )}
 
+          {/* 9. PROFIT & LOSS (P&L) FINANCIAL & MARGIN ANALYTICS TAB */}
+          {activeTab === 'pnl' && hasAccess('pnl') && (
+            <div className="space-y-6 animate-fadeIn pb-12">
+              {/* Top Header & Actions */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-[#0B1320] via-[#0F1A2C] to-[#0B1320] p-5 rounded-2xl border border-emerald-500/20 shadow-xl">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                      <Lock className="w-3 h-3 text-emerald-400" />
+                      Owner & Authorized Financials
+                    </span>
+                    <span className="text-xs text-slate-400">• Confidentially Masked From Workers</span>
+                  </div>
+                  <h1 className="text-2xl font-black text-white mt-1 flex items-center gap-2 tracking-tight">
+                    <TrendingUp className="w-6 h-6 text-emerald-400" />
+                    Dealership Profit & Loss (P&L) & Margin Analytics
+                  </h1>
+                  <p className="text-xs text-slate-400 mt-1 max-w-2xl">
+                    Real-time vehicle procurement ledger, mechanical refurbishment tracking, target net margins, and visual Recharts trend analysis.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowPrintPnlModal(true)}
+                    className="px-3 py-2 rounded-xl bg-[#0F1A2C] hover:bg-[#16243C] text-slate-200 border border-white/10 hover:border-slate-500 text-xs font-semibold flex items-center gap-1.5 transition"
+                  >
+                    <Printer className="w-4 h-4 text-cyan-400" />
+                    <span>Print Statement</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={exportPnlCsv}
+                    className="px-3 py-2 rounded-xl bg-[#0F1A2C] hover:bg-[#16243C] text-slate-200 border border-white/10 hover:border-emerald-500/40 text-xs font-semibold flex items-center gap-1.5 transition"
+                  >
+                    <Download className="w-4 h-4 text-emerald-400" />
+                    <span>Export CSV</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingProcurementBike(null);
+                      setShowProcurementModal(true);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>+ Log Procurement / Repairs</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 4 Financial KPI Stat Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* 1. Total Capital Outlay */}
+                <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-cyan-500/40 transition group">
+                  <div className="flex items-center justify-between text-slate-400 text-xs mb-2">
+                    <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-400">Total Capital Invested</span>
+                    <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition">
+                      <Wallet className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="text-2xl font-black text-white tracking-tight">
+                    ₹{pnlTotals.totalLanded.toLocaleString('en-IN')}
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
+                    <span>Purchase: <strong className="text-slate-200 font-mono">₹{pnlTotals.totalPurchase.toLocaleString('en-IN')}</strong></span>
+                    <span>Repairs: <strong className="text-cyan-300 font-mono">₹{pnlTotals.totalRepair.toLocaleString('en-IN')}</strong></span>
+                  </div>
+                </div>
+
+                {/* 2. Total Asking Valuation */}
+                <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-amber-500/40 transition group">
+                  <div className="flex items-center justify-between text-slate-400 text-xs mb-2">
+                    <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-400">Total Asking Valuation</span>
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition">
+                      <DollarSign className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="text-2xl font-black text-amber-400 tracking-tight">
+                    ₹{pnlTotals.totalAsking.toLocaleString('en-IN')}
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
+                    <span>Active Stock Units</span>
+                    <span className="text-slate-300 font-mono font-bold">{pnlTotals.availableCount} Available / {pnlTotals.soldCount} Sold</span>
+                  </div>
+                </div>
+
+                {/* 3. Target / Total Net Profit */}
+                <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-emerald-500/40 transition group">
+                  <div className="flex items-center justify-between text-slate-400 text-xs mb-2">
+                    <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-400">Target Net Profit</span>
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition">
+                      <TrendingUp className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className={`text-2xl font-black tracking-tight ${pnlTotals.totalProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {pnlTotals.totalProfit < 0 ? '-' : '+'}₹{Math.abs(pnlTotals.totalProfit).toLocaleString('en-IN')}
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between text-[11px]">
+                    <span className="text-slate-400">Avg Return / Margin</span>
+                    <span className={`font-mono font-bold px-2 py-0.5 rounded ${pnlTotals.avgMarginPercent >= 15 ? 'bg-emerald-500/20 text-emerald-400' : pnlTotals.avgMarginPercent > 0 ? 'bg-amber-500/20 text-amber-300' : 'bg-red-500/20 text-red-400'}`}>
+                      {pnlTotals.avgMarginPercent.toFixed(1)}% ROI
+                    </span>
+                  </div>
+                </div>
+
+                {/* 4. Realized Cash Profit (Sold Units) */}
+                <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-purple-500/40 transition group">
+                  <div className="flex items-center justify-between text-slate-400 text-xs mb-2">
+                    <span className="font-semibold uppercase tracking-wider text-[11px] text-slate-400">Realized Cash Profit</span>
+                    <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:scale-110 transition">
+                      <CheckCircle className="w-4 h-4" />
+                    </div>
+                  </div>
+                  <div className="text-2xl font-black text-purple-400 tracking-tight">
+                    ₹{pnlTotals.realizedProfit.toLocaleString('en-IN')}
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-slate-400">
+                    <span>Sold Vehicles</span>
+                    <span className="text-purple-300 font-mono font-bold">{pnlTotals.soldCount} Units Dispatched</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Data Visualization Dashboard using Recharts */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Main Vehicle Profit & Landed Investment Recharts Chart */}
+                <div className="lg:col-span-2 p-5 rounded-2xl bg-[#0B1320] border border-white/10 shadow-xl space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
+                    <div>
+                      <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                        <BarChart3 className="w-4 h-4 text-emerald-400" />
+                        Vehicle-by-Vehicle Profitability & Outlay Comparison
+                      </h2>
+                      <p className="text-[11px] text-slate-400">
+                        Comparing Landed Investment (Purchase + Repairs) vs Asking Price vs Net Profit per bike
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1 bg-[#0F1A2C] p-1 rounded-xl border border-white/5 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => setPnlChartMode('bar')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${pnlChartMode === 'bar' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                      >
+                        Bar View
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPnlChartMode('area')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${pnlChartMode === 'area' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                      >
+                        Valuation Trend
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPnlChartMode('line')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${pnlChartMode === 'line' ? 'bg-emerald-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                      >
+                        Margin Curve
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Recharts Chart Container */}
+                  <div className="w-full h-72">
+                    {pnlRechartsData.length === 0 ? (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 text-xs">
+                        <Calculator className="w-8 h-8 mb-2 opacity-50" />
+                        No vehicle procurement records match current filters.
+                      </div>
+                    ) : pnlChartMode === 'bar' ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={pnlRechartsData} margin={{ top: 10, right: 10, left: -10, bottom: 25 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" vertical={false} />
+                          <XAxis
+                            dataKey="shortName"
+                            stroke="#6B7280"
+                            fontSize={10}
+                            interval={0}
+                            angle={-25}
+                            textAnchor="end"
+                            height={45}
+                          />
+                          <YAxis
+                            stroke="#6B7280"
+                            fontSize={10}
+                            tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
+                          />
+                          <RechartsTooltip content={<PnlCustomTooltip />} />
+                          <Legend
+                            wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                            formatter={(value) => <span className="text-slate-300 text-xs">{value}</span>}
+                          />
+                          <Bar dataKey="landed" name="Landed Cost (₹)" fill="#3B82F6" radius={[4, 4, 0, 0]} maxBarSize={32} />
+                          <Bar dataKey="asking" name="Asking Price (₹)" fill="#F59E0B" radius={[4, 4, 0, 0]} maxBarSize={32} />
+                          <Bar dataKey="profit" name="Net Profit / Loss (₹)" radius={[4, 4, 0, 0]} maxBarSize={32}>
+                            {pnlRechartsData.map((entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={entry.profit >= 0 ? '#10B981' : '#EF4444'}
+                              />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : pnlChartMode === 'area' ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={pnlRechartsData} margin={{ top: 10, right: 10, left: -10, bottom: 25 }}>
+                          <defs>
+                            <linearGradient id="colorAsking" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4} />
+                              <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="colorLanded" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.4} />
+                              <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" vertical={false} />
+                          <XAxis dataKey="shortName" stroke="#6B7280" fontSize={10} angle={-25} textAnchor="end" height={45} />
+                          <YAxis stroke="#6B7280" fontSize={10} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+                          <RechartsTooltip content={<PnlCustomTooltip />} />
+                          <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                          <Area type="monotone" dataKey="asking" name="Asking Price (₹)" stroke="#F59E0B" fillOpacity={1} fill="url(#colorAsking)" />
+                          <Area type="monotone" dataKey="landed" name="Landed Cost (₹)" stroke="#3B82F6" fillOpacity={1} fill="url(#colorLanded)" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={pnlRechartsData} margin={{ top: 10, right: 10, left: -10, bottom: 25 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" vertical={false} />
+                          <XAxis dataKey="shortName" stroke="#6B7280" fontSize={10} angle={-25} textAnchor="end" height={45} />
+                          <YAxis stroke="#6B7280" fontSize={10} tickFormatter={(v) => `${v}%`} />
+                          <RechartsTooltip content={<PnlCustomTooltip />} />
+                          <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                          <Line type="monotone" dataKey="marginPercent" name="Margin ROI %" stroke="#10B981" strokeWidth={3} dot={{ r: 4, fill: '#10B981' }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    )}
+                  </div>
+                </div>
+
+                {/* Fleet Health & Margin Band Distribution */}
+                <div className="p-5 rounded-2xl bg-[#0B1320] border border-white/10 shadow-xl space-y-4 flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                      <PieChartIcon className="w-4 h-4 text-amber-400" />
+                      Margin Distribution & Inventory Health
+                    </h2>
+                    <p className="text-[11px] text-slate-400">
+                      Breakdown of high margin vs thin margin vs loss-making units
+                    </p>
+                  </div>
+
+                  {/* PieChart */}
+                  <div className="w-full h-44">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={pnlPieData}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={40}
+                          outerRadius={65}
+                          paddingAngle={4}
+                        >
+                          {pnlPieData.map((entry, index) => (
+                            <Cell key={`slice-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip
+                          formatter={(value: any, name: any) => [`${value} Vehicles`, name]}
+                          contentStyle={{ backgroundColor: '#0B1320', borderColor: '#374151', borderRadius: '8px', fontSize: '11px' }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Breakdown Legend Cards */}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                      <div className="flex items-center justify-between text-emerald-400 font-semibold text-[11px]">
+                        <span>High (&gt;20%)</span>
+                        <span className="font-mono font-bold">{pnlTotals.highMarginCount}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">Top Profit Stars</span>
+                    </div>
+
+                    <div className="p-2 rounded-xl bg-teal-500/10 border border-teal-500/20">
+                      <div className="flex items-center justify-between text-teal-400 font-semibold text-[11px]">
+                        <span>Normal (10-20%)</span>
+                        <span className="font-mono font-bold">{pnlTotals.normalMarginCount}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">Healthy Velocity</span>
+                    </div>
+
+                    <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                      <div className="flex items-center justify-between text-amber-400 font-semibold text-[11px]">
+                        <span>Thin (&lt;10%)</span>
+                        <span className="font-mono font-bold">{pnlTotals.thinMarginCount}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">Price Sensitive</span>
+                    </div>
+
+                    <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/20">
+                      <div className="flex items-center justify-between text-red-400 font-semibold text-[11px]">
+                        <span>Loss (&lt;0)</span>
+                        <span className="font-mono font-bold">{pnlTotals.lossCount}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">Capital Deficit</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Low-Margin & Loss Prevention Intelligence Alert Banner */}
+              {pnlTotals.lossCount > 0 && (
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-red-950/40 via-red-900/20 to-transparent border border-red-500/40 flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5 animate-pulse" />
+                  <div className="flex-1 text-xs">
+                    <div className="flex items-center gap-2">
+                      <strong className="text-red-300 font-bold uppercase tracking-wide">
+                        Owner Loss Alert: {pnlTotals.lossCount} Vehicle(s) are incurring negative profit margin
+                      </strong>
+                    </div>
+                    <p className="text-slate-300 mt-1">
+                      Vehicles where total investment (purchase price + mechanical refurbishment) exceeds showroom asking price will erode dealership capital. We recommend revising asking price upwards or negotiating repair supplier fees.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Date, Status, Margin Filters & Search Controls */}
+              <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 space-y-3">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  {/* Date Filter Tabs */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                    {(['all', 'today', 'week', 'month', 'quarter', 'year', 'custom'] as const).map(filter => (
+                      <button
+                        key={filter}
+                        type="button"
+                        onClick={() => setPnlDateFilter(filter)}
+                        className={`px-3 py-1.5 rounded-xl font-semibold capitalize whitespace-nowrap transition ${
+                          pnlDateFilter === filter
+                            ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                            : 'bg-[#0F1A2C] text-slate-400 hover:text-white border border-white/5'
+                        }`}
+                      >
+                        {filter === 'all' ? 'All Time' : filter === 'year' ? 'Fiscal Year' : filter}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Search Input */}
+                  <div className="relative min-w-[240px]">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={pnlSearch}
+                      onChange={(e) => setPnlSearch(e.target.value)}
+                      placeholder="Search model, brand or notes..."
+                      className="w-full pl-9 pr-3 py-1.5 bg-[#0F1A2C] border border-white/10 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Sub Filters: Status and Margin Band */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-white/5 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-400 text-[11px] font-semibold uppercase">Status:</span>
+                    <button
+                      type="button"
+                      onClick={() => setPnlStatusFilter('all')}
+                      className={`px-2.5 py-1 rounded-lg ${pnlStatusFilter === 'all' ? 'bg-slate-700 text-white font-bold' : 'text-slate-400 hover:text-white'}`}
+                    >
+                      All ({bikes.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPnlStatusFilter('available')}
+                      className={`px-2.5 py-1 rounded-lg ${pnlStatusFilter === 'available' ? 'bg-emerald-600/30 text-emerald-300 font-bold border border-emerald-500/30' : 'text-slate-400 hover:text-white'}`}
+                    >
+                      In Stock
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPnlStatusFilter('sold')}
+                      className={`px-2.5 py-1 rounded-lg ${pnlStatusFilter === 'sold' ? 'bg-purple-600/30 text-purple-300 font-bold border border-purple-500/30' : 'text-slate-400 hover:text-white'}`}
+                    >
+                      Sold Units
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-400 text-[11px] font-semibold uppercase">Margin Filter:</span>
+                    <select
+                      value={pnlMarginBandFilter}
+                      onChange={(e) => setPnlMarginBandFilter(e.target.value as any)}
+                      className="bg-[#0F1A2C] border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    >
+                      <option value="all">All Margins</option>
+                      <option value="high">High Margin (&gt; 20%)</option>
+                      <option value="normal">Normal Margin (10% - 20%)</option>
+                      <option value="thin">Thin Margin (0% - 10%)</option>
+                      <option value="loss">Loss Units (&lt; 0%)</option>
+                    </select>
+                  </div>
+
+                  {pnlDateFilter === 'custom' && (
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <span className="text-slate-400 text-[11px]">From:</span>
+                      <input
+                        type="date"
+                        value={pnlCustomStart}
+                        onChange={(e) => setPnlCustomStart(e.target.value)}
+                        className="bg-[#0F1A2C] border border-white/10 rounded-lg px-2 py-1 text-xs text-white"
+                      />
+                      <span className="text-slate-400 text-[11px]">To:</span>
+                      <input
+                        type="date"
+                        value={pnlCustomEnd}
+                        onChange={(e) => setPnlCustomEnd(e.target.value)}
+                        className="bg-[#0F1A2C] border border-white/10 rounded-lg px-2 py-1 text-xs text-white"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Unit-Level Individual Bike Profitability Table */}
+              <div className="rounded-2xl bg-[#0B1320] border border-white/10 shadow-xl overflow-hidden">
+                <div className="p-4 border-b border-white/10 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Bike className="w-4 h-4 text-emerald-400" />
+                    <h3 className="text-sm font-bold text-white">
+                      Vehicle Profitability Ledger ({filteredPnlBikes.length} Units)
+                    </h3>
+                  </div>
+                  <span className="text-xs text-slate-400 font-mono">
+                    Owner Confidential • Tap to inspect procurement & repairs
+                  </span>
+                </div>
+
+                {filteredPnlBikes.length === 0 ? (
+                  <div className="p-12 text-center text-slate-500 text-xs">
+                    <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    No vehicles found matching current filter criteria.
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-[#0F1A2C]/80 text-[11px] uppercase tracking-wider text-slate-400 border-b border-white/10">
+                        <tr>
+                          <th className="py-3 px-4">Vehicle Model</th>
+                          <th className="py-3 px-3">Procurement Date</th>
+                          <th className="py-3 px-3 text-right">Purchase Cost</th>
+                          <th className="py-3 px-3 text-right">Repairs & Refurb</th>
+                          <th className="py-3 px-3 text-right">Total Landed Cost</th>
+                          <th className="py-3 px-3 text-right">Asking Price</th>
+                          <th className="py-3 px-3 text-right">Net Profit / Loss</th>
+                          <th className="py-3 px-3 text-center">Margin ROI</th>
+                          <th className="py-3 px-3 text-center">Status</th>
+                          <th className="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5 font-mono">
+                        {filteredPnlBikes.map((bike) => {
+                          const pCost = bike.purchase_cost ?? 0;
+                          const rCost = bike.repair_cost ?? 0;
+                          const landed = pCost + rCost;
+                          const asking = bike.price ?? 0;
+                          const profit = asking - landed;
+                          const marginPercent = landed > 0 ? (profit / landed) * 100 : 0;
+                          const isLoss = profit < 0;
+                          const isHigh = marginPercent >= 20;
+                          const isNormal = marginPercent >= 10 && marginPercent < 20;
+
+                          return (
+                            <tr
+                              key={bike.id}
+                              className={`hover:bg-white/[0.02] transition ${
+                                isLoss ? 'bg-red-500/[0.03]' : ''
+                              }`}
+                            >
+                              {/* Vehicle Model & Image */}
+                              <td className="py-3 px-4 font-sans">
+                                <div className="flex items-center gap-3">
+                                  {bike.image_url ? (
+                                    <img
+                                      src={bike.image_url}
+                                      alt={bike.name}
+                                      className="w-10 h-10 rounded-lg object-cover border border-white/10 flex-shrink-0"
+                                    />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-lg bg-[#0F1A2C] border border-white/10 flex items-center justify-center flex-shrink-0">
+                                      <Bike className="w-5 h-5 text-slate-500" />
+                                    </div>
+                                  )}
+                                  <div>
+                                    <div className="font-bold text-white flex items-center gap-1.5">
+                                      <span>{bike.name}</span>
+                                      {bike.year && (
+                                        <span className="text-[10px] text-slate-400 font-mono font-normal">
+                                          ({bike.year})
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="text-[11px] text-slate-400 flex items-center gap-2">
+                                      <span>{bike.brand}</span>
+                                      <span>•</span>
+                                      <span>{bike.category}</span>
+                                      {bike.repairs_note && (
+                                        <span className="text-[10px] text-cyan-300 max-w-[140px] truncate" title={bike.repairs_note}>
+                                          • {bike.repairs_note}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+
+                              {/* Procurement Date */}
+                              <td className="py-3 px-3 text-slate-400 text-[11px]">
+                                {bike.procurement_date || '2026-02-15'}
+                              </td>
+
+                              {/* Purchase Cost */}
+                              <td className="py-3 px-3 text-right text-slate-300">
+                                ₹{pCost.toLocaleString('en-IN')}
+                              </td>
+
+                              {/* Repairs & Refurbishment */}
+                              <td className="py-3 px-3 text-right">
+                                {rCost > 0 ? (
+                                  <span className="text-cyan-300">
+                                    +₹{rCost.toLocaleString('en-IN')}
+                                  </span>
+                                ) : (
+                                  <span className="text-slate-500">₹0</span>
+                                )}
+                              </td>
+
+                              {/* Total Landed Cost */}
+                              <td className="py-3 px-3 text-right text-blue-300 font-bold">
+                                ₹{landed.toLocaleString('en-IN')}
+                              </td>
+
+                              {/* Asking Price */}
+                              <td className="py-3 px-3 text-right text-amber-300 font-bold">
+                                ₹{asking.toLocaleString('en-IN')}
+                              </td>
+
+                              {/* Net Profit / Loss */}
+                              <td className="py-3 px-3 text-right font-bold">
+                                <span className={profit >= 0 ? 'text-emerald-400' : 'text-red-400 font-black'}>
+                                  {profit < 0 ? '-' : '+'}₹{Math.abs(profit).toLocaleString('en-IN')}
+                                </span>
+                              </td>
+
+                              {/* Margin ROI Badge */}
+                              <td className="py-3 px-3 text-center">
+                                {isLoss ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
+                                    <TrendingDown className="w-3 h-3" />
+                                    {marginPercent.toFixed(1)}% LOSS
+                                  </span>
+                                ) : isHigh ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                                    <TrendingUp className="w-3 h-3" />
+                                    {marginPercent.toFixed(1)}% HIGH
+                                  </span>
+                                ) : isNormal ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">
+                                    {marginPercent.toFixed(1)}% NORMAL
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                    {marginPercent.toFixed(1)}% THIN
+                                  </span>
+                                )}
+                              </td>
+
+                              {/* Status */}
+                              <td className="py-3 px-3 text-center">
+                                {bike.status === 'Sold' ? (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                    Sold
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    In Stock
+                                  </span>
+                                )}
+                              </td>
+
+                              {/* Actions */}
+                              <td className="py-3 px-4 text-right whitespace-nowrap font-sans">
+                                <div className="flex items-center justify-end gap-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleQuickMarkSold(bike)}
+                                    title={bike.status === 'Sold' ? 'Revert to Available' : 'Mark as Sold (Realize Profit)'}
+                                    className={`p-1.5 rounded-lg border text-xs font-semibold transition ${
+                                      bike.status === 'Sold'
+                                        ? 'bg-purple-900/40 text-purple-300 border-purple-500/30 hover:bg-purple-800/50'
+                                        : 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30 hover:bg-emerald-900/50'
+                                    }`}
+                                  >
+                                    <CheckCircle className="w-3.5 h-3.5" />
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setEditingProcurementBike(bike);
+                                      setShowProcurementModal(true);
+                                    }}
+                                    className="px-2.5 py-1.5 rounded-lg bg-[#0F1A2C] hover:bg-[#16243C] text-slate-300 hover:text-white border border-white/10 text-xs font-semibold inline-flex items-center gap-1 transition"
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5 text-cyan-400" />
+                                    <span>Edit P&L</span>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      {/* Table Summary Footer */}
+                      <tfoot className="bg-[#0F1A2C] text-xs font-bold text-white border-t border-white/10">
+                        <tr>
+                          <td className="py-3 px-4 font-sans">
+                            Grand Totals ({filteredPnlBikes.length} Vehicles)
+                          </td>
+                          <td className="py-3 px-3"></td>
+                          <td className="py-3 px-3 text-right font-mono text-slate-300">
+                            ₹{pnlTotals.totalPurchase.toLocaleString('en-IN')}
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono text-cyan-300">
+                            ₹{pnlTotals.totalRepair.toLocaleString('en-IN')}
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono text-blue-300">
+                            ₹{pnlTotals.totalLanded.toLocaleString('en-IN')}
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono text-amber-300">
+                            ₹{pnlTotals.totalAsking.toLocaleString('en-IN')}
+                          </td>
+                          <td className={`py-3 px-3 text-right font-mono ${pnlTotals.totalProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                            {pnlTotals.totalProfit < 0 ? '-' : '+'}₹{Math.abs(pnlTotals.totalProfit).toLocaleString('en-IN')}
+                          </td>
+                          <td className="py-3 px-3 text-center font-mono text-emerald-400">
+                            {pnlTotals.avgMarginPercent.toFixed(1)}% ROI
+                          </td>
+                          <td colSpan={2}></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
 
@@ -3993,6 +5086,16 @@ export default function App() {
           >
             <Receipt className="w-5 h-5" />
             <span>Billing</span>
+          </button>
+        )}
+
+        {hasAccess('pnl') && (
+          <button
+            onClick={() => setActiveTab('pnl')}
+            className={`flex flex-col items-center gap-1 text-[11px] font-medium py-1 px-2 ${activeTab === 'pnl' ? 'text-emerald-400 font-bold' : 'text-slate-400'}`}
+          >
+            <TrendingUp className="w-5 h-5 text-emerald-400" />
+            <span>P&L</span>
           </button>
         )}
 
@@ -5078,6 +6181,7 @@ export default function App() {
                 if (form.permBilling.checked) permissions.push('billing');
                 if (form.permBranches.checked) permissions.push('branches');
                 if (form.permSettings.checked) permissions.push('settings');
+                if (form.permPnl?.checked) permissions.push('pnl');
 
                 const newStaff: StaffItem = {
                   id: editingStaff ? editingStaff.id : Date.now(),
@@ -5232,6 +6336,21 @@ export default function App() {
                     <div>
                       <span className="text-slate-200 font-semibold">CMS & Social Media Settings</span>
                       <span className="text-[10px] text-slate-500 block">Top announcement banner & customer phone lines</span>
+                    </div>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer p-2 rounded-xl hover:bg-emerald-500/10 border border-emerald-500/30 bg-emerald-950/20 transition">
+                    <input
+                      type="checkbox"
+                      name="permPnl"
+                      defaultChecked={editingStaff?.permissions.includes('pnl')}
+                      className="rounded bg-slate-700 text-emerald-500 focus:ring-0"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-emerald-400 font-bold">Profit & Loss (P&L) Financials</span>
+                        <span className="px-1.5 py-0.5 rounded text-[9px] bg-red-600/30 text-red-300 font-mono uppercase font-bold tracking-wider">Owner Confidential</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">Confidential procurement purchase costs, mechanical repairs, net margins & Recharts financial analytics</span>
                     </div>
                   </label>
                 </div>
@@ -5612,6 +6731,440 @@ export default function App() {
         </div>
       )}
 
+      {/* 9. VEHICLE PROCUREMENT, REFURBISHMENT & MARGIN MODAL (OWNER ONLY) */}
+      {showProcurementModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+          <div className="w-full max-w-xl bg-[#0B1320] p-6 rounded-2xl border border-emerald-500/30 my-8 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <Calculator className="w-5 h-5 text-emerald-400" />
+                <div>
+                  <h3 className="text-base font-bold text-white">
+                    {editingProcurementBike ? 'Edit Vehicle Financials & Repairs' : 'Log Vehicle Procurement'}
+                  </h3>
+                  <span className="text-[10px] text-emerald-400 font-mono font-bold tracking-wider uppercase">
+                    Owner Confidential • Protected Financial Ledger
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowProcurementModal(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.target as any;
+                const targetBikeId = editingProcurementBike ? editingProcurementBike.id : Number(form.targetBikeId?.value);
+                const targetBike = bikes.find(b => b.id === targetBikeId);
+
+                if (!targetBike) {
+                  showToast('Please select a valid vehicle');
+                  return;
+                }
+
+                const purchaseCost = Number(form.purchaseCost.value) || 0;
+                const repairCost = Number(form.repairCost.value) || 0;
+                const askingPrice = Number(form.askingPrice.value) || targetBike.price || 0;
+                const procDate = form.procDate.value || new Date().toISOString().split('T')[0];
+                const repairsNote = form.repairsNote.value.trim();
+                const vehicleStatus = form.vehicleStatus.value as 'Available' | 'Sold';
+
+                const totalLanded = purchaseCost + repairCost;
+                const netProfit = askingPrice - totalLanded;
+
+                const updatedBike: BikeItem = {
+                  ...targetBike,
+                  purchase_cost: purchaseCost,
+                  repair_cost: repairCost,
+                  price: askingPrice,
+                  procurement_date: procDate,
+                  repairs_note: repairsNote,
+                  status: vehicleStatus
+                };
+
+                setBikes(prev => prev.map(b => b.id === targetBike.id ? updatedBike : b));
+                showToast(`Saved financials for ${updatedBike.name}`);
+
+                // Audit log
+                logAuditAction(
+                  'inventory_edit',
+                  'Inventory',
+                  `Owner updated procurement & margin financials for ${updatedBike.name}`,
+                  updatedBike.id,
+                  updatedBike.name,
+                  {
+                    field: 'procurement_financials',
+                    before: {
+                      purchase: targetBike.purchase_cost,
+                      repairs: targetBike.repair_cost,
+                      asking: targetBike.price,
+                      status: targetBike.status
+                    },
+                    after: {
+                      purchase: purchaseCost,
+                      repairs: repairCost,
+                      asking: askingPrice,
+                      landed: totalLanded,
+                      netProfit: netProfit,
+                      status: vehicleStatus
+                    },
+                    notes: repairsNote || 'Procurement adjustment'
+                  }
+                );
+
+                // Supabase sync
+                supabase
+                  .from('bikes')
+                  .update({
+                    purchase_cost: purchaseCost,
+                    repair_cost: repairCost,
+                    price: askingPrice,
+                    procurement_date: procDate,
+                    repairs_note: repairsNote,
+                    status: vehicleStatus
+                  })
+                  .eq('id', targetBike.id)
+                  .then();
+
+                setShowProcurementModal(false);
+              }}
+              className="space-y-4"
+            >
+              {/* Bike Selector if not already editing a specific bike */}
+              {!editingProcurementBike ? (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                    Select Dealership Vehicle
+                  </label>
+                  <select
+                    name="targetBikeId"
+                    required
+                    defaultValue=""
+                    className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500"
+                  >
+                    <option value="" disabled>-- Select a bike to log procurement --</option>
+                    {bikes.map(b => (
+                      <option key={b.id} value={b.id}>
+                        {b.name} ({b.brand} • {b.year || '2025'}) — Current Asking: ₹{b.price.toLocaleString('en-IN')}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="p-3 rounded-xl bg-[#0F1A2C] border border-white/10 flex items-center gap-3">
+                  {editingProcurementBike.image_url ? (
+                    <img
+                      src={editingProcurementBike.image_url}
+                      alt={editingProcurementBike.name}
+                      className="w-12 h-12 rounded-lg object-cover border border-white/10"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-[#080E17] flex items-center justify-center">
+                      <Bike className="w-6 h-6 text-slate-500" />
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="text-sm font-bold text-white">{editingProcurementBike.name}</h4>
+                    <span className="text-xs text-slate-400 font-mono">
+                      {editingProcurementBike.brand} • {editingProcurementBike.category} • Year: {editingProcurementBike.year || 2025}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Financial Inputs: Purchase Cost & Repair Cost */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                    Procurement / Buy Cost (₹)
+                  </label>
+                  <input
+                    name="purchaseCost"
+                    type="number"
+                    min="0"
+                    step="1000"
+                    required
+                    defaultValue={editingProcurementBike?.purchase_cost || 0}
+                    placeholder="e.g. 150000"
+                    className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-0.5 block">Amount paid to seller/exchange</span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                    Mechanical & Refurbish (₹)
+                  </label>
+                  <input
+                    name="repairCost"
+                    type="number"
+                    min="0"
+                    step="500"
+                    required
+                    defaultValue={editingProcurementBike?.repair_cost || 0}
+                    placeholder="e.g. 15000"
+                    className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-cyan-500 font-mono"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-0.5 block">Service, parts, tyres, polish</span>
+                </div>
+              </div>
+
+              {/* Asking Price & Procurement Date */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                    Showroom Asking Price (₹)
+                  </label>
+                  <input
+                    name="askingPrice"
+                    type="number"
+                    min="0"
+                    step="1000"
+                    required
+                    defaultValue={editingProcurementBike?.price || 0}
+                    placeholder="e.g. 185000"
+                    className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-amber-300 font-bold focus:outline-none focus:border-amber-500 font-mono"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-0.5 block">Final sticker price on website</span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                    Procurement Date
+                  </label>
+                  <input
+                    name="procDate"
+                    type="date"
+                    required
+                    defaultValue={editingProcurementBike?.procurement_date || new Date().toISOString().split('T')[0]}
+                    className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-0.5 block">Date unit arrived at showroom</span>
+                </div>
+              </div>
+
+              {/* Status and Notes */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                  Inventory Status
+                </label>
+                <select
+                  name="vehicleStatus"
+                  defaultValue={editingProcurementBike?.status || 'Available'}
+                  className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-medium"
+                >
+                  <option value="Available">Available (In Showroom Stock)</option>
+                  <option value="Sold">Sold (Realized Cash Profit)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                  Mechanical Job Work & Refurbishment Notes
+                </label>
+                <textarea
+                  name="repairsNote"
+                  rows={2}
+                  defaultValue={editingProcurementBike?.repairs_note || ''}
+                  placeholder="e.g. New clutch plate, front brake pads replaced, full ceramic wash & buffing"
+                  className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 resize-none"
+                />
+              </div>
+
+              {/* Notice Box */}
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-slate-300 flex items-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <span className="text-[11px] leading-relaxed">
+                  <strong>Zero Worker Leakage:</strong> Purchase and repair records entered here are strictly isolated from normal staff and worker logins. Only you and authorized owners can view this profit data.
+                </span>
+              </div>
+
+              <div className="pt-3 border-t border-white/10 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowProcurementModal(false)}
+                  className="px-4 py-2 rounded-lg bg-[#0F1A2C] text-slate-300 text-xs hover:bg-[#16243C] transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-600/30 transition flex items-center gap-1.5"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  <span>Save Financials</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 10. PRINTABLE P&L EXECUTIVE DEALERSHIP STATEMENT MODAL */}
+      {showPrintPnlModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto">
+          <div className="w-full max-w-4xl bg-white text-slate-900 rounded-2xl p-8 my-8 shadow-2xl space-y-6">
+            {/* Header with Print and Close Action buttons */}
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white font-black text-xl shadow">
+                  A
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 tracking-tight">ADARSH MOTORS DEALERSHIP NETWORK</h2>
+                  <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold">
+                    Confidential Pre-Owned Superbike Inventory & Margin Performance Statement
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 print:hidden">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-red-600/30 transition"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>Print Document</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPrintPnlModal(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            {/* Statement Metadata */}
+            <div className="grid grid-cols-3 gap-4 text-xs bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Statement Date</span>
+                <span className="font-bold text-slate-800 font-mono">
+                  {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Reporting Authority</span>
+                <span className="font-bold text-slate-800">
+                  {currentUser ? currentUser.name : 'Managing Director (Owner)'}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 block text-[10px] uppercase font-bold">Dealership Hub</span>
+                <span className="font-bold text-slate-800">Madhapur & Gachibowli, Hyderabad</span>
+              </div>
+            </div>
+
+            {/* Financial Overview Table */}
+            <div className="grid grid-cols-4 gap-3 text-center">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="text-[10px] uppercase font-bold text-slate-500">Capital Invested</div>
+                <div className="text-lg font-black text-slate-900 font-mono mt-0.5">
+                  ₹{pnlTotals.totalLanded.toLocaleString('en-IN')}
+                </div>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="text-[10px] uppercase font-bold text-slate-500">Asking Valuation</div>
+                <div className="text-lg font-black text-amber-600 font-mono mt-0.5">
+                  ₹{pnlTotals.totalAsking.toLocaleString('en-IN')}
+                </div>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="text-[10px] uppercase font-bold text-slate-500">Projected Net Margin</div>
+                <div className="text-lg font-black text-emerald-600 font-mono mt-0.5">
+                  +₹{pnlTotals.totalProfit.toLocaleString('en-IN')}
+                </div>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="text-[10px] uppercase font-bold text-slate-500">Realized Profit</div>
+                <div className="text-lg font-black text-purple-600 font-mono mt-0.5">
+                  ₹{pnlTotals.realizedProfit.toLocaleString('en-IN')}
+                </div>
+              </div>
+            </div>
+
+            {/* Breakdown Table */}
+            <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-100 text-[10px] uppercase font-bold text-slate-600 border-b border-slate-200">
+                  <tr>
+                    <th className="py-2.5 px-3">Vehicle Details</th>
+                    <th className="py-2.5 px-2 text-right">Purchase (₹)</th>
+                    <th className="py-2.5 px-2 text-right">Repairs (₹)</th>
+                    <th className="py-2.5 px-2 text-right">Landed Cost (₹)</th>
+                    <th className="py-2.5 px-2 text-right">Asking Price (₹)</th>
+                    <th className="py-2.5 px-2 text-right">Net Margin (₹)</th>
+                    <th className="py-2.5 px-2 text-center">ROI %</th>
+                    <th className="py-2.5 px-3 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 font-mono text-[11px]">
+                  {bikes.map((bike) => {
+                    const pCost = bike.purchase_cost ?? 0;
+                    const rCost = bike.repair_cost ?? 0;
+                    const landed = pCost + rCost;
+                    const asking = bike.price ?? 0;
+                    const profit = asking - landed;
+                    const marginPercent = landed > 0 ? (profit / landed) * 100 : 0;
+
+                    return (
+                      <tr key={bike.id} className={profit < 0 ? 'bg-red-50 text-red-900' : ''}>
+                        <td className="py-2 px-3 font-sans font-semibold text-slate-800">
+                          {bike.name} <span className="text-[10px] text-slate-500 font-normal">({bike.brand})</span>
+                        </td>
+                        <td className="py-2 px-2 text-right text-slate-600">
+                          ₹{pCost.toLocaleString('en-IN')}
+                        </td>
+                        <td className="py-2 px-2 text-right text-slate-600">
+                          ₹{rCost.toLocaleString('en-IN')}
+                        </td>
+                        <td className="py-2 px-2 text-right font-bold text-slate-800">
+                          ₹{landed.toLocaleString('en-IN')}
+                        </td>
+                        <td className="py-2 px-2 text-right font-bold text-slate-900">
+                          ₹{asking.toLocaleString('en-IN')}
+                        </td>
+                        <td className={`py-2 px-2 text-right font-bold ${profit >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                          {profit < 0 ? '-' : '+'}₹{Math.abs(profit).toLocaleString('en-IN')}
+                        </td>
+                        <td className="py-2 px-2 text-center font-bold">
+                          {marginPercent.toFixed(1)}%
+                        </td>
+                        <td className="py-2 px-3 text-center">
+                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase font-sans ${bike.status === 'Sold' ? 'bg-purple-100 text-purple-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                            {bike.status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Signatures & Verification */}
+            <div className="pt-8 grid grid-cols-2 gap-8 text-xs text-slate-600 border-t border-slate-200">
+              <div className="border-t border-dashed border-slate-400 pt-2 text-center">
+                <span className="font-bold text-slate-800 block">Authorized Dealership Principal / Owner</span>
+                <span className="text-[10px] text-slate-400">Adarsh Motors Management Signatory</span>
+              </div>
+              <div className="border-t border-dashed border-slate-400 pt-2 text-center">
+                <span className="font-bold text-slate-800 block">Financial Controller / Auditor</span>
+                <span className="text-[10px] text-slate-400">Ledger Verification & Stamp</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showSqlModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
           <div className="w-full max-w-2xl bg-[#0B1320] p-6 rounded-2xl border border-white/10 max-h-[90vh] flex flex-col">
@@ -5641,8 +7194,18 @@ CREATE TABLE IF NOT EXISTS bikes (
   km INTEGER,
   image_url TEXT,
   status TEXT DEFAULT 'Available',
+  purchase_cost NUMERIC DEFAULT 0,
+  repair_cost NUMERIC DEFAULT 0,
+  procurement_date DATE DEFAULT CURRENT_DATE,
+  repairs_note TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Upgrade existing bikes table if already created:
+ALTER TABLE bikes ADD COLUMN IF NOT EXISTS purchase_cost NUMERIC DEFAULT 0;
+ALTER TABLE bikes ADD COLUMN IF NOT EXISTS repair_cost NUMERIC DEFAULT 0;
+ALTER TABLE bikes ADD COLUMN IF NOT EXISTS procurement_date DATE DEFAULT CURRENT_DATE;
+ALTER TABLE bikes ADD COLUMN IF NOT EXISTS repairs_note TEXT;
 
 CREATE TABLE IF NOT EXISTS leads (
   id BIGSERIAL PRIMARY KEY,
@@ -5713,8 +7276,8 @@ CREATE POLICY "Allow anon for staff_users" ON staff_users FOR ALL USING (true) W
             <div className="flex items-center justify-between border-t border-white/10 pt-3">
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText(`CREATE TABLE IF NOT EXISTS bikes (id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL, brand TEXT NOT NULL, price NUMERIC NOT NULL, category TEXT NOT NULL, year INTEGER, km INTEGER, image_url TEXT, status TEXT DEFAULT 'Available'); CREATE TABLE IF NOT EXISTS leads (id BIGSERIAL PRIMARY KEY, customer_name TEXT NOT NULL, phone TEXT NOT NULL, bike_interested TEXT, service_type TEXT, message TEXT, status TEXT DEFAULT 'New'); CREATE TABLE IF NOT EXISTS invoices (id BIGSERIAL PRIMARY KEY, invoice_number TEXT UNIQUE, customer_name TEXT NOT NULL, mobile TEXT NOT NULL, vehicle TEXT NOT NULL, price NUMERIC NOT NULL, payment_mode TEXT DEFAULT 'UPI', notes TEXT); CREATE TABLE IF NOT EXISTS branches (id BIGSERIAL PRIMARY KEY, branch_name TEXT NOT NULL, city TEXT NOT NULL, address TEXT NOT NULL, phone TEXT NOT NULL, maps_url TEXT, status TEXT DEFAULT 'Active'); CREATE TABLE IF NOT EXISTS site_settings (id BIGSERIAL PRIMARY KEY, key TEXT UNIQUE NOT NULL, value TEXT); CREATE TABLE IF NOT EXISTS staff_users (id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL, phone TEXT UNIQUE NOT NULL, pin TEXT NOT NULL, role TEXT DEFAULT 'staff', permissions JSONB);`);
-                  showToast('Copied SQL setup commands to clipboard!');
+                  navigator.clipboard.writeText(`CREATE TABLE IF NOT EXISTS bikes (id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL, brand TEXT NOT NULL, price NUMERIC NOT NULL, category TEXT NOT NULL, year INTEGER, km INTEGER, image_url TEXT, status TEXT DEFAULT 'Available', purchase_cost NUMERIC DEFAULT 0, repair_cost NUMERIC DEFAULT 0, procurement_date DATE DEFAULT CURRENT_DATE, repairs_note TEXT); ALTER TABLE bikes ADD COLUMN IF NOT EXISTS purchase_cost NUMERIC DEFAULT 0; ALTER TABLE bikes ADD COLUMN IF NOT EXISTS repair_cost NUMERIC DEFAULT 0; ALTER TABLE bikes ADD COLUMN IF NOT EXISTS procurement_date DATE DEFAULT CURRENT_DATE; ALTER TABLE bikes ADD COLUMN IF NOT EXISTS repairs_note TEXT; CREATE TABLE IF NOT EXISTS leads (id BIGSERIAL PRIMARY KEY, customer_name TEXT NOT NULL, phone TEXT NOT NULL, bike_interested TEXT, service_type TEXT, message TEXT, status TEXT DEFAULT 'New'); CREATE TABLE IF NOT EXISTS invoices (id BIGSERIAL PRIMARY KEY, invoice_number TEXT UNIQUE, customer_name TEXT NOT NULL, mobile TEXT NOT NULL, vehicle TEXT NOT NULL, price NUMERIC NOT NULL, payment_mode TEXT DEFAULT 'UPI', notes TEXT); CREATE TABLE IF NOT EXISTS branches (id BIGSERIAL PRIMARY KEY, branch_name TEXT NOT NULL, city TEXT NOT NULL, address TEXT NOT NULL, phone TEXT NOT NULL, maps_url TEXT, status TEXT DEFAULT 'Active'); CREATE TABLE IF NOT EXISTS site_settings (id BIGSERIAL PRIMARY KEY, key TEXT UNIQUE NOT NULL, value TEXT); CREATE TABLE IF NOT EXISTS staff_users (id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL, phone TEXT UNIQUE NOT NULL, pin TEXT NOT NULL, role TEXT DEFAULT 'staff', permissions JSONB);`);
+                  showToast('Copied updated SQL setup commands with P&L columns to clipboard!');
                 }}
                 className="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs flex items-center gap-1.5 transition"
               >

@@ -24,17 +24,25 @@
           },
           colors: {
             obsidian: {
-              950: '#05080E',
-              900: '#080E17',
-              850: '#0B1320',
-              800: '#0F1A2C',
-              700: '#16243C',
-              600: '#1E3150',
+              950: '#04060A',
+              900: '#080A0F',
+              850: '#0D121B',
+              800: '#121926',
+              700: '#1A2436',
+              600: '#24324A',
             },
             racing: {
+              400: '#F87171',
               500: '#EF4444',
               600: '#DC2626',
               700: '#B91C1C',
+            },
+            gold: {
+              300: '#FDE68A',
+              400: '#FBBF24',
+              500: '#F59E0B',
+              600: '#D97706',
+              700: '#B45309',
             },
             cyanGlow: '#00F0FF',
             emeraldGlow: '#10B981',
@@ -57,7 +65,7 @@
       color-scheme: dark;
     }
     body {
-      background-color: #080E17;
+      background-color: #080A0F;
       color: #E2E8F0;
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
@@ -65,23 +73,31 @@
 
     /* Glassmorphic Panels */
     .glass-panel {
-      background: rgba(11, 19, 32, 0.75);
+      background: rgba(13, 18, 27, 0.78);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.07);
     }
     .glass-card {
-      background: linear-gradient(135deg, rgba(15, 26, 44, 0.8) 0%, rgba(11, 19, 32, 0.9) 100%);
+      background: linear-gradient(135deg, rgba(18, 25, 38, 0.82) 0%, rgba(13, 18, 27, 0.92) 100%);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.08);
       transition: all 0.25s ease;
     }
     .glass-card:hover {
-      border-color: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.18);
       transform: translateY(-2px);
     }
 
     /* Glowing Card Rim Accents */
+    .glow-gold {
+      box-shadow: 0 0 25px -8px rgba(245, 158, 11, 0.25);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+    .glow-crimson {
+      box-shadow: 0 0 25px -8px rgba(220, 38, 38, 0.28);
+      border-color: rgba(220, 38, 38, 0.35);
+    }
     .glow-cyan {
       box-shadow: 0 0 25px -8px rgba(0, 240, 255, 0.2);
       border-color: rgba(0, 240, 255, 0.25);
@@ -278,7 +294,14 @@
           <span>CMS & Social Links</span>
         </button>
 
-        <!-- Owner Only Item -->
+        <!-- Owner Only Items -->
+        <button onclick="switchTab('procurement')" id="nav-procurement"
+          class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-obsidian-800 border border-transparent">
+          <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+          <span>Profit & Loss (P&L)</span>
+          <span class="ml-auto text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Owner P&L</span>
+        </button>
+
         <button onclick="switchTab('staff')" id="nav-staff"
           class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white hover:bg-obsidian-800 border border-transparent">
           <i data-lucide="users-round" class="w-4 h-4"></i>
@@ -579,14 +602,107 @@
             </button>
           </div>
 
-          <!-- Filters Bar -->
+          <!-- OWNER-ONLY INVENTORY PROCUREMENT & PROFIT CALCULATOR -->
+          <div id="inventoryOwnerProfitWidget" class="glass-card glow-emerald rounded-2xl p-5 border border-emerald-500/30 relative overflow-hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3.5 border-b border-white/10">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-700/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                  <i data-lucide="calculator" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-sm font-bold text-white tracking-wide uppercase">Procurement & Profit Margin Calculator</h3>
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 text-[10px] font-extrabold border border-emerald-700/50 flex items-center gap-1 shadow-sm">
+                      <i data-lucide="shield-check" class="w-3 h-3 text-emerald-400"></i> Owner Only · Hidden from Staff
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Quickly compute purchase cost, refurbishment investment, and net profit margins across any inventory unit.</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="switchTab('procurement')" class="px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-700/40 text-xs font-semibold flex items-center gap-1.5 transition">
+                  <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                  <span>Full Ledger & Analytics</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Vehicle Quick Selector & Inputs Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-4">
+              <!-- Select Vehicle -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="quickCalcBikeSelect">Select Vehicle</label>
+                <select id="quickCalcBikeSelect" onchange="onQuickCalcBikeSelect(this.value)" class="w-full px-3 py-2 bg-obsidian-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500">
+                  <option value="">-- Choose from Inventory --</option>
+                </select>
+              </div>
+
+              <!-- Purchase Cost -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="quickCalcPurchase">Purchase / Inward Cost (₹)</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-mono text-xs">₹</span>
+                  <input type="number" id="quickCalcPurchase" min="0" placeholder="e.g. 780000" oninput="runQuickProfitCalc()"
+                    class="w-full pl-7 pr-3 py-2 bg-obsidian-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 font-mono font-bold">
+                </div>
+              </div>
+
+              <!-- Mechanical Repairs -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="quickCalcRepair">Mechanical & Repairs (₹)</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-mono text-xs">₹</span>
+                  <input type="number" id="quickCalcRepair" min="0" placeholder="e.g. 35000" oninput="runQuickProfitCalc()"
+                    class="w-full pl-7 pr-3 py-2 bg-obsidian-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 font-mono font-bold">
+                </div>
+              </div>
+
+              <!-- Asking Price -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="quickCalcAsking">Showroom Asking Price (₹)</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-mono text-xs">₹</span>
+                  <input type="number" id="quickCalcAsking" min="0" placeholder="e.g. 920000" oninput="runQuickProfitCalc()"
+                    class="w-full pl-7 pr-3 py-2 bg-obsidian-950 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-emerald-500 font-mono font-bold">
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Calculation Outcome Ribbons -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 pt-3 border-t border-white/10 font-mono text-xs">
+              <div class="p-3 bg-obsidian-950/70 rounded-xl border border-white/5 flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] text-slate-400 block uppercase font-sans">Total Investment Cost:</span>
+                  <span id="quickCalcTotalCost" class="text-sm font-black text-white">₹0</span>
+                </div>
+                <i data-lucide="wallet" class="w-4 h-4 text-slate-500"></i>
+              </div>
+
+              <div class="p-3 bg-obsidian-950/70 rounded-xl border border-white/5 flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] text-slate-400 block uppercase font-sans">Target Net Profit:</span>
+                  <span id="quickCalcNetProfit" class="text-sm font-black text-emerald-400">₹0</span>
+                </div>
+                <span id="quickCalcRoiBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800">0% ROI</span>
+              </div>
+
+              <div class="p-3 bg-obsidian-950/70 rounded-xl border border-white/5 flex items-center justify-end">
+                <button type="button" onclick="saveQuickCalcToBike()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/30 transition">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                  <span>Save Margins to Vehicle</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters Bar & View Switcher -->
           <div class="glass-panel p-4 rounded-xl border border-white/10 flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
             <div class="flex-1 relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                 <i data-lucide="search" class="w-4 h-4"></i>
               </span>
               <input type="text" id="inventorySearch" oninput="renderInventoryTable()" placeholder="Search by vehicle name, brand (e.g. Kawasaki, BMW)..."
-                class="w-full pl-9 pr-4 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-racing-500">
+                class="w-full pl-9 pr-4 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-racing-500 font-sans">
             </div>
 
             <div class="flex items-center gap-2 flex-wrap">
@@ -610,25 +726,39 @@
                 <option value="Booked">Booked</option>
                 <option value="Sold">Sold</option>
               </select>
+
+              <!-- COMPACT VIEW MODE TOGGLE -->
+              <div class="flex items-center p-1 bg-obsidian-950 rounded-lg border border-white/10 text-xs shrink-0">
+                <button type="button" id="invViewTableBtn" onclick="setInventoryViewMode('table')" title="Compact Table View"
+                  class="px-2.5 py-1.5 rounded-md font-semibold transition bg-racing-600 text-white flex items-center gap-1.5 shadow-sm">
+                  <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                  <span class="hidden sm:inline">Compact Table</span>
+                </button>
+                <button type="button" id="invViewGridBtn" onclick="setInventoryViewMode('grid')" title="Compact Grid View"
+                  class="px-2.5 py-1.5 rounded-md font-semibold transition text-slate-400 hover:text-white flex items-center gap-1.5">
+                  <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                  <span class="hidden sm:inline">Compact Grid</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Inventory Data Table -->
-          <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+          <!-- 1. COMPACT TABLE VIEW CONTAINER -->
+          <div id="inventoryTableViewContainer" class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
                 <thead>
                   <tr class="text-slate-400 bg-obsidian-950/60 border-b border-white/10 font-semibold tracking-wider uppercase text-[11px]">
-                    <th class="py-3 px-4">VEHICLE / ASSET</th>
-                    <th class="py-3 px-4">BRAND</th>
-                    <th class="py-3 px-4">CATEGORY</th>
-                    <th class="py-3 px-4">YEAR & KM</th>
-                    <th class="py-3 px-4">PRICE</th>
-                    <th class="py-3 px-4">STATUS</th>
-                    <th class="py-3 px-4 text-right">ACTIONS</th>
+                    <th class="py-2.5 px-3.5">VEHICLE / ASSET</th>
+                    <th class="py-2.5 px-3.5">BRAND</th>
+                    <th class="py-2.5 px-3.5">CATEGORY</th>
+                    <th class="py-2.5 px-3.5">YEAR & KM</th>
+                    <th class="py-2.5 px-3.5">SHOWROOM ASKING</th>
+                    <th class="py-2.5 px-3.5">STATUS</th>
+                    <th class="py-2.5 px-3.5 text-right">QUICK ACTIONS</th>
                   </tr>
                 </thead>
-                <tbody id="inventoryTableBody" class="divide-y divide-white/5">
+                <tbody id="inventoryTableBody" class="divide-y divide-white/5 font-sans">
                   <!-- Filled dynamically -->
                 </tbody>
               </table>
@@ -641,6 +771,11 @@
               <p class="text-sm font-semibold text-white">No vehicles found</p>
               <p class="text-xs text-slate-400 mt-1">Try adjusting your search criteria or add a new vehicle.</p>
             </div>
+          </div>
+
+          <!-- 2. COMPACT GRID VIEW CONTAINER -->
+          <div id="inventoryGridViewContainer" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+            <!-- Filled dynamically in compact grid format -->
           </div>
         </section>
 
@@ -804,25 +939,223 @@
         <!-- 6. DYNAMIC CMS & SOCIAL LINKS SECTION      -->
         <!-- ========================================== -->
         <section id="section-settings" class="tab-section hidden space-y-6">
-          <div>
-            <h2 class="text-2xl font-extrabold text-white tracking-tight">Dynamic CMS & Social Media Settings</h2>
-            <p class="text-xs text-slate-400 mt-1">Modify customer-facing contact numbers, Instagram handles, and top announcement banner text without code changes.</p>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">CMS, Hero Slider & Social Media Manager</h2>
+                <span class="px-2.5 py-0.5 rounded-full bg-gold-500/10 text-gold-400 border border-gold-500/30 font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 shadow-sm">
+                  <i data-lucide="sparkles" class="w-3 h-3 text-gold-400"></i> Dynamic Customer Front Page Sync
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Configure customer website hero slides, contact telephone numbers, WhatsApp routing, and top festival announcements in real-time.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="resetHeroSlidesToDefaults()" class="px-3.5 py-2 rounded-xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-slate-300 hover:text-white font-semibold text-xs flex items-center gap-1.5 transition">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-slate-400"></i>
+                <span>Reset Slides to Default</span>
+              </button>
+              <button type="button" onclick="saveHeroSlidesToSupabase()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-racing-600 to-racing-700 hover:from-racing-500 hover:to-racing-600 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-racing-600/30 transition">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                <span>Publish Hero Slides</span>
+              </button>
+            </div>
           </div>
 
-          <div class="glass-panel p-6 rounded-2xl border border-white/10 max-w-3xl">
+          <!-- 1. DYNAMIC HERO CAROUSEL & BANNER MANAGER -->
+          <div class="glass-panel p-6 rounded-2xl border border-white/10 space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-racing-600/20 to-racing-700/20 text-racing-400 border border-racing-500/30 flex items-center justify-center shrink-0">
+                  <i data-lucide="layers" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-white uppercase tracking-wider">Customer Front Page Hero Carousel (5 Slides)</h3>
+                  <p class="text-[11px] text-slate-400 mt-0.5">Select a slide below to customize titles, call-to-action buttons, background imagery, and navigation redirects.</p>
+                </div>
+              </div>
+              <span class="text-[11px] font-mono text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-800/40">
+                Key: <code class="text-white">site_settings.hero_slides</code>
+              </span>
+            </div>
+
+            <!-- Slide Selector Tabs -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" id="heroSlideTabsContainer">
+              <!-- Dynamically populated 5 slide buttons -->
+            </div>
+
+            <!-- Active Slide Editor Grid (2 Columns: Form Left, Real-Time Luxury Preview Right) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start pt-2">
+              <!-- Left: Form Controls (7 cols) -->
+              <div class="lg:col-span-7 space-y-4">
+                <input type="hidden" id="activeSlideIndex" value="0">
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div class="sm:col-span-2">
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="slideTitle">Slide Main Headline <span class="text-racing-400">*</span></label>
+                    <input type="text" id="slideTitle" oninput="updateLiveSlidePreview()" placeholder="e.g. BUY YOUR DREAM BIKE"
+                      class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-racing-500 font-bold tracking-tight">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="slideBadge">Badge / Tagline</label>
+                    <input type="text" id="slideBadge" oninput="updateLiveSlidePreview()" placeholder="e.g. VERIFIED SUPERBIKES"
+                      class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-xl text-xs text-gold-400 focus:outline-none focus:border-gold-500 font-mono font-semibold">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="slideSubtitle">Supporting Subtitle & Value Proposition</label>
+                  <textarea id="slideSubtitle" rows="2" oninput="updateLiveSlidePreview()" placeholder="e.g. Hyderabad's premier certified pre-owned superbike hub with 120-point mechanical inspection..."
+                    class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-racing-500 font-sans"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="slideButtonText">Primary Button Label</label>
+                    <input type="text" id="slideButtonText" oninput="updateLiveSlidePreview()" placeholder="e.g. Explore Superbikes"
+                      class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-racing-500">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="slideActionTarget">Action Redirect Target</label>
+                    <select id="slideActionTarget" onchange="updateLiveSlidePreview()" class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-racing-500 font-mono">
+                      <option value="#inventory">#inventory (Showroom Catalog)</option>
+                      <option value="#sell-modal">#sell-modal (Instant Bike Valuation)</option>
+                      <option value="#service-modal">#service-modal (Workshop Care & Inspection)</option>
+                      <option value="#leads">#leads (Test Ride & Concierge)</option>
+                      <option value="#branches">#branches (Showroom Locations)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="slideSecondaryBtnText">Secondary Button Label</label>
+                    <input type="text" id="slideSecondaryBtnText" oninput="updateLiveSlidePreview()" placeholder="e.g. Book Test Ride"
+                      class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-racing-500">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1" for="slideImageUrl">Slide Background Image URL</label>
+                    <input type="text" id="slideImageUrl" oninput="updateLiveSlidePreview()" placeholder="Image URL or choose preset"
+                      class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-racing-500 font-mono text-[11px]">
+                  </div>
+                </div>
+
+                <!-- Showroom Photo Presets & File Upload -->
+                <div class="p-3 bg-obsidian-950/80 rounded-xl border border-white/5 space-y-2">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400 font-semibold uppercase">1-Tap Showroom Image Presets:</span>
+                    <label class="text-cyan-400 hover:text-cyan-300 font-semibold cursor-pointer flex items-center gap-1">
+                      <i data-lucide="upload" class="w-3 h-3"></i>
+                      <span>Upload from Device</span>
+                      <input type="file" accept="image/*" class="hidden" onchange="onSlideFileUpload(this)">
+                    </label>
+                  </div>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button type="button" onclick="selectSlidePreset('/public/assets/aistudio/Screenshot_2026-10-27_171108_18bf6569.png')"
+                      class="p-1.5 rounded-lg bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-left transition flex items-center gap-2">
+                      <img src="/public/assets/aistudio/Screenshot_2026-10-27_171108_18bf6569.png" class="w-7 h-7 rounded object-cover">
+                      <span class="text-[10px] font-semibold text-slate-300 truncate">Diavel V4 Red</span>
+                    </button>
+                    <button type="button" onclick="selectSlidePreset('/public/assets/aistudio/Screenshot_2026-10-27_171056_6ccfcea2.png')"
+                      class="p-1.5 rounded-lg bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-left transition flex items-center gap-2">
+                      <img src="/public/assets/aistudio/Screenshot_2026-10-27_171056_6ccfcea2.png" class="w-7 h-7 rounded object-cover">
+                      <span class="text-[10px] font-semibold text-slate-300 truncate">Showroom Fleet</span>
+                    </button>
+                    <button type="button" onclick="selectSlidePreset('/public/assets/aistudio/Screenshot_2026-10-27_171123_5ece9d25.png')"
+                      class="p-1.5 rounded-lg bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-left transition flex items-center gap-2">
+                      <img src="/public/assets/aistudio/Screenshot_2026-10-27_171123_5ece9d25.png" class="w-7 h-7 rounded object-cover">
+                      <span class="text-[10px] font-semibold text-slate-300 truncate">120-Pt Inspection</span>
+                    </button>
+                    <button type="button" onclick="selectSlidePreset('/public/assets/aistudio/image_f4045ab9.png')"
+                      class="p-1.5 rounded-lg bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-left transition flex items-center gap-2">
+                      <img src="/public/assets/aistudio/image_f4045ab9.png" class="w-7 h-7 rounded object-cover">
+                      <span class="text-[10px] font-semibold text-slate-300 truncate">Super Duke R</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-2">
+                  <span class="text-[11px] text-slate-400">Edits update in-memory. Click "Publish Hero Slides" to push live.</span>
+                  <button type="button" onclick="applySlideChanges()" class="px-4 py-2 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 text-white font-semibold text-xs border border-white/10 flex items-center gap-1.5 transition">
+                    <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span>Apply to Active Slide</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right: Real-Time Luxury Slide Live Preview (5 cols) -->
+              <div class="lg:col-span-5 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="eye" class="w-3.5 h-3.5 text-cyan-400"></i>
+                    <span>Customer Website Live Preview</span>
+                  </span>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-obsidian-950 text-slate-400 border border-white/5" id="previewSlideIndicator">
+                    Slide 1 of 5
+                  </span>
+                </div>
+
+                <!-- Luxury Hero Preview Card -->
+                <div class="relative w-full aspect-[16/10] rounded-2xl overflow-hidden border border-white/15 bg-obsidian-950 shadow-2xl flex flex-col justify-end p-5 group">
+                  <!-- Background Image with Gradient Dimmer -->
+                  <img id="livePreviewImg" src="/public/assets/aistudio/Screenshot_2026-10-27_171108_18bf6569.png"
+                    class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    onerror="this.src='/public/assets/aistudio/image_f4045ab9.png'">
+                  <div class="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/75 to-transparent"></div>
+                  <div class="absolute inset-0 bg-gradient-to-r from-obsidian-950/90 via-obsidian-950/50 to-transparent"></div>
+
+                  <!-- Overlay Content -->
+                  <div class="relative z-10 space-y-2">
+                    <span id="livePreviewBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gold-500/20 text-gold-400 border border-gold-500/30 text-[9px] font-mono font-extrabold uppercase tracking-wider">
+                      VERIFIED SUPERBIKES
+                    </span>
+
+                    <h4 id="livePreviewTitle" class="text-lg sm:text-xl font-black text-white tracking-tight leading-tight uppercase font-sans">
+                      BUY YOUR DREAM BIKE
+                    </h4>
+
+                    <p id="livePreviewSubtitle" class="text-[11px] text-slate-300 line-clamp-2 leading-relaxed">
+                      Hyderabad's premier certified pre-owned superbike hub with 120-point mechanical inspection & 1-year warranty.
+                    </p>
+
+                    <div class="pt-2 flex items-center gap-2">
+                      <span id="livePreviewBtnPrimary" class="px-3 py-1.5 rounded-lg bg-racing-600 text-white font-bold text-[11px] shadow-md shadow-racing-600/40">
+                        Explore Superbikes
+                      </span>
+                      <span id="livePreviewBtnSecondary" class="px-3 py-1.5 rounded-lg bg-white/10 text-slate-200 font-semibold text-[11px] border border-white/10">
+                        Book Test Ride
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. CONTACT HOTLINE, WHATSAPP & CMS ANNOUNCEMENT SETTINGS -->
+          <div class="glass-panel p-6 rounded-2xl border border-white/10 max-w-3xl space-y-5">
+            <div class="flex items-center gap-2.5 pb-4 border-b border-white/10">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-500/20 to-gold-700/20 text-gold-400 border border-gold-500/30 flex items-center justify-center shrink-0">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Official Contacts & Top Announcement Banner</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Control sales phone lines, official WhatsApp number for enquiries, and the website top ticker banner.</p>
+              </div>
+            </div>
+
             <form id="cmsSettingsForm" class="space-y-5">
               <!-- Top Promo Banner -->
               <div class="p-4 rounded-xl bg-obsidian-850 border border-white/10">
                 <div class="flex items-center justify-between mb-2">
-                  <label class="text-xs font-semibold text-white uppercase tracking-wider">Top Promo Announcement Banner</label>
+                  <label class="text-xs font-semibold text-white uppercase tracking-wider">Top Announcement Ribbon Ticker</label>
                   <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="cmsBannerActive" class="sr-only peer" checked>
                     <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-racing-600"></div>
                   </label>
                 </div>
                 <textarea id="cmsBannerText" rows="2" class="w-full px-3 py-2 bg-obsidian-900 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-racing-500 font-sans"
-                  placeholder="e.g. ⚡ Special Diwali Superbike Festival: 0% Processing Fee on all Kawasaki & BMW models this week! Visit Hyderabad showroom."></textarea>
-                <p class="text-[11px] text-slate-400 mt-1">Renders at the very top of the customer catalog website.</p>
+                  placeholder="e.g. ⚡ Special Superbike Carnival: 0% Processing Fee on all Kawasaki & BMW models this week! Visit Jubilee Hills showroom."></textarea>
+                <p class="text-[11px] text-slate-400 mt-1">Renders at the very top of the customer website.</p>
               </div>
 
               <!-- Social & Contact Grid -->
@@ -837,7 +1170,7 @@
                 </div>
 
                 <div>
-                  <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-1" for="cmsWhatsApp">WhatsApp Official Number</label>
+                  <label class="block text-xs font-medium text-slate-300 uppercase tracking-wider mb-1" for="cmsWhatsApp">WhatsApp Official Number (Lead Forwarding)</label>
                   <input type="text" id="cmsWhatsApp" placeholder="9014540489"
                     class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-racing-500 font-mono">
                 </div>
@@ -870,10 +1203,10 @@
               </div>
 
               <div class="pt-4 flex items-center justify-between border-t border-white/10">
-                <span class="text-xs text-slate-400">Saves to Supabase <code class="font-mono text-slate-300">site_settings</code></span>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-racing-600 hover:bg-racing-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-racing-600/30 transition">
+                <span class="text-xs text-slate-400">Directly syncs to Supabase <code class="font-mono text-cyan-400">site_settings</code></span>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-racing-600 to-racing-700 hover:from-racing-500 hover:to-racing-600 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-racing-600/30 transition">
                   <i data-lucide="save" class="w-4 h-4"></i>
-                  <span>Save CMS Settings</span>
+                  <span>Save CMS Settings to Supabase</span>
                 </button>
               </div>
             </form>
@@ -921,33 +1254,423 @@
           </div>
         </section>
 
+
+        <!-- ========================================== -->
+        <!-- 7. OWNER-ONLY PROCUREMENT & PROFIT ANALYTICS -->
+        <!-- ========================================== -->
+        <!-- 7. OWNER-ONLY PROFIT & LOSS (P&L) MODULE   -->
+        <!-- ========================================== -->
+        <section id="section-procurement" class="tab-section hidden space-y-6">
+          <!-- Header with Secret Owner Badge -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">Profit & Loss (P&L) & Financial Performance Statement</h2>
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 shadow-sm">
+                  <i data-lucide="shield-alert" class="w-3 h-3 text-emerald-400"></i> Owner Confidential · Secret from Workers
+                </span>
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-gold-500/10 text-gold-400 border border-gold-500/30 flex items-center gap-1 shadow-sm">
+                  <i data-lucide="receipt" class="w-3 h-3 text-gold-400"></i> Dealership Financial Statement
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                Executive Dealer P&L Statement: Realized Sales Margins, Cost of Goods Sold (COGS), Refurbishment Costs, Inventory Valuation & Net Cash Profit.
+              </p>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <button type="button" onclick="openPrintPnLModal()" class="px-3.5 py-2 rounded-xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-slate-300 hover:text-white font-semibold text-xs flex items-center gap-1.5 transition">
+                <i data-lucide="printer" class="w-3.5 h-3.5 text-gold-400"></i>
+                <span>Print P&L Statement</span>
+              </button>
+              <button type="button" onclick="exportProcurementCsv()" class="px-3.5 py-2 rounded-xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 text-slate-300 hover:text-white font-semibold text-xs flex items-center gap-1.5 transition">
+                <i data-lucide="download" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span>Export Ledger (CSV)</span>
+              </button>
+              <button type="button" onclick="openProcurementModal()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/30 transition">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>Log Vehicle Procurement</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- EXECUTIVE DEALERSHIP P&L INCOME STATEMENT BREAKDOWN -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5" id="pnlExecutiveSummaryCard">
+            <!-- Left Card: Realized P&L (Cash in Bank from Billed / Delivered Sales) -->
+            <div class="lg:col-span-7 glass-panel p-6 rounded-2xl border border-emerald-500/30 space-y-4 relative overflow-hidden">
+              <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
+                    <i data-lucide="badge-percent" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-bold text-white uppercase tracking-wider">Realized P&L Income Statement</h3>
+                    <p class="text-[11px] text-slate-400">Delivered & Sold Vehicles Ledger</p>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-700/50 text-xs font-mono font-bold" id="pnlRealizedUnitCount">
+                  0 Units Realized
+                </span>
+              </div>
+
+              <!-- P&L Math Breakdown Lines -->
+              <div class="space-y-2.5 text-xs font-mono">
+                <div class="flex items-center justify-between py-1 border-b border-white/5">
+                  <span class="text-slate-300 font-sans">Gross Sales Revenue:</span>
+                  <span class="font-bold text-white text-sm" id="pnlRealizedRevenue">₹0</span>
+                </div>
+                <div class="flex items-center justify-between py-1 border-b border-white/5">
+                  <span class="text-slate-400 font-sans">Less: Cost of Goods Sold (COGS Inward):</span>
+                  <span class="text-slate-300 font-semibold" id="pnlRealizedCogs">-₹0</span>
+                </div>
+                <div class="flex items-center justify-between py-1 bg-obsidian-950/60 px-3 rounded-lg border border-white/5">
+                  <span class="text-slate-300 font-sans font-semibold">Gross Profit Margin:</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-cyan-400" id="pnlRealizedGrossProfit">₹0</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/50" id="pnlRealizedGrossMarginPct">0%</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between py-1 border-b border-white/5">
+                  <span class="text-slate-400 font-sans">Less: Mechanical & Refurbishment Cost:</span>
+                  <span class="text-amber-400 font-semibold" id="pnlRealizedRepairs">-₹0</span>
+                </div>
+                <div class="flex items-center justify-between py-1 border-b border-white/5">
+                  <span class="text-slate-400 font-sans">Less: Dealership Overhead & Commission (~2%):</span>
+                  <span class="text-slate-400" id="pnlRealizedOverheads">-₹0</span>
+                </div>
+              </div>
+
+              <!-- Bottom Line Net Cash Profit Result Box -->
+              <div class="p-4 rounded-xl bg-gradient-to-r from-emerald-950/60 to-obsidian-950 border border-emerald-500/40 flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] uppercase tracking-wider text-slate-400 block font-sans">Net Realized Cash Profit:</span>
+                  <span class="text-2xl font-black text-emerald-400 font-mono tracking-tight" id="pnlNetRealizedProfit">₹0</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] uppercase tracking-wider text-slate-400 block font-sans">Net Margin:</span>
+                  <span class="text-sm font-extrabold text-emerald-300 font-mono" id="pnlNetRealizedMarginPct">0.0% Net ROI</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Card: Unrealized Showroom Fleet & Working Capital -->
+            <div class="lg:col-span-5 glass-panel p-6 rounded-2xl border border-white/10 space-y-4 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 flex items-center justify-center">
+                      <i data-lucide="layers" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                      <h3 class="text-sm font-bold text-white uppercase tracking-wider">Unrealized Showroom Working Capital</h3>
+                      <p class="text-[11px] text-slate-400">Available Stock Pipeline</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px] font-mono font-bold" id="pnlActiveFleetCount">
+                    0 In Stock
+                  </span>
+                </div>
+
+                <div class="space-y-3 mt-4 text-xs font-mono">
+                  <div class="p-3 rounded-xl bg-obsidian-950/80 border border-white/5 flex items-center justify-between">
+                    <div>
+                      <span class="text-[10px] text-slate-400 block font-sans uppercase">Capital Locked in Fleet:</span>
+                      <span class="text-base font-black text-white" id="pnlPipelineCapital">₹0</span>
+                    </div>
+                    <span class="text-[11px] text-slate-400" id="pnlPipelineSplit">Purchase + Repairs</span>
+                  </div>
+
+                  <div class="p-3 rounded-xl bg-obsidian-950/80 border border-white/5 flex items-center justify-between">
+                    <div>
+                      <span class="text-[10px] text-slate-400 block font-sans uppercase">Projected Showroom Asking:</span>
+                      <span class="text-base font-black text-slate-200" id="pnlPipelineAsking">₹0</span>
+                    </div>
+                    <i data-lucide="tag" class="w-4 h-4 text-slate-500"></i>
+                  </div>
+
+                  <div class="p-3 rounded-xl bg-gradient-to-r from-purple-950/40 to-obsidian-950 border border-purple-500/30 flex items-center justify-between">
+                    <div>
+                      <span class="text-[10px] text-purple-300 block font-sans uppercase font-bold">Projected Net Pipeline Profit:</span>
+                      <span class="text-lg font-black text-purple-400" id="pnlPipelineProfit">₹0</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded bg-purple-950 text-purple-300 text-[11px] font-bold border border-purple-800/40" id="pnlPipelineRoiPct">
+                      0% ROI
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- P&L Quick Ledger Health Note -->
+              <div class="pt-3 border-t border-white/5 text-[11px] text-slate-400 flex items-center justify-between">
+                <span>Working Capital Velocity</span>
+                <span class="text-emerald-400 font-medium">Optimal Liquidity</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- DYNAMIC COST & MARGIN WATERFALL BREAKDOWN BAR -->
+          <div class="glass-panel p-5 rounded-2xl border border-white/10 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <span class="font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i>
+                <span>Vehicle Revenue & Cost Distribution Waterfall</span>
+              </span>
+              <span class="text-[11px] text-slate-400 font-mono" id="pnlWaterfallSummary">
+                Showing margin decomposition across all vehicles
+              </span>
+            </div>
+
+            <!-- Segmented Progress Bar -->
+            <div class="w-full h-3.5 bg-obsidian-950 rounded-full overflow-hidden flex border border-white/10 shadow-inner">
+              <div id="pnlBarCogs" class="h-full bg-slate-500 transition-all duration-500" style="width: 75%;" title="Inward Vehicle Purchase Cost"></div>
+              <div id="pnlBarRepairs" class="h-full bg-cyan-500 transition-all duration-500" style="width: 8%;" title="Refurbishment & Repairs"></div>
+              <div id="pnlBarOverheads" class="h-full bg-amber-500 transition-all duration-500" style="width: 3%;" title="Overhead & Selling Costs"></div>
+              <div id="pnlBarProfit" class="h-full bg-emerald-500 transition-all duration-500" style="width: 14%;" title="Net Dealership Profit"></div>
+            </div>
+
+            <!-- Legend Items -->
+            <div class="flex items-center justify-between flex-wrap gap-2 pt-1 text-[11px] font-mono">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+                <span class="text-slate-300">COGS Inward: <strong id="pnlLegendCogs" class="text-white">75%</strong></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+                <span class="text-slate-300">Workshop & Repairs: <strong id="pnlLegendRepairs" class="text-cyan-400">8%</strong></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <span class="text-slate-300">Overhead: <strong id="pnlLegendOverheads" class="text-amber-400">3%</strong></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="text-slate-300">Net Profit Margin: <strong id="pnlLegendProfit" class="text-emerald-400">14%</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- DYNAMIC LOSS PREVENTION & THIN MARGIN ALERT BANNER -->
+          <div id="pnlLossMitigationBanner" class="hidden p-4 rounded-xl bg-amber-950/40 border border-amber-500/30 flex items-start sm:items-center justify-between gap-3 text-xs">
+            <div class="flex items-start sm:items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/40">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="font-bold text-amber-300 uppercase tracking-wide block">Margin Optimization Intelligence</span>
+                <p class="text-slate-300 mt-0.5" id="pnlLossAlertText">1 vehicle currently has a projected margin under 8%. Review procurement price or increase showroom asking valuation.</p>
+              </div>
+            </div>
+            <button type="button" onclick="filterThinMarginVehicles()" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 font-semibold text-xs whitespace-nowrap transition">
+              Review Units
+            </button>
+          </div>
+
+          <!-- P&L PERIOD & ADVANCED FILTER CONTROLS BAR -->
+          <div class="glass-panel p-4 rounded-xl border border-white/10 flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
+            <!-- Date Filter Presets -->
+            <div class="flex items-center gap-1.5 p-1 bg-obsidian-950 rounded-xl border border-white/10 text-xs overflow-x-auto no-scrollbar">
+              <button type="button" onclick="setProcurementDateFilter('all')" id="btn-proc-filter-all" class="proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition bg-emerald-600 text-white">
+                All Time
+              </button>
+              <button type="button" onclick="setProcurementDateFilter('today')" id="btn-proc-filter-today" class="proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">
+                Today
+              </button>
+              <button type="button" onclick="setProcurementDateFilter('week')" id="btn-proc-filter-week" class="proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">
+                This Week
+              </button>
+              <button type="button" onclick="setProcurementDateFilter('month')" id="btn-proc-filter-month" class="proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">
+                This Month
+              </button>
+              <button type="button" onclick="setProcurementDateFilter('quarter')" id="btn-proc-filter-quarter" class="proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">
+                This Quarter
+              </button>
+              <button type="button" onclick="setProcurementDateFilter('fy')" id="btn-proc-filter-fy" class="proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">
+                FY 2025-26
+              </button>
+              <button type="button" onclick="setProcurementDateFilter('custom')" id="btn-proc-filter-custom" class="proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">
+                Custom Range
+              </button>
+            </div>
+
+            <!-- Custom Date Range Inputs -->
+            <div id="procurementCustomDateContainer" class="hidden flex items-center gap-2 text-xs flex-wrap">
+              <input type="date" id="procStartDate" class="px-2.5 py-1.5 bg-obsidian-850 border border-white/10 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
+              <span class="text-slate-400">to</span>
+              <input type="date" id="procEndDate" class="px-2.5 py-1.5 bg-obsidian-850 border border-white/10 rounded-lg text-white font-mono text-xs focus:outline-none focus:border-emerald-500">
+              <button type="button" onclick="applyCustomProcurementFilter()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-xs">
+                Apply
+              </button>
+            </div>
+
+            <!-- Secondary Filters: Status & Profitability -->
+            <div class="flex items-center gap-2 flex-wrap">
+              <!-- Search in Ledger -->
+              <div class="relative">
+                <input type="text" id="pnlSearchInput" oninput="renderProcurementAnalysis()" placeholder="Search vehicle..."
+                  class="w-36 sm:w-44 px-2.5 py-1.5 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-sans">
+              </div>
+
+              <!-- Status Quick Filter -->
+              <select id="procStatusFilter" onchange="renderProcurementAnalysis()" class="px-2.5 py-1.5 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-emerald-500">
+                <option value="ALL">All Statuses</option>
+                <option value="Sold">Sold (Realized P&L)</option>
+                <option value="Booked">Booked (Token Received)</option>
+                <option value="Available">Available (In Stock)</option>
+              </select>
+
+              <!-- Profitability Band Filter -->
+              <select id="pnlProfitBandFilter" onchange="renderProcurementAnalysis()" class="px-2.5 py-1.5 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-emerald-500">
+                <option value="ALL">All Margin Bands</option>
+                <option value="HIGH">High Margin (>20%)</option>
+                <option value="NORMAL">Normal Margin (10-20%)</option>
+                <option value="LOW">Thin Margin (<10%)</option>
+                <option value="LOSS">Loss (<0%)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 4 GLOWING PROFIT ANALYTICS STAT CARDS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 1. Total Capital Invested -->
+            <div class="glass-card glow-cyan rounded-2xl p-5 border border-cyan-500/25 relative overflow-hidden">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Capital Invested</span>
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                  <i data-lucide="wallet" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <div class="text-2xl font-black text-white font-mono tracking-tight" id="procStatTotalInvested">₹0</div>
+              <div class="flex items-center justify-between text-[11px] text-slate-400 mt-2 font-mono">
+                <span>Purchase: <span id="procStatPurePurchase" class="text-slate-300">₹0</span></span>
+                <span>Repairs: <span id="procStatPureRepairs" class="text-cyan-400 font-bold">₹0</span></span>
+              </div>
+            </div>
+
+            <!-- 2. Showroom Asking Value -->
+            <div class="glass-card glow-purple rounded-2xl p-5 border border-purple-500/25 relative overflow-hidden">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Projected Asking Revenue</span>
+                <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center">
+                  <i data-lucide="tag" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <div class="text-2xl font-black text-white font-mono tracking-tight" id="procStatAskingRevenue">₹0</div>
+              <div class="text-[11px] text-slate-400 mt-2 flex items-center gap-1 font-mono">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-purple-400"></i>
+                <span>Units in calculation: <strong id="procStatUnitsCount" class="text-white">0</strong></span>
+              </div>
+            </div>
+
+            <!-- 3. Target Net Profit & Margin % -->
+            <div class="glass-card glow-emerald rounded-2xl p-5 border border-emerald-500/25 relative overflow-hidden">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Target Net Profit</span>
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <div class="text-2xl font-black text-emerald-400 font-mono tracking-tight" id="procStatTargetProfit">₹0</div>
+              <div class="flex items-center justify-between text-[11px] mt-2 font-mono">
+                <span class="text-slate-400">Net Expected ROI:</span>
+                <span id="procStatRoiMargin" class="text-emerald-300 font-extrabold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">0%</span>
+              </div>
+            </div>
+
+            <!-- 4. Realized Cash Profit -->
+            <div class="glass-card glow-amber rounded-2xl p-5 border border-amber-500/25 relative overflow-hidden">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Realized Cash Profit</span>
+                <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                  <i data-lucide="check-circle" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <div class="text-2xl font-black text-amber-400 font-mono tracking-tight" id="procStatRealizedProfit">₹0</div>
+              <div class="text-[11px] text-slate-400 mt-2 flex items-center gap-1 font-mono">
+                <i data-lucide="award" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>From <strong id="procStatSoldCount" class="text-white">0</strong> sold & delivered units</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VEHICLE P&L LEDGER DATA TABLE -->
+          <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+            <div class="p-4 border-b border-white/10 flex items-center justify-between flex-wrap gap-2">
+              <div class="text-xs font-bold text-white flex items-center gap-2">
+                <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i>
+                <span>Dealership Vehicle Unit-Level Profit & Loss Ledger</span>
+              </div>
+              <div class="text-[11px] text-slate-400 font-mono" id="procLedgerFilteredNote">
+                Showing all active vehicles
+              </div>
+            </div>
+
+            <!-- Desktop & Tablet Table View -->
+            <div class="hidden md:block overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="text-slate-400 bg-obsidian-950/60 border-b border-white/10 font-semibold tracking-wider uppercase text-[11px]">
+                    <th class="py-3 px-4">VEHICLE & INWARD DATE</th>
+                    <th class="py-3 px-4">PURCHASE COST</th>
+                    <th class="py-3 px-4">REPAIRS & REFURBISHMENT</th>
+                    <th class="py-3 px-4">TOTAL LANDED COST</th>
+                    <th class="py-3 px-4">SHOWROOM ASKING / SALE</th>
+                    <th class="py-3 px-4">NET MARGIN (P&L)</th>
+                    <th class="py-3 px-4">ACCOUNTING STATUS</th>
+                    <th class="py-3 px-4 text-right">MANAGE</th>
+                  </tr>
+                </thead>
+                <tbody id="procurementTableBody" class="divide-y divide-white/5 font-mono">
+                  <!-- Filled dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mobile Dedicated High-Readability Financial Card Feed -->
+            <div id="procurementMobileCards" class="md:hidden p-3.5 space-y-3 font-sans">
+              <!-- Filled dynamically with touch-friendly vehicle cards -->
+            </div>
+
+            <div id="procurementEmptyState" class="hidden p-12 text-center">
+              <div class="w-12 h-12 mx-auto rounded-xl bg-obsidian-800 text-slate-500 flex items-center justify-center mb-3">
+                <i data-lucide="calculator" class="w-6 h-6"></i>
+              </div>
+              <p class="text-sm font-semibold text-white">No vehicle entries match the current filter</p>
+              <p class="text-xs text-slate-400 mt-1">Try changing your date range, margin filter, or click "Log Vehicle Procurement".</p>
+            </div>
+          </div>
+        </section>
+
       </div>
     </main>
 
     <!-- MOBILE FIXED BOTTOM NAVIGATION BAR -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 z-40 px-2 py-2 flex items-center justify-around">
-      <button onclick="switchTab('overview')" id="mob-nav-overview" class="flex flex-col items-center gap-1 text-[11px] font-medium text-racing-500 py-1 px-2">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 z-40 px-2 py-1.5 flex items-center justify-around backdrop-blur-xl bg-obsidian-950/95">
+      <button onclick="switchTab('overview')" id="mob-nav-overview" class="flex flex-col items-center gap-1 text-[11px] font-medium text-racing-500 py-1 px-1.5">
         <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
         <span>Overview</span>
       </button>
 
-      <button onclick="switchTab('inventory')" id="mob-nav-inventory" class="flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white py-1 px-2">
+      <button onclick="switchTab('inventory')" id="mob-nav-inventory" class="flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white py-1 px-1.5">
         <i data-lucide="bike" class="w-5 h-5"></i>
         <span>Inventory</span>
       </button>
 
-      <button onclick="switchTab('leads')" id="mob-nav-leads" class="flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white py-1 px-2">
+      <button onclick="switchTab('leads')" id="mob-nav-leads" class="flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white py-1 px-1.5">
         <i data-lucide="phone-call" class="w-5 h-5"></i>
         <span>Leads</span>
       </button>
 
-      <button onclick="switchTab('billing')" id="mob-nav-billing" class="flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white py-1 px-2">
+      <button onclick="switchTab('procurement')" id="mob-nav-procurement" class="flex flex-col items-center gap-1 text-[11px] font-medium text-emerald-400 hover:text-white py-1 px-1.5">
+        <i data-lucide="trending-up" class="w-5 h-5"></i>
+        <span>P&L</span>
+      </button>
+
+      <button onclick="switchTab('billing')" id="mob-nav-billing" class="flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white py-1 px-1.5">
         <i data-lucide="receipt" class="w-5 h-5"></i>
         <span>Billing</span>
       </button>
 
-      <button onclick="openMobileMenu()" id="mob-nav-more" class="flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white py-1 px-2">
-        <i data-lucide="menu" class="w-5 h-5"></i>
+      <button onclick="openMobileMenu()" id="mob-nav-more" class="flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-white py-1 px-1.5">
+        <i data-lucide="grid" class="w-5 h-5"></i>
         <span>More</span>
       </button>
     </nav>
@@ -957,6 +1680,39 @@
   <!-- ========================================== -->
   <!-- MODALS CONTAINER                           -->
   <!-- ========================================== -->
+
+  <!-- 0. MOBILE BOTTOM SHEET NAVIGATION MENU MODAL -->
+  <div id="mobileMenuModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-obsidian-950/85 backdrop-blur-md hidden transition-all">
+    <div class="w-full sm:max-w-md glass-panel p-5 rounded-t-3xl sm:rounded-2xl border border-white/10 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-racing-600 flex items-center justify-center text-white font-black text-xs">AM</div>
+          <div>
+            <h3 class="text-sm font-bold text-white">Dealership Navigation</h3>
+            <p class="text-[10px] text-slate-400" id="mobileMenuUserSubtitle">Pavan Kumar · Dealership Owner</p>
+          </div>
+        </div>
+        <button onclick="closeModal('mobileMenuModal')" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-obsidian-850">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5" id="mobileMenuLinksContainer">
+        <!-- Filled dynamically based on Owner vs Staff permissions -->
+      </div>
+
+      <div class="pt-2 border-t border-white/10 flex items-center justify-between">
+        <button onclick="openSqlModal(); closeModal('mobileMenuModal')" class="text-xs text-cyan-400 hover:underline flex items-center gap-1 font-mono">
+          <i data-lucide="database" class="w-3.5 h-3.5"></i>
+          <span>SQL Schema</span>
+        </button>
+        <button onclick="logout(); closeModal('mobileMenuModal')" class="text-xs text-red-400 hover:text-red-300 flex items-center gap-1 font-semibold">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- 1. ADD / EDIT BIKE MODAL -->
   <div id="bikeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-950/80 backdrop-blur-sm hidden">
@@ -1019,6 +1775,47 @@
               <option value="Sold">Sold</option>
             </select>
           </div>
+        </div>
+
+        <!-- OWNER-ONLY CONFIDENTIAL FINANCIAL & PROCUREMENT FIELDS -->
+        <div id="bikeOwnerFinancialFields" class="p-3.5 bg-emerald-950/20 border border-emerald-500/30 rounded-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wide flex items-center gap-1.5">
+              <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Procurement & Margin Analysis (Owner Only)</span>
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-200 border border-emerald-700">CONFIDENTIAL</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-medium text-slate-300 uppercase mb-1" for="bikePurchaseCost">Purchase Cost (₹)</label>
+              <input type="number" id="bikePurchaseCost" min="0" placeholder="e.g. 780000" oninput="calculateBikeModalProfit()"
+                class="w-full px-3 py-1.5 bg-obsidian-900 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono">
+            </div>
+            <div>
+              <label class="block text-[11px] font-medium text-slate-300 uppercase mb-1" for="bikeRepairCost">Mechanical Repairs & Refurbishment (₹)</label>
+              <input type="number" id="bikeRepairCost" min="0" placeholder="e.g. 35000" oninput="calculateBikeModalProfit()"
+                class="w-full px-3 py-1.5 bg-obsidian-900 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 p-2 bg-obsidian-950/80 rounded-lg border border-white/5 text-[11px] font-mono">
+            <div>
+              <span class="text-slate-400 block text-[10px]">Total Investment Cost:</span>
+              <span id="bikeModalTotalCostDisplay" class="font-bold text-white">₹0</span>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[10px]">Target Net Profit (Margin):</span>
+              <span id="bikeModalNetProfitDisplay" class="font-bold text-emerald-400">₹0 (0%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- WORKER ACCESS PRIVACY NOTICE (Visible to staff only) -->
+        <div id="bikeStaffPrivacyNotice" class="hidden p-2.5 bg-obsidian-850 rounded-xl border border-white/5 text-[11px] text-slate-400 flex items-center gap-2">
+          <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-500 shrink-0"></i>
+          <span>Financial procurement and profit margin fields are restricted to Owner access only.</span>
         </div>
 
         <!-- CHOOSE FILES / GALLERY PICKER -->
@@ -1518,6 +2315,218 @@
   </div>
 
 
+  <!-- 8. VEHICLE PROCUREMENT & MARGIN CALCULATOR MODAL (OWNER ONLY) -->
+  <div id="procurementModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-950/85 backdrop-blur-sm hidden">
+    <div class="w-full max-w-lg glass-panel p-6 rounded-2xl border border-white/10 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+            <i data-lucide="calculator" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white" id="procurementModalTitle">Log Vehicle Procurement & Margins</h3>
+            <p class="text-[10px] text-emerald-400 font-semibold tracking-wide">CONFIDENTIAL OWNER P&L LEDGER</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeModal('procurementModal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form id="procurementForm" class="space-y-4">
+        <input type="hidden" id="procBikeId">
+
+        <!-- Select or Enter Vehicle -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1" for="procSelectBike">Select Existing Inventory or Enter New</label>
+          <select id="procSelectBike" onchange="onProcurementBikeSelect(this.value)" class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500">
+            <option value="new">+ Enter New Procured Vehicle</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1" for="procVehicleName">Vehicle Title <span class="text-racing-500">*</span></label>
+            <input type="text" id="procVehicleName" required placeholder="e.g. Kawasaki Ninja Z900"
+              class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1" for="procInwardDate">Inward Date</label>
+            <input type="date" id="procInwardDate" required
+              class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1" for="procPurchaseCost">Purchase / Inward Cost (₹) <span class="text-racing-500">*</span></label>
+            <input type="number" id="procPurchaseCost" required min="0" placeholder="e.g. 780000" oninput="recalcProcurementForm()"
+              class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono font-bold">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1" for="procRepairCost">Repairs & Refurbishment (₹)</label>
+            <input type="number" id="procRepairCost" min="0" placeholder="e.g. 35000" oninput="recalcProcurementForm()"
+              class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono font-bold">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1" for="procAskingPrice">Final Showroom Asking / Sold Price (₹) <span class="text-racing-500">*</span></label>
+          <input type="number" id="procAskingPrice" required min="0" placeholder="e.g. 920000" oninput="recalcProcurementForm()"
+            class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono font-black text-sm">
+        </div>
+
+        <!-- Real-time Investment & Margin Breakdown -->
+        <div class="p-3.5 bg-obsidian-950/80 rounded-xl border border-emerald-500/30 space-y-2 font-mono text-xs">
+          <div class="flex items-center justify-between text-slate-300">
+            <span>Total Landed Cost (Purchase + Repairs):</span>
+            <span id="procFormTotalCost" class="font-extrabold text-white text-sm">₹0</span>
+          </div>
+          <div class="flex items-center justify-between text-slate-300">
+            <span>Target Net Margin (P&L):</span>
+            <span id="procFormNetProfit" class="font-extrabold text-emerald-400 text-sm">₹0</span>
+          </div>
+          <div class="flex items-center justify-between pt-1 border-t border-white/10">
+            <span class="text-slate-400">Target ROI Margin:</span>
+            <span id="procFormMarginPct" class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-extrabold text-xs">0% ROI</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1" for="procStatus">Vehicle Inventory Status</label>
+            <select id="procStatus" class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500">
+              <option value="Available">Available (Showroom Ready)</option>
+              <option value="Booked">Booked (Token Received)</option>
+              <option value="Sold">Sold & Profit Realized</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1" for="procRepairsNote">Refurbishment Scope</label>
+            <input type="text" id="procRepairsNote" placeholder="e.g. Full service, ceramic coat"
+              class="w-full px-3 py-2 bg-obsidian-850 border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-3 border-t border-white/10">
+          <button type="button" onclick="closeModal('procurementModal')" class="px-4 py-2 rounded-lg bg-obsidian-850 hover:bg-obsidian-800 text-slate-300 text-xs font-medium">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-600/30">Save P&L Margins</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- 8.1. OFFICIAL PRINTABLE P&L FINANCIAL STATEMENT MODAL -->
+  <div id="printPnLModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-950/85 backdrop-blur-md hidden">
+    <div class="w-full max-w-3xl glass-panel p-6 sm:p-8 rounded-2xl border border-white/15 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gold-500/15 text-gold-400 border border-gold-500/30 flex items-center justify-center">
+            <i data-lucide="receipt" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Dealership Profit & Loss Statement</h3>
+            <p class="text-[11px] text-slate-400 font-mono">ADARSH MOTORS DEALERSHIP PVT LTD · HYDERABAD</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-racing-600 hover:bg-racing-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-md">
+            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+            <span>Print / Save PDF</span>
+          </button>
+          <button type="button" onclick="closeModal('printPnLModal')" class="p-1.5 text-slate-400 hover:text-white rounded-lg bg-obsidian-800">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Printable Statement Body -->
+      <div class="p-6 bg-obsidian-950/90 rounded-2xl border border-white/10 space-y-6 text-slate-200 font-sans text-xs" id="pnlPrintableContent">
+        <!-- Letterhead Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+          <div>
+            <div class="text-lg font-black tracking-tight text-white uppercase">ADARSH <span class="text-racing-500">MOTORS</span></div>
+            <p class="text-[11px] text-slate-400 mt-0.5">Plot 42, Road No. 36, Jubilee Hills, Hyderabad, Telangana 500033</p>
+            <p class="text-[11px] text-slate-400">Phone: +91 9014540489 · GSTIN: 36AAHCA1234F1Z8</p>
+          </div>
+          <div class="text-left sm:text-right font-mono">
+            <span class="text-[10px] uppercase tracking-wider text-slate-400 block font-sans">Statement Period:</span>
+            <span class="font-bold text-white text-xs" id="printPnlPeriod">All Time to Date</span>
+            <div class="text-[10px] text-emerald-400 font-semibold mt-1">● Certified Dealership Accounts</div>
+          </div>
+        </div>
+
+        <!-- Section 1: Realized Dealership Trading Performance -->
+        <div class="space-y-3">
+          <h4 class="font-bold text-white uppercase tracking-wider text-xs flex items-center gap-2 text-cyan-400">
+            <span>Part I: Realized Trading Account & Operating Profit</span>
+          </h4>
+          <table class="w-full text-left font-mono">
+            <tbody class="divide-y divide-white/5">
+              <tr class="py-2">
+                <td class="py-2 text-slate-300 font-sans">Gross Vehicle Sales Revenue (Billed Invoices):</td>
+                <td class="py-2 text-right font-bold text-white text-sm" id="printPnlGrossRevenue">₹0</td>
+              </tr>
+              <tr class="py-2">
+                <td class="py-2 text-slate-400 font-sans">Less: Inward Procurement Cost of Goods Sold (COGS):</td>
+                <td class="py-2 text-right font-semibold text-slate-300" id="printPnlCogs">-₹0</td>
+              </tr>
+              <tr class="py-2 bg-obsidian-900/60 font-bold">
+                <td class="py-2 px-2 text-cyan-300 font-sans">GROSS DEALERSHIP MARGIN:</td>
+                <td class="py-2 px-2 text-right text-cyan-400 text-sm" id="printPnlGrossProfit">₹0</td>
+              </tr>
+              <tr class="py-2">
+                <td class="py-2 text-slate-400 font-sans">Less: Mechanical, Tyre & Refurbishment Expenditure:</td>
+                <td class="py-2 text-right font-semibold text-amber-400" id="printPnlRepairs">-₹0</td>
+              </tr>
+              <tr class="py-2">
+                <td class="py-2 text-slate-400 font-sans">Less: Dealership Overhead, Logistics & Sales Commission (~2%):</td>
+                <td class="py-2 text-right text-slate-400" id="printPnlOverheads">-₹0</td>
+              </tr>
+              <tr class="py-2.5 bg-emerald-950/40 text-emerald-300 font-black text-sm border-t border-emerald-500/30">
+                <td class="py-2.5 px-2 font-sans uppercase">NET REALIZED CASH PROFIT:</td>
+                <td class="py-2.5 px-2 text-right text-base text-emerald-400" id="printPnlNetProfit">₹0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Section 2: Showroom Fleet Capital & Valuation -->
+        <div class="space-y-3 pt-3 border-t border-white/10">
+          <h4 class="font-bold text-white uppercase tracking-wider text-xs flex items-center gap-2 text-purple-400">
+            <span>Part II: Active Showroom Working Capital & Unsold Valuation</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono">
+            <div class="p-3 bg-obsidian-900 rounded-xl border border-white/5">
+              <span class="text-[10px] text-slate-400 block font-sans uppercase">Capital in Fleet:</span>
+              <span class="font-bold text-white" id="printPnlCapitalLocked">₹0</span>
+            </div>
+            <div class="p-3 bg-obsidian-900 rounded-xl border border-white/5">
+              <span class="text-[10px] text-slate-400 block font-sans uppercase">Showroom Asking Valuation:</span>
+              <span class="font-bold text-slate-200" id="printPnlAskingValue">₹0</span>
+            </div>
+            <div class="p-3 bg-purple-950/40 rounded-xl border border-purple-500/20">
+              <span class="text-[10px] text-purple-300 block font-sans uppercase font-bold">Projected Net Pipeline:</span>
+              <span class="font-bold text-purple-400" id="printPnlPipelineProfit">₹0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Authorized Signatory Footer -->
+        <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-[11px] text-slate-400">
+          <div>
+            <div>Authorized Signatory: <strong>Adarsh Motors Dealership Pvt Ltd</strong></div>
+            <div>Prepared for: <strong>Pavan Kumar (Managing Director & Owner)</strong></div>
+          </div>
+          <div class="text-left sm:text-right">
+            <div>Verification Timestamp: <span class="font-mono text-slate-300" id="printPnlTimestamp">2026-10-31 06:30 IST</span></div>
+            <div class="text-emerald-400 font-semibold">Strictly Confidential · Owner Internal Record</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <!-- 7. SUPABASE SQL SCHEMA SETUP HELPER MODAL -->
   <div id="sqlModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian-950/85 backdrop-blur-md hidden">
     <div class="w-full max-w-2xl glass-panel p-6 rounded-2xl border border-white/10 max-h-[90vh] flex flex-col">
@@ -1545,6 +2554,9 @@ CREATE TABLE IF NOT EXISTS bikes (
   km INTEGER,
   image_url TEXT,
   status TEXT DEFAULT 'Available',
+  purchase_cost NUMERIC DEFAULT 0,
+  repair_cost NUMERIC DEFAULT 0,
+  procurement_date DATE DEFAULT CURRENT_DATE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -1663,6 +2675,10 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         brand: "Kawasaki",
         category: "Superbike",
         price: 920000,
+        purchase_cost: 780000,
+        repair_cost: 35000,
+        procurement_date: "2026-10-15",
+        repairs_note: "Brembo brake pad renewal, Akrapovic exhaust check, full ceramic coat",
         year: 2026,
         km: 4200,
         image_url: "/public/assets/aistudio/image_f4045ab9.png",
@@ -1674,6 +2690,10 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         brand: "BMW",
         category: "Adventure",
         price: 345000,
+        purchase_cost: 285000,
+        repair_cost: 18000,
+        procurement_date: "2026-10-18",
+        repairs_note: "Fork seals replacement, new knobby dual-sport tires",
         year: 2026,
         km: 3100,
         image_url: "/public/assets/aistudio/image_f4045ab9.png",
@@ -1685,6 +2705,10 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         brand: "Honda",
         category: "Scooter",
         price: 85000,
+        purchase_cost: 68000,
+        repair_cost: 4500,
+        procurement_date: "2026-10-22",
+        repairs_note: "General oil service, spark plug, body polish",
         year: 2026,
         km: 1800,
         image_url: "/public/assets/aistudio/image_f4045ab9.png",
@@ -1696,6 +2720,10 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         brand: "Ducati",
         category: "Superbike",
         price: 2000000,
+        purchase_cost: 1680000,
+        repair_cost: 65000,
+        procurement_date: "2026-10-10",
+        repairs_note: "Desmo service check, Pirelli Diablo Rosso IV tires, PPF wrap",
         year: 2026,
         km: 1800,
         image_url: "/public/assets/aistudio/image_f4045ab9.png",
@@ -1707,6 +2735,10 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         brand: "KTM",
         category: "Superbike",
         price: 315000,
+        purchase_cost: 255000,
+        repair_cost: 16000,
+        procurement_date: "2026-10-20",
+        repairs_note: "Quickshifter calibration, chain-sprocket kit",
         year: 2025,
         km: 8400,
         image_url: "/public/assets/aistudio/image_f4045ab9.png",
@@ -1718,6 +2750,10 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         brand: "Royal Enfield",
         category: "Commuter",
         price: 175000,
+        purchase_cost: 140000,
+        repair_cost: 8000,
+        procurement_date: "2026-10-05",
+        repairs_note: "Engine de-carbonizing, new bar-end mirrors",
         year: 2025,
         km: 6200,
         image_url: "/public/assets/aistudio/image_f4045ab9.png",
@@ -1729,6 +2765,10 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         brand: "Alpinestars",
         category: "Riding Gear",
         price: 85000,
+        purchase_cost: 62000,
+        repair_cost: 0,
+        procurement_date: "2026-10-25",
+        repairs_note: "Brand new stock with CE Level 2 armor certification",
         year: 2026,
         km: 0,
         image_url: "",
@@ -1906,11 +2946,73 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
 
     // App Global State
     let currentUser = null;
-    let bikesList = getStoredData('bikes', SEED_BIKES);
+    let bikesList = getStoredData('bikes', SEED_BIKES).map(b => ({
+      ...b,
+      purchase_cost: b.purchase_cost !== undefined ? Number(b.purchase_cost) : Math.round((Number(b.price) || 100000) * 0.82),
+      repair_cost: b.repair_cost !== undefined ? Number(b.repair_cost) : 25000,
+      procurement_date: b.procurement_date || '2026-10-15',
+      repairs_note: b.repairs_note || 'Inspected & showroom certified'
+    }));
     let leadsList = getStoredData('leads', SEED_LEADS);
     let invoicesList = getStoredData('invoices', SEED_INVOICES);
     let branchesList = getStoredData('branches', SEED_BRANCHES);
     let siteSettings = getStoredData('settings', SEED_SETTINGS);
+
+    // 5 Front-Page Hero Slides
+    const DEFAULT_HERO_SLIDES = [
+      {
+        id: 1,
+        title: "BUY YOUR DREAM BIKE",
+        subtitle: "Hyderabad's premier certified pre-owned superbike hub with 120-point mechanical inspection & 1-year engine warranty.",
+        badge: "VERIFIED SUPERBIKES",
+        actionTarget: "#inventory",
+        buttonText: "Explore Superbikes",
+        secondaryButtonText: "Book Test Ride",
+        imageUrl: "/public/assets/aistudio/Screenshot_2026-10-27_171108_18bf6569.png"
+      },
+      {
+        id: 2,
+        title: "SELL IN 15 MINS",
+        subtitle: "Instant computerized valuation, zero paperwork hassles, and same-day direct bank settlement.",
+        badge: "INSTANT LIQUIDITY",
+        actionTarget: "#sell-modal",
+        buttonText: "Get Instant Quote",
+        secondaryButtonText: "WhatsApp Valuation",
+        imageUrl: "/public/assets/aistudio/Screenshot_2026-10-27_171056_6ccfcea2.png"
+      },
+      {
+        id: 3,
+        title: "EXCHANGE & UPGRADE",
+        subtitle: "Trade in your existing motorcycle for a 600cc to 1300cc monster with maximum market trade-in credit.",
+        badge: "TRADE-IN BONUS",
+        actionTarget: "#inventory",
+        buttonText: "View Exchange Stock",
+        secondaryButtonText: "Calculate Difference",
+        imageUrl: "/public/assets/aistudio/image_f4045ab9.png"
+      },
+      {
+        id: 4,
+        title: "DOORSTEP TEST RIDE",
+        subtitle: "Experience the adrenaline of Ducati, BMW, and Kawasaki delivered to your doorstep in Hyderabad.",
+        badge: "VIP CONCIERGE",
+        actionTarget: "#leads",
+        buttonText: "Schedule Doorstep Ride",
+        secondaryButtonText: "Call Concierge",
+        imageUrl: "/public/assets/aistudio/Screenshot_2026-10-27_171123_5ece9d25.png"
+      },
+      {
+        id: 5,
+        title: "CERTIFIED 120-PT INSPECTION",
+        subtitle: "Every bike undergoes rigorous compression testing, dyno telemetry, chassis alignment, and clear RTO title verification.",
+        badge: "PEACE OF MIND",
+        actionTarget: "#service-modal",
+        buttonText: "View Inspection Standards",
+        secondaryButtonText: "Download Sample Report",
+        imageUrl: "/public/assets/aistudio/Screenshot_2026-10-27_171108_18bf6569.png"
+      }
+    ];
+
+    let heroSlides = getStoredData('hero_slides', DEFAULT_HERO_SLIDES);
     let staffList = getStoredData('staff', SEED_STAFF);
     let activityAlerts = getStoredData('alerts', [
       { id: 1, type: 'lead', title: 'New enquiry received', detail: 'Kiran Varma for Kawasaki Ninja Z900', time: '15m ago' },
@@ -2076,13 +3178,43 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
       const isOwner = currentUser.role === 'owner';
       const perms = currentUser.permissions || [];
 
-      // Staff navigation visibility
+      // 1. Overview tab: strictly Owner only (hidden from workers)
+      const overviewDesktopBtn = document.getElementById('nav-overview');
+      const overviewMobileBtn = document.getElementById('mob-nav-overview');
+      if (overviewDesktopBtn) overviewDesktopBtn.style.display = isOwner ? 'flex' : 'none';
+      if (overviewMobileBtn) overviewMobileBtn.style.display = isOwner ? 'flex' : 'none';
+
+      // 2. Staff navigation visibility: strictly Owner only
       const staffNavBtn = document.getElementById('nav-staff');
       if (staffNavBtn) {
         staffNavBtn.style.display = isOwner ? 'flex' : 'none';
       }
 
-      // Restrict other tabs for staff
+      // 3. Procurement & Profit Analysis: strictly Owner only (confidential from workers)
+      const procurementNavBtn = document.getElementById('nav-procurement');
+      const procurementMobileBtn = document.getElementById('mob-nav-procurement');
+      if (procurementNavBtn) {
+        procurementNavBtn.style.display = isOwner ? 'flex' : 'none';
+      }
+      if (procurementMobileBtn) {
+        procurementMobileBtn.style.display = isOwner ? 'flex' : 'none';
+      }
+
+      // 4. Bike Modal Financial Fields & Inventory Quick Calculator: hidden from workers
+      const bikeOwnerFields = document.getElementById('bikeOwnerFinancialFields');
+      const bikePrivacyNotice = document.getElementById('bikeStaffPrivacyNotice');
+      if (bikeOwnerFields) bikeOwnerFields.style.display = isOwner ? 'block' : 'none';
+      if (bikePrivacyNotice) bikePrivacyNotice.style.display = isOwner ? 'none' : 'flex';
+
+      const invProfitWidget = document.getElementById('inventoryOwnerProfitWidget');
+      if (invProfitWidget) {
+        invProfitWidget.style.display = isOwner ? 'block' : 'none';
+      }
+      if (isOwner) {
+        initQuickProfitCalculator();
+      }
+
+      // 5. Restrict modular tabs for staff based on Owner's granular permissions
       const modules = ['inventory', 'leads', 'billing', 'branches', 'settings'];
       modules.forEach(m => {
         const desktopBtn = document.getElementById(`nav-${m}`);
@@ -2093,11 +3225,11 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         if (mobileBtn) mobileBtn.style.display = hasAccess ? 'flex' : 'none';
       });
 
-      // Default switch to allowed tab
+      // 6. Default switch to allowed tab (Never show Overview to workers without permission)
       if (isOwner) {
         switchTab('overview');
       } else {
-        const firstAllowed = modules.find(m => perms.includes(m)) || 'overview';
+        const firstAllowed = modules.find(m => perms.includes(m)) || 'leads';
         switchTab(firstAllowed);
       }
     }
@@ -2106,11 +3238,24 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
     function switchTab(tabId) {
       if (!currentUser) return;
 
-      // Access Check
       const isOwner = currentUser.role === 'owner';
       const perms = currentUser.permissions || [];
-      if (!isOwner && tabId !== 'overview' && !perms.includes(tabId) && !perms.includes('all')) {
-        showToast("Access Denied: You do not have permission to view this module.", "error");
+
+      // Access Security Verification
+      if (tabId === 'procurement' && !isOwner) {
+        showToast("Access Denied: Vehicle Procurement & Margins are confidential to Owner only.", "error");
+        return;
+      }
+      if (tabId === 'staff' && !isOwner) {
+        showToast("Access Denied: Staff accounts management is restricted to Owner.", "error");
+        return;
+      }
+      if (tabId === 'overview' && !isOwner) {
+        showToast("Access Denied: Overview metrics dashboard is restricted to Owner.", "error");
+        return;
+      }
+      if (!isOwner && !perms.includes(tabId) && !perms.includes('all')) {
+        showToast(`Access Denied: You do not have permission to view this module.`, "error");
         return;
       }
 
@@ -2135,14 +3280,19 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
       }
 
       // Update Mobile Nav styles
-      ['overview', 'inventory', 'leads', 'billing'].forEach(m => {
+      ['overview', 'inventory', 'leads', 'procurement', 'billing'].forEach(m => {
         const mobBtn = document.getElementById(`mob-nav-${m}`);
         if (mobBtn) {
           if (m === tabId) {
-            mobBtn.classList.add('text-racing-500');
-            mobBtn.classList.remove('text-slate-400');
+            if (m === 'procurement') {
+              mobBtn.classList.add('text-emerald-400');
+              mobBtn.classList.remove('text-slate-400');
+            } else {
+              mobBtn.classList.add('text-racing-500');
+              mobBtn.classList.remove('text-slate-400');
+            }
           } else {
-            mobBtn.classList.remove('text-racing-500');
+            mobBtn.classList.remove('text-racing-500', 'text-emerald-400');
             mobBtn.classList.add('text-slate-400');
           }
         }
@@ -2155,34 +3305,78 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         leads: 'Customer Leads CRM',
         billing: 'Digital Billing & Invoices',
         branches: 'Showroom Branches',
-        settings: 'CMS & Social Media Settings',
-        staff: 'Staff Access & Permissions'
+        settings: 'CMS, Hero Slider & Social Media Manager',
+        staff: 'Staff Access & Permissions',
+        procurement: 'Profit & Loss (P&L) & Financial Performance Statement (Owner Confidential)'
       };
       document.getElementById('currentSectionTitle').textContent = titles[tabId] || tabId;
 
       // Refresh specific tab view
       if (tabId === 'overview') updateOverviewMetrics();
-      if (tabId === 'inventory') renderInventoryTable();
+      if (tabId === 'inventory') {
+        renderInventoryTable();
+        if (isOwner) initQuickProfitCalculator();
+      }
       if (tabId === 'leads') renderLeadsTable();
       if (tabId === 'billing') renderInvoicesTable();
       if (tabId === 'branches') renderBranchesGrid();
       if (tabId === 'settings') loadSettingsForm();
       if (tabId === 'staff') renderStaffTable();
+      if (tabId === 'procurement') renderProcurementAnalysis();
 
-      lucide.createIcons();
+      safeCreateIcons();
     }
 
     function openMobileMenu() {
-      // Toggle modal or quick switcher for remaining tabs
       const isOwner = currentUser && currentUser.role === 'owner';
-      const promptText = isOwner 
-        ? "Select Section:\n1. Showrooms\n2. CMS Settings\n3. Staff Manager"
-        : "Select Section:\n1. Showrooms\n2. CMS Settings";
-      
-      const choice = prompt("Enter section (branches, settings, staff):");
-      if (choice && ['branches', 'settings', 'staff'].includes(choice.toLowerCase())) {
-        switchTab(choice.toLowerCase());
+      const perms = currentUser?.permissions || [];
+      const subtitle = document.getElementById('mobileMenuUserSubtitle');
+      if (subtitle) {
+        subtitle.textContent = isOwner 
+          ? `${currentUser.name || 'Pavan Kumar'} · Dealership Owner` 
+          : `${currentUser.name || 'Staff Member'} · Dealership Staff`;
       }
+
+      const container = document.getElementById('mobileMenuLinksContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const allItems = [
+        { id: 'overview', name: 'Overview', icon: 'layout-dashboard', color: 'text-racing-400', ownerOnly: true },
+        { id: 'inventory', name: 'Inventory & Stock', icon: 'bike', color: 'text-cyan-400', perm: 'inventory' },
+        { id: 'leads', name: 'Leads CRM', icon: 'phone-call', color: 'text-purple-400', perm: 'leads' },
+        { id: 'procurement', name: 'Profit & Loss (P&L)', icon: 'trending-up', color: 'text-emerald-400', ownerOnly: true, badge: 'Owner' },
+        { id: 'billing', name: 'Billing & Invoices', icon: 'receipt', color: 'text-amber-400', perm: 'billing' },
+        { id: 'branches', name: 'Showrooms', icon: 'map-pin', color: 'text-blue-400', perm: 'branches' },
+        { id: 'settings', name: 'Hero Slides & CMS', icon: 'palette', color: 'text-pink-400', perm: 'settings' },
+        { id: 'staff', name: 'Staff Permissions', icon: 'shield-check', color: 'text-emerald-400', ownerOnly: true, badge: 'Owner' }
+      ];
+
+      allItems.forEach(item => {
+        const hasAccess = isOwner || (!item.ownerOnly && (perms.includes(item.perm) || perms.includes('all')));
+        if (!hasAccess) return;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = "p-3 rounded-xl bg-obsidian-850 hover:bg-obsidian-800 border border-white/10 flex flex-col items-start gap-1.5 transition text-left group";
+        btn.onclick = () => {
+          closeModal('mobileMenuModal');
+          switchTab(item.id);
+        };
+        btn.innerHTML = `
+          <div class="flex items-center justify-between w-full">
+            <div class="w-7 h-7 rounded-lg bg-obsidian-950 flex items-center justify-center ${item.color} border border-white/5 group-hover:scale-110 transition-transform">
+              <i data-lucide="${item.icon}" class="w-4 h-4"></i>
+            </div>
+            ${item.badge ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800/40">${item.badge}</span>` : ''}
+          </div>
+          <span class="text-xs font-semibold text-white tracking-wide">${item.name}</span>
+        `;
+        container.appendChild(btn);
+      });
+
+      openModal('mobileMenuModal');
+      safeCreateIcons();
     }
 
 
@@ -2229,6 +3423,30 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         if (!stErr && st && st.length > 0) {
           staffList = st;
           setStoredData('staff', staffList);
+          isSupabaseOnline = true;
+        }
+
+        // Try fetching site_settings
+        const { data: sets, error: sErr } = await supabase.from('site_settings').select('*');
+        if (!sErr && sets && sets.length > 0) {
+          sets.forEach(item => {
+            if (item.key === 'global_config') {
+              try {
+                siteSettings = { ...siteSettings, ...JSON.parse(item.value) };
+                setStoredData('settings', siteSettings);
+              } catch (e) {}
+            } else if (item.key === 'hero_slides') {
+              try {
+                const parsed = JSON.parse(item.value);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                  heroSlides = parsed;
+                  setStoredData('hero_slides', heroSlides);
+                }
+              } catch (e) {}
+            } else if (item.key in siteSettings) {
+              siteSettings[item.key] = item.value;
+            }
+          });
           isSupabaseOnline = true;
         }
 
@@ -2449,15 +3667,61 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
     }
 
 
-    // 9. INVENTORY MANAGER (CRUD)
+    // 9. INVENTORY MANAGER (CRUD & COMPACT TABLE/GRID VIEWS)
+    let inventoryViewMode = 'table'; // 'table' or 'grid'
+
+    function setInventoryViewMode(mode) {
+      inventoryViewMode = mode;
+      const tableBtn = document.getElementById('invViewTableBtn');
+      const gridBtn = document.getElementById('invViewGridBtn');
+      const tableContainer = document.getElementById('inventoryTableViewContainer');
+      const gridContainer = document.getElementById('inventoryGridViewContainer');
+
+      if (mode === 'table') {
+        if (tableBtn) tableBtn.className = "px-2.5 py-1.5 rounded-md font-semibold transition bg-racing-600 text-white flex items-center gap-1.5 shadow-sm";
+        if (gridBtn) gridBtn.className = "px-2.5 py-1.5 rounded-md font-semibold transition text-slate-400 hover:text-white flex items-center gap-1.5";
+        if (tableContainer) tableContainer.classList.remove('hidden');
+        if (gridContainer) gridContainer.classList.add('hidden');
+      } else {
+        if (tableBtn) tableBtn.className = "px-2.5 py-1.5 rounded-md font-semibold transition text-slate-400 hover:text-white flex items-center gap-1.5";
+        if (gridBtn) gridBtn.className = "px-2.5 py-1.5 rounded-md font-semibold transition bg-racing-600 text-white flex items-center gap-1.5 shadow-sm";
+        if (tableContainer) tableContainer.classList.add('hidden');
+        if (gridContainer) gridContainer.classList.remove('hidden');
+      }
+
+      renderInventoryTable();
+    }
+
+    function calculateBikeModalProfit() {
+      const asking = Number(document.getElementById('bikePrice')?.value || 0);
+      const purchase = Number(document.getElementById('bikePurchaseCost')?.value || 0);
+      const repair = Number(document.getElementById('bikeRepairCost')?.value || 0);
+      const totalCost = purchase + repair;
+      const profit = asking - totalCost;
+      const marginPct = totalCost > 0 ? ((profit / totalCost) * 100).toFixed(1) : '0';
+
+      const totalDisp = document.getElementById('bikeModalTotalCostDisplay');
+      const profitDisp = document.getElementById('bikeModalNetProfitDisplay');
+      if (totalDisp) totalDisp.textContent = formatINR(totalCost);
+      if (profitDisp) {
+        const sign = profit >= 0 ? '+' : '';
+        profitDisp.textContent = `${sign}${formatINR(profit)} (${marginPct}%)`;
+        profitDisp.className = profit >= 0 ? 'font-bold text-emerald-400' : 'font-bold text-red-400';
+      }
+    }
+
     function renderInventoryTable() {
       const tbody = document.getElementById('inventoryTableBody');
+      const gridContainer = document.getElementById('inventoryGridViewContainer');
       const emptyState = document.getElementById('inventoryEmptyState');
       const search = (document.getElementById('inventorySearch')?.value || '').toLowerCase();
       const catFilter = document.getElementById('inventoryCategoryFilter')?.value || 'ALL';
       const statusFilter = document.getElementById('inventoryStatusFilter')?.value || 'ALL';
 
-      tbody.innerHTML = '';
+      if (tbody) tbody.innerHTML = '';
+      if (gridContainer) gridContainer.innerHTML = '';
+
+      const isOwner = currentUser && currentUser.role === 'owner';
 
       let filtered = bikesList.filter(b => {
         const matchesSearch = b.name.toLowerCase().includes(search) || b.brand.toLowerCase().includes(search);
@@ -2467,57 +3731,151 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
       });
 
       if (filtered.length === 0) {
-        emptyState.classList.remove('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
         return;
       }
-      emptyState.classList.add('hidden');
+      if (emptyState) emptyState.classList.add('hidden');
 
-      filtered.forEach(bike => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-white/[0.02] transition border-b border-white/5";
+      // 1. POPULATE COMPACT TABLE ROWS
+      if (tbody) {
+        filtered.forEach(bike => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-white/[0.02] transition border-b border-white/5";
 
-        const imgPlaceholder = bike.image_url ? 
-          `<img src="${escapeHtml(bike.image_url)}" alt="${escapeHtml(bike.name)}" class="w-12 h-12 object-cover rounded-lg border border-white/10 shrink-0 bg-obsidian-950" onerror="this.onerror=null; this.src='/public/assets/aistudio/image_f4045ab9.png';">` :
-          `<div class="w-12 h-12 rounded-lg bg-obsidian-800 border border-white/10 flex items-center justify-center text-slate-500 shrink-0"><i data-lucide="bike" class="w-6 h-6"></i></div>`;
+          const imgPlaceholder = bike.image_url ? 
+            `<img src="${escapeHtml(bike.image_url)}" alt="${escapeHtml(bike.name)}" class="w-10 h-10 object-cover rounded-lg border border-white/10 shrink-0 bg-obsidian-950" onerror="this.onerror=null; this.src='/public/assets/aistudio/image_f4045ab9.png';">` :
+            `<div class="w-10 h-10 rounded-lg bg-obsidian-800 border border-white/10 flex items-center justify-center text-slate-500 shrink-0"><i data-lucide="bike" class="w-5 h-5"></i></div>`;
 
-        tr.innerHTML = `
-          <td class="py-3 px-4">
-            <div class="flex items-center gap-3">
-              ${imgPlaceholder}
-              <div>
-                <div class="font-bold text-white">${escapeHtml(bike.name)}</div>
-                <div class="text-[11px] text-slate-400">ID: #${bike.id}</div>
+          // Owner sees subtle confidential margin indicator; Workers see asking price ONLY
+          const purchase = Number(bike.purchase_cost ?? 0);
+          const repair = Number(bike.repair_cost ?? 0);
+          const totalCost = purchase + repair;
+          const netProfit = Number(bike.price || 0) - totalCost;
+
+          const confidentialMarginTag = isOwner ? 
+            `<div class="text-[10px] font-mono mt-0.5 flex items-center gap-1 ${netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}">
+              <span>Net:</span>
+              <span class="font-bold">${netProfit >= 0 ? '+' : ''}${formatINR(netProfit)}</span>
+            </div>` : '';
+
+          tr.innerHTML = `
+            <td class="py-2.5 px-3.5">
+              <div class="flex items-center gap-2.5">
+                ${imgPlaceholder}
+                <div class="min-w-0">
+                  <div class="font-bold text-white text-xs truncate max-w-[180px]" title="${escapeHtml(bike.name)}">${escapeHtml(bike.name)}</div>
+                  <div class="text-[10px] text-slate-400 font-mono">ID: #${bike.id}</div>
+                </div>
+              </div>
+            </td>
+            <td class="py-2.5 px-3.5 font-medium text-slate-300 text-xs">${escapeHtml(bike.brand)}</td>
+            <td class="py-2.5 px-3.5">
+              <span class="px-2 py-0.5 rounded bg-obsidian-800 text-slate-300 text-[10px] border border-white/5">${escapeHtml(bike.category)}</span>
+            </td>
+            <td class="py-2.5 px-3.5 font-mono text-slate-300 text-xs">
+              ${bike.year || '2026'} · <span class="text-slate-400">${bike.km ? bike.km.toLocaleString('en-IN') + ' km' : 'New'}</span>
+            </td>
+            <td class="py-2.5 px-3.5">
+              <div class="font-mono font-bold text-white text-xs">${formatINR(bike.price)}</div>
+              ${confidentialMarginTag}
+            </td>
+            <td class="py-2.5 px-3.5">
+              <select onchange="updateBikeStatus(${bike.id}, this.value)" class="text-[11px] bg-obsidian-850 border border-white/10 rounded px-2 py-1 text-slate-200">
+                <option value="Available" ${bike.status === 'Available' ? 'selected' : ''}>Available</option>
+                <option value="Booked" ${bike.status === 'Booked' ? 'selected' : ''}>Booked</option>
+                <option value="Sold" ${bike.status === 'Sold' ? 'selected' : ''}>Sold</option>
+              </select>
+            </td>
+            <td class="py-2.5 px-3.5 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <button onclick="editBike(${bike.id})" class="p-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-slate-300 transition" title="Edit Vehicle Details">
+                  <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                </button>
+                ${isOwner ? `
+                  <button onclick="openProcurementModal(${bike.id})" class="p-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-900/30 transition" title="Vehicle Procurement & Margin Analysis">
+                    <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+                  </button>
+                ` : ''}
+                <button onclick="deleteBike(${bike.id})" class="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/30 transition" title="Delete Vehicle">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 2. POPULATE COMPACT GRID CARDS
+      if (gridContainer) {
+        filtered.forEach(bike => {
+          const purchase = Number(bike.purchase_cost ?? 0);
+          const repair = Number(bike.repair_cost ?? 0);
+          const totalCost = purchase + repair;
+          const netProfit = Number(bike.price || 0) - totalCost;
+
+          const card = document.createElement('div');
+          card.className = "glass-card rounded-xl p-3 border border-white/10 flex flex-col justify-between hover:border-white/20 transition";
+          card.innerHTML = `
+            <div>
+              <div class="relative w-full h-28 rounded-lg overflow-hidden bg-obsidian-950 mb-2 border border-white/5">
+                <img src="${escapeHtml(bike.image_url || '/public/assets/aistudio/image_f4045ab9.png')}" alt="${escapeHtml(bike.name)}"
+                  class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/public/assets/aistudio/image_f4045ab9.png';">
+                <div class="absolute top-1.5 left-1.5">
+                  <span class="px-1.5 py-0.5 rounded bg-obsidian-950/80 backdrop-blur-md text-white font-mono text-[9px] font-bold border border-white/10">
+                    ${escapeHtml(bike.brand)}
+                  </span>
+                </div>
+                <div class="absolute top-1.5 right-1.5">
+                  <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${bike.status === 'Available' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : bike.status === 'Booked' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'bg-racing-500/20 text-racing-400 border border-racing-500/30'}">
+                    ${bike.status}
+                  </span>
+                </div>
+              </div>
+
+              <div class="font-bold text-white text-xs truncate" title="${escapeHtml(bike.name)}">${escapeHtml(bike.name)}</div>
+              <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono mt-1">
+                <span>${bike.year || 2026} · ${bike.km ? bike.km.toLocaleString('en-IN') + ' km' : 'New'}</span>
+                <span class="px-1.5 py-0.5 rounded bg-obsidian-800 text-slate-300">${escapeHtml(bike.category)}</span>
+              </div>
+
+              <div class="mt-2 pt-2 border-t border-white/5 flex items-center justify-between">
+                <div>
+                  <span class="text-[9px] uppercase text-slate-400 font-bold block">Showroom Asking</span>
+                  <span class="text-xs font-black font-mono text-white">${formatINR(bike.price)}</span>
+                </div>
+                ${isOwner ? `
+                  <div class="text-right">
+                    <span class="text-[9px] uppercase text-emerald-400 font-bold block">Net Profit</span>
+                    <span class="text-[11px] font-mono font-bold ${netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}">${netProfit >= 0 ? '+' : ''}${formatINR(netProfit)}</span>
+                  </div>
+                ` : ''}
               </div>
             </div>
-          </td>
-          <td class="py-3 px-4 font-medium text-slate-300">${escapeHtml(bike.brand)}</td>
-          <td class="py-3 px-4">
-            <span class="px-2 py-0.5 rounded bg-obsidian-800 text-slate-300 text-[11px] border border-white/5">${escapeHtml(bike.category)}</span>
-          </td>
-          <td class="py-3 px-4 font-mono text-slate-300">
-            ${bike.year || '2026'} · <span class="text-slate-400">${bike.km ? bike.km.toLocaleString('en-IN') + ' km' : 'New'}</span>
-          </td>
-          <td class="py-3 px-4 font-mono font-bold text-white">${formatINR(bike.price)}</td>
-          <td class="py-3 px-4">
-            <select onchange="updateBikeStatus(${bike.id}, this.value)" class="text-xs bg-obsidian-850 border border-white/10 rounded px-2 py-1 text-slate-200">
-              <option value="Available" ${bike.status === 'Available' ? 'selected' : ''}>Available</option>
-              <option value="Booked" ${bike.status === 'Booked' ? 'selected' : ''}>Booked</option>
-              <option value="Sold" ${bike.status === 'Sold' ? 'selected' : ''}>Sold</option>
-            </select>
-          </td>
-          <td class="py-3 px-4 text-right">
-            <div class="flex items-center justify-end gap-1.5">
-              <button onclick="editBike(${bike.id})" class="p-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-slate-300 transition" title="Edit Vehicle">
+
+            <div class="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between gap-1.5">
+              <select onchange="updateBikeStatus(${bike.id}, this.value)" class="flex-1 text-[10px] bg-obsidian-850 border border-white/10 rounded px-1.5 py-1 text-slate-200">
+                <option value="Available" ${bike.status === 'Available' ? 'selected' : ''}>Available</option>
+                <option value="Booked" ${bike.status === 'Booked' ? 'selected' : ''}>Booked</option>
+                <option value="Sold" ${bike.status === 'Sold' ? 'selected' : ''}>Sold</option>
+              </select>
+              <button onclick="editBike(${bike.id})" class="p-1 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-slate-300 transition" title="Edit Vehicle">
                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="deleteBike(${bike.id})" class="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/30 transition" title="Delete Vehicle">
+              ${isOwner ? `
+                <button onclick="openProcurementModal(${bike.id})" class="p-1 rounded-lg bg-emerald-950/50 hover:bg-emerald-900/70 text-emerald-400 border border-emerald-900/30 transition" title="Vehicle Procurement Margins">
+                  <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+                </button>
+              ` : ''}
+              <button onclick="deleteBike(${bike.id})" class="p-1 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/30 transition" title="Delete Vehicle">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
             </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+          `;
+          gridContainer.appendChild(card);
+        });
+      }
+
       lucide.createIcons();
     }
 
@@ -2526,6 +3884,17 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
       document.getElementById('bikeForm').reset();
       document.getElementById('bikeId').value = "";
       clearBikePhoto();
+
+      const isOwner = currentUser && currentUser.role === 'owner';
+      const finFields = document.getElementById('bikeOwnerFinancialFields');
+      const privacyNotice = document.getElementById('bikeStaffPrivacyNotice');
+      if (finFields) finFields.style.display = isOwner ? 'block' : 'none';
+      if (privacyNotice) privacyNotice.style.display = isOwner ? 'none' : 'flex';
+
+      document.getElementById('bikePurchaseCost').value = '';
+      document.getElementById('bikeRepairCost').value = '';
+      calculateBikeModalProfit();
+
       openModal('bikeModal');
     }
 
@@ -2542,6 +3911,18 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
       document.getElementById('bikeKm').value = bike.km || 0;
       document.getElementById('bikePrice').value = bike.price;
       document.getElementById('bikeStatus').value = bike.status;
+
+      const isOwner = currentUser && currentUser.role === 'owner';
+      const finFields = document.getElementById('bikeOwnerFinancialFields');
+      const privacyNotice = document.getElementById('bikeStaffPrivacyNotice');
+      if (finFields) finFields.style.display = isOwner ? 'block' : 'none';
+      if (privacyNotice) privacyNotice.style.display = isOwner ? 'none' : 'flex';
+
+      if (isOwner) {
+        document.getElementById('bikePurchaseCost').value = bike.purchase_cost ?? '';
+        document.getElementById('bikeRepairCost').value = bike.repair_cost ?? '';
+        calculateBikeModalProfit();
+      }
       
       if (bike.image_url) {
         setBikePhotoPreview(bike.image_url);
@@ -2602,7 +3983,17 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
     document.getElementById('bikeForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const id = document.getElementById('bikeId').value;
+      const isOwner = currentUser && currentUser.role === 'owner';
       const finalImage = document.getElementById('bikeImageData').value.trim() || '/public/assets/aistudio/image_f4045ab9.png';
+
+      const existingBike = id ? bikesList.find(b => b.id == id) : null;
+      const purchaseCost = isOwner 
+        ? Number(document.getElementById('bikePurchaseCost').value) || 0 
+        : (existingBike ? Number(existingBike.purchase_cost || 0) : 0);
+      const repairCost = isOwner 
+        ? Number(document.getElementById('bikeRepairCost').value) || 0 
+        : (existingBike ? Number(existingBike.repair_cost || 0) : 0);
+
       const bikeData = {
         name: document.getElementById('bikeName').value.trim(),
         brand: document.getElementById('bikeBrand').value.trim(),
@@ -2611,7 +4002,10 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
         km: Number(document.getElementById('bikeKm').value) || 0,
         price: Number(document.getElementById('bikePrice').value) || 0,
         status: document.getElementById('bikeStatus').value,
-        image_url: finalImage
+        image_url: finalImage,
+        purchase_cost: purchaseCost,
+        repair_cost: repairCost,
+        procurement_date: existingBike ? (existingBike.procurement_date || new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0]
       };
 
       if (id) {
@@ -2695,6 +4089,887 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
 
       renderInventoryTable();
       updateOverviewMetrics();
+    }
+
+    // ========================================================
+    // 9.0. INVENTORY QUICK PROCUREMENT & PROFIT MARGIN ENGINE (OWNER ONLY)
+    // ========================================================
+    function initQuickProfitCalculator() {
+      const select = document.getElementById('quickCalcBikeSelect');
+      if (!select) return;
+
+      const currentVal = select.value;
+      select.innerHTML = '<option value="">-- Choose from Inventory --</option>';
+
+      bikesList.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.id;
+        opt.textContent = `${b.name} (${b.brand || 'Vehicle'}) — ${formatINR(b.price)}`;
+        select.appendChild(opt);
+      });
+
+      if (currentVal && bikesList.some(b => b.id == currentVal)) {
+        select.value = currentVal;
+        onQuickCalcBikeSelect(currentVal);
+      } else if (bikesList.length > 0) {
+        select.value = bikesList[0].id;
+        onQuickCalcBikeSelect(bikesList[0].id);
+      } else {
+        runQuickProfitCalc();
+      }
+    }
+
+    function onQuickCalcBikeSelect(bikeId) {
+      if (!bikeId) {
+        const p = document.getElementById('quickCalcPurchase');
+        const r = document.getElementById('quickCalcRepair');
+        const a = document.getElementById('quickCalcAsking');
+        if (p) p.value = '';
+        if (r) r.value = '';
+        if (a) a.value = '';
+        runQuickProfitCalc();
+        return;
+      }
+
+      const bike = bikesList.find(b => b.id == bikeId);
+      if (!bike) return;
+
+      const p = document.getElementById('quickCalcPurchase');
+      const r = document.getElementById('quickCalcRepair');
+      const a = document.getElementById('quickCalcAsking');
+      if (p) p.value = bike.purchase_cost ?? '';
+      if (r) r.value = bike.repair_cost ?? '';
+      if (a) a.value = bike.price ?? '';
+
+      runQuickProfitCalc();
+    }
+
+    function runQuickProfitCalc() {
+      const p = document.getElementById('quickCalcPurchase');
+      const r = document.getElementById('quickCalcRepair');
+      const a = document.getElementById('quickCalcAsking');
+
+      const purchase = Number(p ? p.value : 0) || 0;
+      const repair = Number(r ? r.value : 0) || 0;
+      const asking = Number(a ? a.value : 0) || 0;
+
+      const totalCost = purchase + repair;
+      const netProfit = asking - totalCost;
+      const roi = totalCost > 0 ? ((netProfit / totalCost) * 100).toFixed(1) : '0';
+
+      const totalCostElem = document.getElementById('quickCalcTotalCost');
+      const netProfitElem = document.getElementById('quickCalcNetProfit');
+      const roiElem = document.getElementById('quickCalcRoiBadge');
+
+      if (totalCostElem) totalCostElem.textContent = formatINR(totalCost);
+      if (netProfitElem) {
+        netProfitElem.textContent = `${netProfit >= 0 ? '+' : ''}${formatINR(netProfit)}`;
+        netProfitElem.className = `text-sm font-black ${netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+      }
+      if (roiElem) {
+        roiElem.textContent = `${roi}% ROI`;
+        roiElem.className = `px-2 py-0.5 rounded text-[10px] font-bold ${netProfit >= 0 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-red-950 text-red-300 border border-red-800'}`;
+      }
+    }
+
+    async function saveQuickCalcToBike() {
+      const select = document.getElementById('quickCalcBikeSelect');
+      const bikeId = select?.value;
+      if (!bikeId) {
+        showToast("Please select a vehicle from inventory first!", "error");
+        return;
+      }
+      const bike = bikesList.find(b => b.id == bikeId);
+      if (!bike) return;
+
+      const purchase = Number(document.getElementById('quickCalcPurchase').value) || 0;
+      const repair = Number(document.getElementById('quickCalcRepair').value) || 0;
+      const asking = Number(document.getElementById('quickCalcAsking').value) || 0;
+
+      bike.purchase_cost = purchase;
+      bike.repair_cost = repair;
+      bike.price = asking;
+      setStoredData('bikes', bikesList);
+
+      const netProfit = asking - (purchase + repair);
+      showToast(`Updated margins for ${bike.name}: Net Profit ${formatINR(netProfit)}!`, "success");
+      addActivityAlert('inventory', 'Vehicle Margins Recalculated', `${bike.name}: Inward ${formatINR(purchase)}, Repairs ${formatINR(repair)}, Asking ${formatINR(asking)}`);
+
+      if (supabase) {
+        try {
+          await supabase.from('bikes').update({
+            purchase_cost: purchase,
+            repair_cost: repair,
+            price: asking
+          }).eq('id', bike.id);
+        } catch (err) {
+          console.warn("Supabase bike margin update error", err);
+        }
+      }
+
+      renderInventoryTable();
+      updateOverviewMetrics();
+    }
+
+
+    // ========================================================
+    // 9.1. OWNER VEHICLE PROFIT & LOSS (P&L) FINANCIAL ENGINE
+    // ========================================================
+    let procurementDateFilter = 'all';
+
+    function setProcurementDateFilter(filter) {
+      procurementDateFilter = filter;
+      ['all', 'today', 'week', 'month', 'quarter', 'fy', 'custom'].forEach(f => {
+        const btn = document.getElementById(`btn-proc-filter-${f}`);
+        if (btn) {
+          if (f === filter) {
+            btn.className = "proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition bg-emerald-600 text-white shadow-sm";
+          } else {
+            btn.className = "proc-filter-btn px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white";
+          }
+        }
+      });
+
+      const customBox = document.getElementById('procurementCustomDateContainer');
+      if (customBox) {
+        if (filter === 'custom') {
+          customBox.classList.remove('hidden');
+          const today = new Date().toISOString().split('T')[0];
+          if (!document.getElementById('procEndDate').value) document.getElementById('procEndDate').value = today;
+          if (!document.getElementById('procStartDate').value) {
+            const d = new Date();
+            d.setDate(d.getDate() - 30);
+            document.getElementById('procStartDate').value = d.toISOString().split('T')[0];
+          }
+        } else {
+          customBox.classList.add('hidden');
+        }
+      }
+
+      renderProcurementAnalysis();
+    }
+
+    function applyCustomProcurementFilter() {
+      renderProcurementAnalysis();
+    }
+
+    function filterThinMarginVehicles() {
+      const bandSelect = document.getElementById('pnlProfitBandFilter');
+      if (bandSelect) {
+        bandSelect.value = 'LOW';
+        renderProcurementAnalysis();
+        showToast("Filtered ledger to Thin Margin & Loss vehicles", "info");
+      }
+    }
+
+    function renderProcurementAnalysis() {
+      if (!currentUser || currentUser.role !== 'owner') return;
+
+      const tbody = document.getElementById('procurementTableBody');
+      const emptyState = document.getElementById('procurementEmptyState');
+      const statusFilter = document.getElementById('procStatusFilter')?.value || 'ALL';
+      const profitBandFilter = document.getElementById('pnlProfitBandFilter')?.value || 'ALL';
+      const searchQuery = (document.getElementById('pnlSearchInput')?.value || '').toLowerCase().trim();
+      const noteEl = document.getElementById('procLedgerFilteredNote');
+
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+
+      // 1. FILTERING LOGIC
+      let filtered = bikesList.filter(b => {
+        // Status filter
+        if (statusFilter !== 'ALL' && b.status !== statusFilter) return false;
+
+        // Search filter
+        if (searchQuery) {
+          const nameMatch = (b.name || '').toLowerCase().includes(searchQuery);
+          const brandMatch = (b.brand || '').toLowerCase().includes(searchQuery);
+          if (!nameMatch && !brandMatch) return false;
+        }
+
+        // Date filter
+        const rawDate = b.procurement_date || (b.created_at ? b.created_at.split('T')[0] : '2026-10-15');
+        const itemDate = new Date(rawDate);
+
+        if (procurementDateFilter === 'today') {
+          if (rawDate !== todayStr) return false;
+        } else if (procurementDateFilter === 'week') {
+          const diffDays = (now - itemDate) / (1000 * 60 * 60 * 24);
+          if (diffDays < 0 || diffDays > 7) return false;
+        } else if (procurementDateFilter === 'month') {
+          const diffDays = (now - itemDate) / (1000 * 60 * 60 * 24);
+          if (diffDays < 0 || diffDays > 30) return false;
+        } else if (procurementDateFilter === 'quarter') {
+          const diffDays = (now - itemDate) / (1000 * 60 * 60 * 24);
+          if (diffDays < 0 || diffDays > 90) return false;
+        } else if (procurementDateFilter === 'fy') {
+          // Current FY (April 1 to March 31)
+          const yr = now.getFullYear();
+          const startFY = new Date(now.getMonth() >= 3 ? yr : yr - 1, 3, 1);
+          if (itemDate < startFY) return false;
+        } else if (procurementDateFilter === 'custom') {
+          const start = document.getElementById('procStartDate')?.value;
+          const end = document.getElementById('procEndDate')?.value;
+          if (start && rawDate < start) return false;
+          if (end && rawDate > end) return false;
+        }
+
+        // Profitability Band filter
+        const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.82));
+        const repairs = Number(b.repair_cost ?? 25000);
+        const asking = Number(b.price || 0);
+        const landedCost = purchase + repairs;
+        const profit = asking - landedCost;
+        const roi = landedCost > 0 ? (profit / landedCost) * 100 : 0;
+
+        if (profitBandFilter === 'HIGH' && roi < 20) return false;
+        if (profitBandFilter === 'NORMAL' && (roi < 10 || roi >= 20)) return false;
+        if (profitBandFilter === 'LOW' && (roi < 0 || roi >= 10)) return false;
+        if (profitBandFilter === 'LOSS' && roi >= 0) return false;
+
+        return true;
+      });
+
+      if (noteEl) {
+        noteEl.textContent = `Showing ${filtered.length} of ${bikesList.length} vehicles (${procurementDateFilter.toUpperCase()} view)`;
+      }
+
+      // 2. FINANCIAL LEDGER AGGREGATIONS
+      let totalPurchase = 0;
+      let totalRepairs = 0;
+      let totalInvested = 0;
+      let totalAsking = 0;
+      let targetProfit = 0;
+
+      // Realized Sales Metrics (Sold Vehicles + Invoices)
+      let realizedRevenue = 0;
+      let realizedCogs = 0;
+      let realizedRepairs = 0;
+      let realizedCount = 0;
+
+      // Unrealized Active Fleet Metrics (Available / Booked Units)
+      let pipelineCapital = 0;
+      let pipelineAsking = 0;
+      let pipelineCount = 0;
+
+      // Low-margin flags
+      let thinMarginBikes = [];
+
+      bikesList.forEach(b => {
+        const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.82));
+        const repairs = Number(b.repair_cost ?? 25000);
+        const asking = Number(b.price || 0);
+        const landed = purchase + repairs;
+        const profit = asking - landed;
+        const marginPct = landed > 0 ? (profit / landed) * 100 : 0;
+
+        if (b.status === 'Sold') {
+          realizedRevenue += asking;
+          realizedCogs += purchase;
+          realizedRepairs += repairs;
+          realizedCount++;
+        } else {
+          pipelineCapital += landed;
+          pipelineAsking += asking;
+          pipelineCount++;
+
+          if (marginPct < 8) {
+            thinMarginBikes.push({ name: b.name, marginPct: marginPct.toFixed(1), asking, landed });
+          }
+        }
+      });
+
+      // Filtered Aggregations for the Top Stat Cards
+      filtered.forEach(b => {
+        const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.82));
+        const repairs = Number(b.repair_cost ?? 25000);
+        const asking = Number(b.price || 0);
+        const landed = purchase + repairs;
+        const profit = asking - landed;
+
+        totalPurchase += purchase;
+        totalRepairs += repairs;
+        totalInvested += landed;
+        totalAsking += asking;
+        targetProfit += profit;
+      });
+
+      // 3. EXECUTIVE P&L INCOME STATEMENT CALCULATIONS
+      const realizedGrossProfit = realizedRevenue - realizedCogs;
+      const realizedGrossMarginPct = realizedRevenue > 0 ? ((realizedGrossProfit / realizedRevenue) * 100).toFixed(1) : '0';
+      const realizedOverheads = Math.round(realizedRevenue * 0.02); // 2% overheads / commission
+      const netRealizedProfit = realizedGrossProfit - realizedRepairs - realizedOverheads;
+      const netRealizedMarginPct = realizedRevenue > 0 ? ((netRealizedProfit / realizedRevenue) * 100).toFixed(1) : '0';
+
+      const pipelineProfit = pipelineAsking - pipelineCapital;
+      const pipelineRoiPct = pipelineCapital > 0 ? ((pipelineProfit / pipelineCapital) * 100).toFixed(1) : '0';
+
+      // Update Executive P&L Income Statement Box
+      const pnlRealizedUnitCountEl = document.getElementById('pnlRealizedUnitCount');
+      const pnlRealizedRevEl = document.getElementById('pnlRealizedRevenue');
+      const pnlRealizedCogsEl = document.getElementById('pnlRealizedCogs');
+      const pnlRealizedGrossProfitEl = document.getElementById('pnlRealizedGrossProfit');
+      const pnlRealizedGrossMarginPctEl = document.getElementById('pnlRealizedGrossMarginPct');
+      const pnlRealizedRepairsEl = document.getElementById('pnlRealizedRepairs');
+      const pnlRealizedOverheadsEl = document.getElementById('pnlRealizedOverheads');
+      const pnlNetRealizedProfitEl = document.getElementById('pnlNetRealizedProfit');
+      const pnlNetRealizedMarginPctEl = document.getElementById('pnlNetRealizedMarginPct');
+
+      if (pnlRealizedUnitCountEl) pnlRealizedUnitCountEl.textContent = `${realizedCount} Units Realized`;
+      if (pnlRealizedRevEl) pnlRealizedRevEl.textContent = formatINR(realizedRevenue);
+      if (pnlRealizedCogsEl) pnlRealizedCogsEl.textContent = `-${formatINR(realizedCogs)}`;
+      if (pnlRealizedGrossProfitEl) pnlRealizedGrossProfitEl.textContent = formatINR(realizedGrossProfit);
+      if (pnlRealizedGrossMarginPctEl) pnlRealizedGrossMarginPctEl.textContent = `${realizedGrossMarginPct}% Gross Margin`;
+      if (pnlRealizedRepairsEl) pnlRealizedRepairsEl.textContent = `-${formatINR(realizedRepairs)}`;
+      if (pnlRealizedOverheadsEl) pnlRealizedOverheadsEl.textContent = `-${formatINR(realizedOverheads)}`;
+
+      if (pnlNetRealizedProfitEl) {
+        pnlNetRealizedProfitEl.textContent = `${netRealizedProfit >= 0 ? '+' : ''}${formatINR(netRealizedProfit)}`;
+        pnlNetRealizedProfitEl.className = `text-2xl font-black font-mono tracking-tight ${netRealizedProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+      }
+      if (pnlNetRealizedMarginPctEl) {
+        pnlNetRealizedMarginPctEl.textContent = `${netRealizedProfit >= 0 ? '+' : ''}${netRealizedMarginPct}% Net Margin`;
+        pnlNetRealizedMarginPctEl.className = `text-sm font-extrabold font-mono ${netRealizedProfit >= 0 ? 'text-emerald-300' : 'text-red-400'}`;
+      }
+
+      // Update Pipeline Card
+      const pnlActiveFleetCountEl = document.getElementById('pnlActiveFleetCount');
+      const pnlPipelineCapitalEl = document.getElementById('pnlPipelineCapital');
+      const pnlPipelineSplitEl = document.getElementById('pnlPipelineSplit');
+      const pnlPipelineAskingEl = document.getElementById('pnlPipelineAsking');
+      const pnlPipelineProfitEl = document.getElementById('pnlPipelineProfit');
+      const pnlPipelineRoiPctEl = document.getElementById('pnlPipelineRoiPct');
+
+      if (pnlActiveFleetCountEl) pnlActiveFleetCountEl.textContent = `${pipelineCount} In Stock`;
+      if (pnlPipelineCapitalEl) pnlPipelineCapitalEl.textContent = formatINR(pipelineCapital);
+      if (pnlPipelineSplitEl) pnlPipelineSplitEl.textContent = `${formatINR(pipelineCapital)} Tied in Stock`;
+      if (pnlPipelineAskingEl) pnlPipelineAskingEl.textContent = formatINR(pipelineAsking);
+      if (pnlPipelineProfitEl) {
+        pnlPipelineProfitEl.textContent = `${pipelineProfit >= 0 ? '+' : ''}${formatINR(pipelineProfit)}`;
+        pnlPipelineProfitEl.className = `text-lg font-black ${pipelineProfit >= 0 ? 'text-purple-400' : 'text-red-400'}`;
+      }
+      if (pnlPipelineRoiPctEl) pnlPipelineRoiPctEl.textContent = `${pipelineRoiPct}% Projected ROI`;
+
+      // 4. WATERFALL BAR CALCULATION
+      const waterfallTotal = totalAsking > 0 ? totalAsking : 1;
+      const cogsPct = Math.min(100, Math.max(0, Math.round((totalPurchase / waterfallTotal) * 100)));
+      const repairsPct = Math.min(100, Math.max(0, Math.round((totalRepairs / waterfallTotal) * 100)));
+      const overheadsPct = Math.min(100, Math.max(0, Math.round(((totalAsking * 0.02) / waterfallTotal) * 100)));
+      const profitPct = Math.max(0, 100 - (cogsPct + repairsPct + overheadsPct));
+
+      const barCogs = document.getElementById('pnlBarCogs');
+      const barRepairs = document.getElementById('pnlBarRepairs');
+      const barOverheads = document.getElementById('pnlBarOverheads');
+      const barProfit = document.getElementById('pnlBarProfit');
+
+      if (barCogs) barCogs.style.width = `${cogsPct}%`;
+      if (barRepairs) barRepairs.style.width = `${repairsPct}%`;
+      if (barOverheads) barOverheads.style.width = `${overheadsPct}%`;
+      if (barProfit) barProfit.style.width = `${profitPct}%`;
+
+      const legCogs = document.getElementById('pnlLegendCogs');
+      const legRepairs = document.getElementById('pnlLegendRepairs');
+      const legOverheads = document.getElementById('pnlLegendOverheads');
+      const legProfit = document.getElementById('pnlLegendProfit');
+
+      if (legCogs) legCogs.textContent = `${cogsPct}% (${formatINR(totalPurchase)})`;
+      if (legRepairs) legRepairs.textContent = `${repairsPct}% (${formatINR(totalRepairs)})`;
+      if (legOverheads) legOverheads.textContent = `${overheadsPct}% (~2%)`;
+      if (legProfit) legProfit.textContent = `${profitPct}% (${formatINR(targetProfit)})`;
+
+      // 5. LOW-MARGIN & LOSS MITIGATION ALERT BANNER
+      const banner = document.getElementById('pnlLossMitigationBanner');
+      const alertText = document.getElementById('pnlLossAlertText');
+      if (banner) {
+        if (thinMarginBikes.length > 0) {
+          banner.classList.remove('hidden');
+          if (alertText) {
+            alertText.textContent = `${thinMarginBikes.length} active vehicle(s) flagged with margin under 8% (e.g. ${thinMarginBikes[0].name} at ${thinMarginBikes[0].marginPct}% margin). Review acquisition price or adjust asking price.`;
+          }
+        } else {
+          banner.classList.add('hidden');
+        }
+      }
+
+      // 6. TOP STAT CARDS (Reflect filtered set)
+      const roiPct = totalInvested > 0 ? ((targetProfit / totalInvested) * 100).toFixed(1) + '%' : '0%';
+      const statInvested = document.getElementById('procStatTotalInvested');
+      const statPurePurchase = document.getElementById('procStatPurePurchase');
+      const statPureRepairs = document.getElementById('procStatPureRepairs');
+      const statAsking = document.getElementById('procStatAskingRevenue');
+      const statUnits = document.getElementById('procStatUnitsCount');
+      const statTargetProfit = document.getElementById('procStatTargetProfit');
+      const statRoi = document.getElementById('procStatRoiMargin');
+      const statRealized = document.getElementById('procStatRealizedProfit');
+      const statSoldCount = document.getElementById('procStatSoldCount');
+
+      if (statInvested) statInvested.textContent = formatINR(totalInvested);
+      if (statPurePurchase) statPurePurchase.textContent = formatINR(totalPurchase);
+      if (statPureRepairs) statPureRepairs.textContent = formatINR(totalRepairs);
+      if (statAsking) statAsking.textContent = formatINR(totalAsking);
+      if (statUnits) statUnits.textContent = filtered.length;
+      if (statTargetProfit) {
+        statTargetProfit.textContent = (targetProfit >= 0 ? '+' : '') + formatINR(targetProfit);
+        statTargetProfit.className = `text-2xl font-black font-mono tracking-tight ${targetProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+      }
+      if (statRoi) statRoi.textContent = roiPct;
+      if (statRealized) statRealized.textContent = formatINR(netRealizedProfit);
+      if (statSoldCount) statSoldCount.textContent = realizedCount;
+
+      // 7. POPULATE LEDGER TABLE & MOBILE CARD FEED
+      const mobileContainer = document.getElementById('procurementMobileCards');
+      if (mobileContainer) mobileContainer.innerHTML = '';
+
+      if (filtered.length === 0) {
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+      }
+      if (emptyState) emptyState.classList.add('hidden');
+
+      filtered.forEach(b => {
+        const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.82));
+        const repairs = Number(b.repair_cost ?? 25000);
+        const asking = Number(b.price || 0);
+        const investment = purchase + repairs;
+        const profit = asking - investment;
+        const marginPct = investment > 0 ? ((profit / investment) * 100).toFixed(1) : '0';
+        const inDate = b.procurement_date || '2026-10-15';
+        const isSold = b.status === 'Sold';
+        const isBooked = b.status === 'Booked';
+
+        // 1. Desktop & Tablet Row
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-white/[0.03] transition border-b border-white/5";
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-sans">
+            <div class="flex items-center gap-2.5">
+              ${b.image_url ? 
+                `<img src="${escapeHtml(b.image_url)}" class="w-10 h-10 object-cover rounded-lg border border-white/10 shrink-0 bg-obsidian-950" onerror="this.onerror=null; this.src='/public/assets/aistudio/image_f4045ab9.png';">` :
+                `<div class="w-10 h-10 rounded-lg bg-obsidian-800 border border-white/10 flex items-center justify-center text-slate-500 shrink-0"><i data-lucide="bike" class="w-5 h-5"></i></div>`
+              }
+              <div>
+                <div class="font-bold text-white text-xs">${escapeHtml(b.name)}</div>
+                <div class="text-[10px] text-slate-400 font-mono mt-0.5">Inward: ${inDate} · <span class="text-cyan-400 font-semibold">${escapeHtml(b.category || 'Superbike')}</span></div>
+              </div>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-slate-200 font-semibold">${formatINR(purchase)}</td>
+          <td class="py-3 px-4">
+            <span class="text-cyan-400 font-semibold">${formatINR(repairs)}</span>
+            ${b.repairs_note ? `<div class="text-[10px] text-slate-400 font-sans truncate max-w-[140px]" title="${escapeHtml(b.repairs_note)}">${escapeHtml(b.repairs_note)}</div>` : ''}
+          </td>
+          <td class="py-3 px-4 font-bold text-white">${formatINR(investment)}</td>
+          <td class="py-3 px-4 font-bold text-slate-200">${formatINR(asking)}</td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="${profit >= 0 ? 'text-emerald-400 font-black' : 'text-red-400 font-black'}">
+                ${profit >= 0 ? '+' : ''}${formatINR(profit)}
+              </span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                profit >= 0 
+                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/40' 
+                  : 'bg-red-950 text-red-300 border border-red-800/40'
+              }">
+                ${profit >= 0 ? 'PROFIT' : 'LOSS'} ${marginPct}%
+              </span>
+            </div>
+          </td>
+          <td class="py-3 px-4 font-sans">
+            ${isSold ? 
+              `<span class="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30 text-[10px] flex items-center gap-1 w-max"><i data-lucide="check" class="w-3 h-3"></i> REALIZED PROFIT</span>` :
+              isBooked ?
+              `<span class="px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-400 font-bold border border-purple-500/30 text-[10px] flex items-center gap-1 w-max"><i data-lucide="clock" class="w-3 h-3"></i> BOOKED</span>` :
+              `<span class="px-2.5 py-1 rounded-full bg-cyan-500/15 text-cyan-400 font-bold border border-cyan-500/30 text-[10px] flex items-center gap-1 w-max"><i data-lucide="package" class="w-3 h-3"></i> UNREALIZED PIPELINE</span>`
+            }
+          </td>
+          <td class="py-3 px-4 text-right font-sans">
+            <div class="flex items-center justify-end gap-1.5">
+              <button onclick="openProcurementModal(${b.id})" class="px-2.5 py-1 rounded-lg bg-emerald-600/15 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/30 text-xs font-semibold transition" title="Adjust P&L Financials">
+                Edit P&L
+              </button>
+              ${!isSold ? `
+                <button onclick="quickMarkBikeSold(${b.id})" class="px-2 py-1 rounded-lg bg-obsidian-850 hover:bg-obsidian-800 text-slate-300 hover:text-white border border-white/10 text-xs font-semibold transition" title="Mark Vehicle as Sold & Realize Profit">
+                  Mark Sold
+                </button>
+              ` : ''}
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+
+        // 2. Mobile High-Readability Card
+        if (mobileContainer) {
+          const card = document.createElement('div');
+          card.className = "p-4 rounded-xl bg-obsidian-900/90 border border-white/10 space-y-3 relative overflow-hidden shadow-lg";
+          card.innerHTML = `
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-2.5 min-w-0">
+                ${b.image_url ? 
+                  `<img src="${escapeHtml(b.image_url)}" class="w-12 h-12 object-cover rounded-xl border border-white/10 shrink-0 bg-obsidian-950" onerror="this.onerror=null; this.src='/public/assets/aistudio/image_f4045ab9.png';">` :
+                  `<div class="w-12 h-12 rounded-xl bg-obsidian-800 border border-white/10 flex items-center justify-center text-slate-500 shrink-0"><i data-lucide="bike" class="w-6 h-6"></i></div>`
+                }
+                <div class="min-w-0">
+                  <h4 class="font-bold text-white text-sm truncate">${escapeHtml(b.name)}</h4>
+                  <div class="text-[10px] text-slate-400 font-mono mt-0.5">Inward: ${inDate} · <span class="text-cyan-400 font-semibold">${escapeHtml(b.category || 'Superbike')}</span></div>
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="px-2 py-0.5 rounded text-xs font-black font-mono block ${
+                  profit >= 0 
+                    ? 'bg-emerald-950 text-emerald-300 border border-emerald-700/60' 
+                    : 'bg-red-950 text-red-300 border border-red-700/60'
+                }">
+                  ${profit >= 0 ? '+' : ''}${formatINR(profit)}
+                </span>
+                <span class="text-[10px] font-mono text-slate-400 mt-0.5 block">${marginPct}% ROI</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 p-2.5 bg-obsidian-950/70 rounded-lg border border-white/5 text-xs font-mono">
+              <div>
+                <span class="text-slate-400 text-[10px] block">Purchase Inward:</span>
+                <span class="font-bold text-slate-200">${formatINR(purchase)}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 text-[10px] block">Workshop Repairs:</span>
+                <span class="font-bold text-cyan-400">${formatINR(repairs)}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 text-[10px] block">Total Landed Cost:</span>
+                <span class="font-bold text-white">${formatINR(investment)}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 text-[10px] block">Showroom Asking:</span>
+                <span class="font-bold text-amber-300">${formatINR(asking)}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1 text-xs">
+              <div>
+                ${isSold ? 
+                  `<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 text-[10px] flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i> REALIZED PROFIT</span>` :
+                  isBooked ?
+                  `<span class="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30 text-[10px] flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> BOOKED</span>` :
+                  `<span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30 text-[10px] flex items-center gap-1"><i data-lucide="package" class="w-3 h-3"></i> UNREALIZED</span>`
+                }
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="openProcurementModal(${b.id})" class="px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-semibold transition">
+                  Edit P&L
+                </button>
+                ${!isSold ? `
+                  <button type="button" onclick="quickMarkBikeSold(${b.id})" class="px-3 py-1.5 rounded-lg bg-obsidian-800 hover:bg-obsidian-700 text-slate-200 hover:text-white border border-white/10 text-xs font-semibold transition">
+                    Mark Sold
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+          mobileContainer.appendChild(card);
+        }
+      });
+
+      safeCreateIcons();
+    }
+
+    async function quickMarkBikeSold(id) {
+      const bike = bikesList.find(b => b.id === id);
+      if (!bike) return;
+
+      if (!confirm(`Mark "${bike.name}" as Sold? This will realize its profit into cash accounts.`)) return;
+
+      bike.status = 'Sold';
+      setStoredData('bikes', bikesList);
+      showToast(`Realized sales profit for ${bike.name}!`, "success");
+      addActivityAlert('inventory', 'Vehicle Sold', `${bike.name} marked as Sold (${formatINR(bike.price)})`);
+
+      if (supabase) {
+        try {
+          await supabase.from('bikes').update({ status: 'Sold' }).eq('id', id);
+        } catch (err) {
+          console.warn("Supabase bike status update error", err);
+        }
+      }
+
+      renderProcurementAnalysis();
+      renderInventoryTable();
+      updateOverviewMetrics();
+    }
+
+    function openPrintPnLModal() {
+      if (!currentUser || currentUser.role !== 'owner') {
+        showToast("Access Denied: Owner confidential statement.", "error");
+        return;
+      }
+
+      let realizedRev = 0;
+      let realizedCogs = 0;
+      let realizedRep = 0;
+      let pipelineCap = 0;
+      let pipelineAsk = 0;
+
+      bikesList.forEach(b => {
+        const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.82));
+        const repairs = Number(b.repair_cost ?? 25000);
+        const asking = Number(b.price || 0);
+        const landed = purchase + repairs;
+
+        if (b.status === 'Sold') {
+          realizedRev += asking;
+          realizedCogs += purchase;
+          realizedRep += repairs;
+        } else {
+          pipelineCap += landed;
+          pipelineAsk += asking;
+        }
+      });
+
+      const grossProfit = realizedRev - realizedCogs;
+      const overheads = Math.round(realizedRev * 0.02);
+      const netProfit = grossProfit - realizedRep - overheads;
+      const pipelineNet = pipelineAsk - pipelineCap;
+
+      document.getElementById('printPnlGrossRevenue').textContent = formatINR(realizedRev);
+      document.getElementById('printPnlCogs').textContent = `-${formatINR(realizedCogs)}`;
+      document.getElementById('printPnlGrossProfit').textContent = formatINR(grossProfit);
+      document.getElementById('printPnlRepairs').textContent = `-${formatINR(realizedRep)}`;
+      document.getElementById('printPnlOverheads').textContent = `-${formatINR(overheads)}`;
+      document.getElementById('printPnlNetProfit').textContent = `${netProfit >= 0 ? '+' : ''}${formatINR(netProfit)}`;
+      document.getElementById('printPnlNetProfit').className = `py-2.5 px-2 text-right text-base font-black ${netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
+
+      document.getElementById('printPnlCapitalLocked').textContent = formatINR(pipelineCap);
+      document.getElementById('printPnlAskingValue').textContent = formatINR(pipelineAsk);
+      document.getElementById('printPnlPipelineProfit').textContent = formatINR(pipelineNet);
+
+      document.getElementById('printPnlPeriod').textContent = `${procurementDateFilter.toUpperCase()} Statement · ${new Date().toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}`;
+      document.getElementById('printPnlTimestamp').textContent = new Date().toLocaleString('en-IN', { timeZoneName: 'short' });
+
+      openModal('printPnLModal');
+    }
+
+    function openProcurementModal(targetBikeId = null) {
+      if (!currentUser || currentUser.role !== 'owner') {
+        showToast("Access Denied: Owner only confidential financial module.", "error");
+        return;
+      }
+
+      const select = document.getElementById('procSelectBike');
+      if (select) {
+        select.innerHTML = '<option value="new">+ Enter New Procured Vehicle</option>' + 
+          bikesList.map(b => `<option value="${b.id}">${escapeHtml(b.name)} (#${b.id}) — Asking: ${formatINR(b.price)}</option>`).join('');
+      }
+
+      if (targetBikeId) {
+        if (select) select.value = targetBikeId;
+        onProcurementBikeSelect(targetBikeId);
+      } else {
+        if (select) select.value = 'new';
+        document.getElementById('procBikeId').value = '';
+        document.getElementById('procVehicleName').value = '';
+        document.getElementById('procInwardDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('procPurchaseCost').value = '';
+        document.getElementById('procRepairCost').value = '';
+        document.getElementById('procAskingPrice').value = '';
+        document.getElementById('procRepairsNote').value = '';
+        document.getElementById('procStatus').value = 'Available';
+        recalcProcurementForm();
+      }
+
+      openModal('procurementModal');
+    }
+
+    function onProcurementBikeSelect(id) {
+      if (!id || id === 'new') {
+        document.getElementById('procBikeId').value = '';
+        document.getElementById('procVehicleName').value = '';
+        document.getElementById('procInwardDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('procPurchaseCost').value = '';
+        document.getElementById('procRepairCost').value = '';
+        document.getElementById('procAskingPrice').value = '';
+        document.getElementById('procStatus').value = 'Available';
+        document.getElementById('procRepairsNote').value = '';
+        recalcProcurementForm();
+        return;
+      }
+
+      const b = bikesList.find(item => item.id == id);
+      if (!b) return;
+
+      document.getElementById('procBikeId').value = b.id;
+      document.getElementById('procVehicleName').value = b.name;
+      document.getElementById('procInwardDate').value = b.procurement_date || '2026-10-15';
+      document.getElementById('procPurchaseCost').value = b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.82);
+      document.getElementById('procRepairCost').value = b.repair_cost ?? 25000;
+      document.getElementById('procAskingPrice').value = b.price;
+      document.getElementById('procStatus').value = b.status || 'Available';
+      document.getElementById('procRepairsNote').value = b.repairs_note || '';
+
+      recalcProcurementForm();
+    }
+
+    function recalcProcurementForm() {
+      const purchase = Number(document.getElementById('procPurchaseCost')?.value || 0);
+      const repairs = Number(document.getElementById('procRepairCost')?.value || 0);
+      const asking = Number(document.getElementById('procAskingPrice')?.value || 0);
+
+      const totalCost = purchase + repairs;
+      const profit = asking - totalCost;
+      const marginPct = totalCost > 0 ? ((profit / totalCost) * 100).toFixed(1) : '0';
+
+      const totalCostEl = document.getElementById('procFormTotalCost');
+      const profitEl = document.getElementById('procFormNetProfit');
+      const marginEl = document.getElementById('procFormMarginPct');
+
+      if (totalCostEl) totalCostEl.textContent = formatINR(totalCost);
+      if (profitEl) {
+        profitEl.textContent = (profit >= 0 ? '+' : '') + formatINR(profit);
+        profitEl.className = profit >= 0 ? 'font-extrabold text-emerald-400 text-sm' : 'font-extrabold text-red-400 text-sm';
+      }
+      if (marginEl) {
+        marginEl.textContent = `${marginPct}% ROI`;
+        marginEl.className = profit >= 0 
+          ? 'px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 font-extrabold text-xs border border-emerald-800'
+          : 'px-2 py-0.5 rounded bg-red-950 text-red-300 font-extrabold text-xs border border-red-800';
+      }
+    }
+
+    document.getElementById('procurementForm')?.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!currentUser || currentUser.role !== 'owner') return;
+
+      const selId = document.getElementById('procSelectBike')?.value;
+      const existingId = document.getElementById('procBikeId')?.value;
+      const name = document.getElementById('procVehicleName').value.trim();
+      const inDate = document.getElementById('procInwardDate').value;
+      const purchase = Number(document.getElementById('procPurchaseCost').value) || 0;
+      const repairs = Number(document.getElementById('procRepairCost').value) || 0;
+      const asking = Number(document.getElementById('procAskingPrice').value) || 0;
+      const status = document.getElementById('procStatus').value;
+      const note = document.getElementById('procRepairsNote').value.trim();
+
+      const targetId = existingId || (selId !== 'new' ? selId : null);
+
+      if (targetId) {
+        // Update existing bike
+        const idx = bikesList.findIndex(b => b.id == targetId);
+        if (idx !== -1) {
+          bikesList[idx].name = name || bikesList[idx].name;
+          bikesList[idx].purchase_cost = purchase;
+          bikesList[idx].repair_cost = repairs;
+          bikesList[idx].price = asking;
+          bikesList[idx].procurement_date = inDate;
+          bikesList[idx].status = status;
+          bikesList[idx].repairs_note = note;
+          setStoredData('bikes', bikesList);
+          showToast(`P&L margins updated for ${bikesList[idx].name}`, 'success');
+          addActivityAlert('inventory', 'P&L Margins Updated', `${bikesList[idx].name}: Inward ${formatINR(purchase)}, Repairs ${formatINR(repairs)}, Asking ${formatINR(asking)}`);
+        }
+
+        if (supabase) {
+          try {
+            await supabase.from('bikes').update({
+              name: name,
+              purchase_cost: purchase,
+              repair_cost: repairs,
+              price: asking,
+              procurement_date: inDate,
+              status: status
+            }).eq('id', targetId);
+          } catch (err) {
+            console.warn("Supabase procurement update error", err);
+          }
+        }
+      } else {
+        // Create new bike with procurement data
+        const newBike = {
+          id: Date.now(),
+          name: name,
+          brand: name.split(' ')[0] || 'Premium',
+          category: 'Superbike',
+          year: 2026,
+          km: 2500,
+          price: asking,
+          purchase_cost: purchase,
+          repair_cost: repairs,
+          procurement_date: inDate,
+          status: status,
+          repairs_note: note,
+          image_url: '/public/assets/aistudio/image_f4045ab9.png'
+        };
+        bikesList.unshift(newBike);
+        setStoredData('bikes', bikesList);
+        showToast(`Procured & listed ${newBike.name} with P&L margins`, 'success');
+        addActivityAlert('inventory', 'New Inward Vehicle', `${newBike.name}: Inward ${formatINR(purchase)} + Repairs ${formatINR(repairs)} = ${formatINR(purchase + repairs)}`);
+
+        if (supabase) {
+          try {
+            await supabase.from('bikes').insert([{
+              name: newBike.name,
+              brand: newBike.brand,
+              category: newBike.category,
+              price: newBike.price,
+              year: newBike.year,
+              km: newBike.km,
+              purchase_cost: purchase,
+              repair_cost: repairs,
+              procurement_date: inDate,
+              status: status,
+              image_url: newBike.image_url
+            }]);
+          } catch (err) {
+            console.warn("Supabase procurement insert error", err);
+          }
+        }
+      }
+
+      closeModal('procurementModal');
+      renderProcurementAnalysis();
+      renderInventoryTable();
+      updateOverviewMetrics();
+    });
+
+    function exportProcurementCsv() {
+      if (!currentUser || currentUser.role !== 'owner') return;
+
+      const headers = ["ID", "Vehicle Name", "Brand", "Category", "Inward Date", "Purchase Cost (INR)", "Repairs Cost (INR)", "Total Landed Investment (INR)", "Asking / Sold Price (INR)", "Net Margin Profit/Loss (INR)", "Margin ROI %", "Accounting Status"];
+      const rows = bikesList.map(b => {
+        const purchase = Number(b.purchase_cost ?? Math.round((Number(b.price) || 100000) * 0.82));
+        const repairs = Number(b.repair_cost ?? 25000);
+        const asking = Number(b.price || 0);
+        const invest = purchase + repairs;
+        const profit = asking - invest;
+        const margin = invest > 0 ? ((profit / invest) * 100).toFixed(1) : '0';
+        return [
+          b.id,
+          `"${(b.name || '').replace(/"/g, '""')}"`,
+          `"${(b.brand || '').replace(/"/g, '""')}"`,
+          `"${(b.category || '').replace(/"/g, '""')}"`,
+          b.procurement_date || '2026-10-15',
+          purchase,
+          repairs,
+          invest,
+          asking,
+          profit,
+          `${margin}%`,
+          b.status || 'Available'
+        ];
+      });
+
+      const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Adarsh_Motors_Dealership_PnL_Ledger_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Dealership P&L ledger exported to CSV!", "success");
     }
 
 
@@ -3322,7 +5597,173 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
     }
 
 
-    // 13. DYNAMIC CMS & SOCIAL LINKS SETTINGS
+    // ========================================================
+    // 13. DYNAMIC CMS, HERO SLIDER & SOCIAL LINKS SETTINGS
+    // ========================================================
+    let activeSlideIdx = 0;
+
+    function renderHeroSlideTabs() {
+      const container = document.getElementById('heroSlideTabsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      heroSlides.forEach((slide, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isActive = idx === activeSlideIdx;
+        btn.className = `px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 whitespace-nowrap shrink-0 ${
+          isActive 
+            ? 'bg-racing-600 text-white shadow-lg shadow-racing-600/30 border border-racing-400' 
+            : 'bg-obsidian-850 hover:bg-obsidian-800 text-slate-300 hover:text-white border border-white/10'
+        }`;
+        btn.innerHTML = `
+          <span class="w-4 h-4 rounded-full ${isActive ? 'bg-white text-racing-600' : 'bg-obsidian-950 text-slate-400'} flex items-center justify-center text-[10px] font-mono font-bold">${idx + 1}</span>
+          <span>Slide ${idx + 1}: ${escapeHtml(slide.title.slice(0, 16))}${slide.title.length > 16 ? '...' : ''}</span>
+        `;
+        btn.onclick = () => switchHeroSlide(idx);
+        container.appendChild(btn);
+      });
+    }
+
+    function switchHeroSlide(idx) {
+      if (idx < 0 || idx >= heroSlides.length) return;
+      activeSlideIdx = idx;
+      const slide = heroSlides[idx];
+
+      const activeIdxInput = document.getElementById('activeSlideIndex');
+      if (activeIdxInput) activeIdxInput.value = idx;
+
+      const titleInput = document.getElementById('slideTitle');
+      const badgeInput = document.getElementById('slideBadge');
+      const subInput = document.getElementById('slideSubtitle');
+      const btnInput = document.getElementById('slideButtonText');
+      const targetInput = document.getElementById('slideActionTarget');
+      const secBtnInput = document.getElementById('slideSecondaryBtnText');
+      const imgInput = document.getElementById('slideImageUrl');
+
+      if (titleInput) titleInput.value = slide.title || '';
+      if (badgeInput) badgeInput.value = slide.badge || '';
+      if (subInput) subInput.value = slide.subtitle || '';
+      if (btnInput) btnInput.value = slide.buttonText || '';
+      if (targetInput) targetInput.value = slide.actionTarget || '#inventory';
+      if (secBtnInput) secBtnInput.value = slide.secondaryButtonText || '';
+      if (imgInput) imgInput.value = slide.imageUrl || '';
+
+      updateLiveSlidePreview();
+      renderHeroSlideTabs();
+    }
+
+    function updateLiveSlidePreview() {
+      const title = document.getElementById('slideTitle')?.value || 'BUY YOUR DREAM BIKE';
+      const badge = document.getElementById('slideBadge')?.value || 'VERIFIED SUPERBIKES';
+      const subtitle = document.getElementById('slideSubtitle')?.value || '';
+      const btnPrimary = document.getElementById('slideButtonText')?.value || 'Explore';
+      const btnSecondary = document.getElementById('slideSecondaryBtnText')?.value || 'Book Test Ride';
+      const imgUrl = document.getElementById('slideImageUrl')?.value || '/public/assets/aistudio/Screenshot_2026-10-27_171108_18bf6569.png';
+
+      const previewBadge = document.getElementById('livePreviewBadge');
+      const previewTitle = document.getElementById('livePreviewTitle');
+      const previewSubtitle = document.getElementById('livePreviewSubtitle');
+      const previewBtnPrimary = document.getElementById('livePreviewBtnPrimary');
+      const previewBtnSecondary = document.getElementById('livePreviewBtnSecondary');
+      const previewImg = document.getElementById('livePreviewImg');
+      const previewIndicator = document.getElementById('previewSlideIndicator');
+
+      if (previewBadge) previewBadge.textContent = badge;
+      if (previewTitle) previewTitle.textContent = title;
+      if (previewSubtitle) previewSubtitle.textContent = subtitle;
+      if (previewBtnPrimary) previewBtnPrimary.textContent = btnPrimary;
+      if (previewBtnSecondary) previewBtnSecondary.textContent = btnSecondary;
+      if (previewImg) previewImg.src = imgUrl;
+      if (previewIndicator) previewIndicator.textContent = `Slide ${activeSlideIdx + 1} of ${heroSlides.length}`;
+    }
+
+    function selectSlidePreset(url) {
+      const input = document.getElementById('slideImageUrl');
+      if (input) {
+        input.value = url;
+        updateLiveSlidePreview();
+        applySlideChanges(false);
+        showToast("Selected slide showroom image preset!");
+      }
+    }
+
+    function onSlideFileUpload(input) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        const imgInput = document.getElementById('slideImageUrl');
+        if (imgInput) imgInput.value = dataUrl;
+        updateLiveSlidePreview();
+        applySlideChanges(false);
+        showToast("Uploaded image applied to slide!");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function applySlideChanges(notify = true) {
+      if (!heroSlides[activeSlideIdx]) return;
+
+      heroSlides[activeSlideIdx] = {
+        ...heroSlides[activeSlideIdx],
+        title: document.getElementById('slideTitle')?.value.trim() || heroSlides[activeSlideIdx].title,
+        badge: document.getElementById('slideBadge')?.value.trim() || heroSlides[activeSlideIdx].badge,
+        subtitle: document.getElementById('slideSubtitle')?.value.trim() || '',
+        buttonText: document.getElementById('slideButtonText')?.value.trim() || 'Explore',
+        actionTarget: document.getElementById('slideActionTarget')?.value || '#inventory',
+        secondaryButtonText: document.getElementById('slideSecondaryBtnText')?.value.trim() || 'Book Test Ride',
+        imageUrl: document.getElementById('slideImageUrl')?.value.trim() || heroSlides[activeSlideIdx].imageUrl
+      };
+
+      setStoredData('hero_slides', heroSlides);
+      renderHeroSlideTabs();
+      updateLiveSlidePreview();
+
+      if (notify) {
+        showToast(`Slide ${activeSlideIdx + 1} updated in local cache! Click "Publish Hero Slides" to push to Supabase.`, "success");
+      }
+    }
+
+    async function saveHeroSlidesToSupabase() {
+      applySlideChanges(false);
+      setStoredData('hero_slides', heroSlides);
+
+      showToast("Publishing 5 Hero Slides to Supabase...", "info");
+      addActivityAlert('settings', 'Hero Carousel Published', `All 5 customer website slides updated`);
+
+      if (supabase) {
+        try {
+          const { error } = await supabase.from('site_settings').upsert([
+            { key: 'hero_slides', value: JSON.stringify(heroSlides), updated_at: new Date().toISOString() }
+          ], { onConflict: 'key' });
+
+          if (error) {
+            console.warn("Supabase hero slides upsert error", error);
+            showToast("Saved locally. Supabase write notice: " + (error.message || 'Check site_settings table permissions'), "info");
+          } else {
+            showToast("5 Hero Slides published to Supabase live! Customer front page synchronized.", "success");
+          }
+        } catch (err) {
+          console.warn("Supabase hero slides error", err);
+          showToast("Saved to local cache. Syncing with Supabase when online.", "info");
+        }
+      } else {
+        showToast("Saved 5 hero slides to local browser storage.", "success");
+      }
+    }
+
+    function resetHeroSlidesToDefaults() {
+      if (!confirm("Reset all 5 hero slides back to original factory defaults?")) return;
+      heroSlides = JSON.parse(JSON.stringify(DEFAULT_HERO_SLIDES));
+      setStoredData('hero_slides', heroSlides);
+      activeSlideIdx = 0;
+      switchHeroSlide(0);
+      showToast("Reset all 5 slides to showroom default configuration.", "info");
+    }
+
     function loadSettingsForm() {
       document.getElementById('cmsInstagram').value = siteSettings.instagram || 'adarshmotors.in';
       document.getElementById('cmsWhatsApp').value = siteSettings.whatsapp || '9014540489';
@@ -3332,6 +5773,9 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
       document.getElementById('cmsTagline').value = siteSettings.tagline || '';
       document.getElementById('cmsBannerActive').checked = siteSettings.bannerActive !== false;
       document.getElementById('cmsBannerText').value = siteSettings.bannerText || '';
+
+      renderHeroSlideTabs();
+      switchHeroSlide(activeSlideIdx || 0);
     }
 
     document.getElementById('cmsSettingsForm').addEventListener('submit', async function(e) {
@@ -3353,9 +5797,15 @@ CREATE POLICY "Allow public anon access for staff_users" ON staff_users FOR ALL 
 
       if (supabase) {
         try {
-          await supabase.from('site_settings').upsert([
-            { key: 'global_config', value: JSON.stringify(siteSettings), updated_at: new Date().toISOString() }
-          ], { onConflict: 'key' });
+          const payload = [
+            { key: 'global_config', value: JSON.stringify(siteSettings), updated_at: new Date().toISOString() },
+            { key: 'instagram', value: siteSettings.instagram, updated_at: new Date().toISOString() },
+            { key: 'whatsapp', value: siteSettings.whatsapp, updated_at: new Date().toISOString() },
+            { key: 'salesPhone', value: siteSettings.salesPhone, updated_at: new Date().toISOString() },
+            { key: 'email', value: siteSettings.email, updated_at: new Date().toISOString() },
+            { key: 'bannerText', value: siteSettings.bannerText, updated_at: new Date().toISOString() }
+          ];
+          await supabase.from('site_settings').upsert(payload, { onConflict: 'key' });
         } catch (err) {
           console.warn("Supabase site settings upsert error", err);
         }
