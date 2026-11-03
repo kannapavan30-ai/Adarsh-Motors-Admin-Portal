@@ -32,8 +32,8 @@ import {
   Upload, Image as ImageIcon, Camera, FolderOpen, Download,
   FileText, FileCheck, Zap, Check, ExternalLink, Sparkles, Car, FileBadge,
   History, Fuel, Calendar, Gauge, Timer, Layers, ChevronLeft, ChevronRight,
-  Settings2, SlidersHorizontal, Info, Award, CheckCheck, Compass, Eye as EyeIcon, Cog,
-  CheckCircle2, Calculator, Wallet, Percent, BarChart3, AlertTriangle, PieChart as PieChartIcon, Edit2, Lock, DollarSign
+  CheckCircle2, Calculator, Wallet, Percent, BarChart3, AlertTriangle, PieChart as PieChartIcon, Edit2, Lock, DollarSign,
+  LayoutGrid, List, Info, Globe, Share2, Clock, Headphones, Compass, ToggleLeft, ToggleRight, Building, MessageSquare, Wrench
 } from 'lucide-react';
 
 // SUPABASE CONFIGURATION
@@ -160,6 +160,170 @@ interface StaffItem {
   permissions: string[];
   status: string;
 }
+
+export interface HeroSlideItem {
+  id: number;
+  badge: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  buttonText: string;
+  buttonTarget: string;
+  isActive: boolean;
+}
+
+export interface SiteSettings {
+  // Helplines & Direct Calling numbers (All phone numbers on customer site)
+  salesPhone: string;          // Main Showroom / Sales hotline: +91 9014540489
+  whatsapp: string;            // Official WhatsApp: 9014540489
+  servicePhone: string;        // Workshop & Dyno Helpline: +91 9848012345
+  rsaPhone: string;            // 24x7 Roadside Assistance: 1800-425-9999 / +91 9123456780
+  tradeInPhone: string;        // Sell Bike / Valuation: +91 9014540489
+  billingPhone: string;        // Accounts / RTO Paperwork: +91 9849112233
+  ownerPhone: string;          // VIP Concierge / Escalation Direct: +91 9014540489
+  whatsappGreeting: string;    // Pre-filled greeting template
+
+  // Social Media Channels
+  instagram: string;           // adarshmotors.in / https://instagram.com/adarshmotors.in
+  youtube: string;             // https://youtube.com/@adarshmotors
+  facebook: string;            // https://facebook.com/adarshmotorshyderabad
+  twitter: string;             // https://x.com/adarshmotors
+  telegram: string;            // https://t.me/adarshmotorsvip
+  threads: string;             // https://threads.net/@adarshmotors.in
+
+  // Dealership Information & Public Identity
+  dealershipName: string;      // ADARSH MOTORS DEALERSHIP PVT LTD
+  tagline: string;             // PERFORMANCE. REFINED.
+  subtitle: string;            // Hyderabad's Premier Certified Pre-Owned Superbike Studio & Dyno Hub since 2001
+  address: string;             // Plot 42, Road No. 36, Jubilee Hills, Hyderabad, Telangana 500033
+  googleMapsUrl: string;       // https://maps.google.com/?q=Jubilee+Hills+Hyderabad
+  email: string;               // contact@adarshmotors.in
+  salesEmail: string;          // sales@adarshmotors.in
+  serviceEmail: string;        // workshop@adarshmotors.in
+  gstin: string;               // 36AADCA1234F1Z8
+  workingHours: string;        // Mon - Sat: 9:30 AM - 8:30 PM | Sunday: 10:00 AM - 6:00 PM
+  customerSiteUrl: string;     // https://adarsh-motors-site.netlify.app/
+
+  // Top Promo Announcement Banner
+  bannerActive: boolean;
+  bannerText: string;
+  bannerBadge: string;
+  bannerCtaText: string;
+  bannerCtaLink: string;
+
+  // Hero Carousel Slides (5 front page slides)
+  heroSlides: HeroSlideItem[];
+
+  // Customer Website Feature Toggles
+  enableSellBike: boolean;
+  enableTestRide: boolean;
+  enableWorkshopBooking: boolean;
+  enableEmiCalculator: boolean;
+  enableCustomerHub: boolean;
+  defaultEmiInterestRate: number;
+  defaultMaxEmiTenureMonths: number;
+  freeRsaPromo: boolean;
+}
+
+const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
+  {
+    id: 1,
+    badge: "LUXURY SUPERBIKES • ESTD 2001",
+    title: "BUY YOUR DREAM SUPERBIKE",
+    subtitle: "48-Point Certified Superbikes, Transparent Pricing & 1-Year Comprehensive Warranty.",
+    image: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1600&q=80",
+    buttonText: "Explore 6-Card Fleet",
+    buttonTarget: "#inventory",
+    isActive: true
+  },
+  {
+    id: 2,
+    badge: "INSTANT LIQUIDITY",
+    title: "SELL YOUR BIKE IN 15 MINUTES",
+    subtitle: "Instant bank transfer, free doorstep inspection, and 100% legal RTO transfer guarantee.",
+    image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1600&q=80",
+    buttonText: "Get Instant Valuation",
+    buttonTarget: "#sell-modal",
+    isActive: true
+  },
+  {
+    id: 3,
+    badge: "RACE CRAFT & PERFORMANCE",
+    title: "DYNO TUNING & SUPERBIKE SPA",
+    subtitle: "Certified Master Technicians, Laser Wheel Alignment, and Motul 300V factory-grade oils.",
+    image: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1600&q=80",
+    buttonText: "Book Workshop Slot",
+    buttonTarget: "#workshop",
+    isActive: true
+  },
+  {
+    id: 4,
+    badge: "FESTIVE LOW-RATE FINANCE",
+    title: "0% PROCESSING FEE & 8.5% EMI",
+    subtitle: "Instant loan approval with HDFC, IDFC First & ICICI Bank with flexible 60-month tenures.",
+    image: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1600&q=80",
+    buttonText: "Calculate Monthly EMI",
+    buttonTarget: "#finance",
+    isActive: true
+  },
+  {
+    id: 5,
+    badge: "COMMUNITY & RIDES",
+    title: "EXCLUSIVE SUNDAY SUPERBIKE RIDES",
+    subtitle: "Join 2,500+ passionate superbike owners across Hyderabad for curated breakfast tours.",
+    image: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1600&q=80",
+    buttonText: "Join VIP Riders Club",
+    buttonTarget: "#community",
+    isActive: true
+  }
+];
+
+const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  salesPhone: "+91 9014540489",
+  whatsapp: "9014540489",
+  servicePhone: "+91 9848012345",
+  rsaPhone: "1800-425-9999",
+  tradeInPhone: "+91 9014540489",
+  billingPhone: "+91 9849112233",
+  ownerPhone: "+91 9014540489",
+  whatsappGreeting: "Hello Adarsh Motors, I am interested in viewing certified superbikes at your Hyderabad showroom.",
+
+  instagram: "adarshmotors.in",
+  youtube: "https://youtube.com/@adarshmotors",
+  facebook: "https://facebook.com/adarshmotorshyderabad",
+  twitter: "https://x.com/adarshmotors",
+  telegram: "https://t.me/adarshmotorsvip",
+  threads: "https://threads.net/@adarshmotors.in",
+
+  dealershipName: "ADARSH MOTORS DEALERSHIP PVT LTD",
+  tagline: "PERFORMANCE. REFINED.",
+  subtitle: "Hyderabad's Premier Certified Pre-Owned Superbike Studio & Dyno Hub since 2001.",
+  address: "Plot 42, Road No. 36, Jubilee Hills, Hyderabad, Telangana 500033",
+  googleMapsUrl: "https://maps.google.com/?q=Jubilee+Hills+Hyderabad",
+  email: "contact@adarshmotors.in",
+  salesEmail: "sales@adarshmotors.in",
+  serviceEmail: "workshop@adarshmotors.in",
+  gstin: "36AADCA1234F1Z8",
+  workingHours: "Mon - Sat: 9:30 AM - 8:30 PM | Sunday: 10:00 AM - 6:00 PM",
+  customerSiteUrl: "https://adarsh-motors-site.netlify.app/",
+
+  bannerActive: true,
+  bannerText: "⚡ Festive Superbike Carnival: 0% Processing Fee on Kawasaki & BMW models this week! Free 1-Year RSA.",
+  bannerBadge: "FESTIVE CARNIVAL",
+  bannerCtaText: "Explore Offers",
+  bannerCtaLink: "https://adarsh-motors-site.netlify.app/#inventory",
+
+  heroSlides: DEFAULT_HERO_SLIDES,
+
+  enableSellBike: true,
+  enableTestRide: true,
+  enableWorkshopBooking: true,
+  enableEmiCalculator: true,
+  enableCustomerHub: true,
+  defaultEmiInterestRate: 8.5,
+  defaultMaxEmiTenureMonths: 60,
+  freeRsaPromo: true
+};
 
 const SEED_BIKES: BikeItem[] = [
   {
@@ -336,6 +500,58 @@ const SEED_BIKES: BikeItem[] = [
     addon_gear_name: "Studds Ninja Elite Flip-up Helmet",
     addon_gear_price: 2400,
     warranty_badge: "Adarsh Verified: 50-Point Inspection & 6-Month Dealership Warranty."
+  },
+  {
+    id: 7,
+    name: "Royal Enfield Continental GT 650",
+    brand: "Royal Enfield",
+    category: "Cruiser",
+    price: 340000,
+    year: 2023,
+    km: 6200,
+    image_url: "/public/assets/aistudio/image_f4045ab9.png",
+    gallery_urls: ["/public/assets/aistudio/image_f4045ab9.png"],
+    status: "Available",
+    displacement_cc: "648 cc",
+    engine_type: "Parallel Twin 4-Stroke Air-Oil Cooled",
+    max_power: "47 hp",
+    acceleration: "5.4s",
+    fuel_type: "Petrol",
+    location: "Hyderabad – Main Showroom",
+    tagline: "Authentic British cafe racer attitude with twin-cylinder acoustic rumble.",
+    colorways: [
+      { name: "Apex Grey", hex: "#64748B" },
+      { name: "British Racing Green", hex: "#14532D" }
+    ],
+    addon_gear_name: "RE Bar End Mirrors & Flyscreen",
+    addon_gear_price: 6500,
+    warranty_badge: "Adarsh Verified: 80-Point Inspection & Clear Title."
+  },
+  {
+    id: 8,
+    name: "Dainese Misano 2 D-Air Race Suit",
+    brand: "Dainese",
+    category: "Riding Gear",
+    price: 145000,
+    year: 2024,
+    km: 0,
+    image_url: "/public/assets/aistudio/Screenshot_2026-10-27_171123_5ece9d25.png",
+    gallery_urls: ["/public/assets/aistudio/Screenshot_2026-10-27_171123_5ece9d25.png"],
+    status: "Available",
+    displacement_cc: "N/A",
+    engine_type: "Full Kangaroo Leather",
+    max_power: "Level 2 Armor",
+    acceleration: "D-Air Wireless Bag",
+    fuel_type: "Gear",
+    location: "Hyderabad – Main Showroom",
+    tagline: "FIM certified MotoGP airbag race suit with titanium shoulder plates.",
+    colorways: [
+      { name: "Black / Fluo Red", hex: "#EF4444" },
+      { name: "Stealth Black", hex: "#0F172A" }
+    ],
+    addon_gear_name: "Axial D1 Air Race Boots",
+    addon_gear_price: 42000,
+    warranty_badge: "Official Dainese Warranty & Certification."
   }
 ];
 
@@ -440,33 +656,113 @@ const SEED_LEADS: LeadItem[] = [
   },
   {
     id: 2,
-    customer_name: "Siddharth Rao",
-    phone: "9000123456",
-    bike_interested: "BMW G310 GS",
-    service_type: "Exchange Quotation",
-    message: "Wants to exchange 2021 Dominar 400. Requested showroom callback.",
+    customer_name: "Vikramaditya Reddy",
+    phone: "9849055443",
+    bike_interested: "Kawasaki Ninja Z900",
+    service_type: "Purchase Booking",
+    message: "Interested in taking a weekend test ride at Jubilee Hills showroom. Ready with 50% token.",
     status: "Contacted",
-    created_at: new Date(Date.now() - 3 * 3600 * 1000).toISOString()
+    created_at: new Date(Date.now() - 4 * 3600 * 1000).toISOString()
   },
   {
     id: 3,
-    customer_name: "Ananya Deshmukh",
-    phone: "9123456789",
-    bike_interested: "Honda Activa 6G",
-    service_type: "Purchase Booking",
-    message: "Token paid via UPI, scheduled delivery for Saturday at Jubilee Hills.",
-    status: "Closed",
-    created_at: new Date(Date.now() - 24 * 3600 * 1000).toISOString()
+    customer_name: "Arjun Mehta",
+    phone: "9700088991",
+    bike_interested: "BMW S1000RR M-Sport",
+    service_type: "Finance Quotation",
+    message: "Looking for 50% down payment finance scheme with HDFC Bank and official BMW warranty.",
+    status: "Contacted",
+    created_at: new Date(Date.now() - 6 * 3600 * 1000).toISOString()
   },
   {
     id: 4,
-    customer_name: "Mohammed Farhan",
-    phone: "9885544332",
-    bike_interested: "Ducati Panigale V2",
+    customer_name: "Aditya Singhania",
+    phone: "9820011223",
+    bike_interested: "BMW S1000RR M-Sport",
     service_type: "Superbike Inspection",
-    message: "Requested mechanic inspection report before transferring balance.",
+    message: "Ready for immediate inspection at showroom. Cash deal if vehicle passes dyno test.",
+    status: "New",
+    created_at: new Date(Date.now() - 12 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 5,
+    customer_name: "Srikanth Rao",
+    phone: "9121234345",
+    bike_interested: "Ducati Diavel V4",
+    service_type: "Exchange Quotation",
+    message: "Wants to trade in 2021 Triumph Street Triple RS. Requested showroom callback.",
+    status: "Follow-up",
+    created_at: new Date(Date.now() - 18 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 6,
+    customer_name: "Rahul Nair",
+    phone: "9940123450",
+    bike_interested: "Ducati Diavel V4",
+    service_type: "Test Ride & Finance",
+    message: "Inquired about Akrapovič exhaust option and comprehensive zero-dep insurance.",
+    status: "Contacted",
+    created_at: new Date(Date.now() - 22 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 7,
+    customer_name: "Pradeep Teja",
+    phone: "9550012398",
+    bike_interested: "KTM 1290 Super Duke R",
+    service_type: "Test Ride",
+    message: "Is test ride permitted this Sunday morning at Gachibowli experience center?",
+    status: "New",
+    created_at: new Date(Date.now() - 26 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 8,
+    customer_name: "Ananya Deshmukh",
+    phone: "9123456789",
+    bike_interested: "Honda Activa 6G Premium",
+    service_type: "Purchase Booking",
+    message: "Token paid via UPI, scheduled delivery for Saturday at Jubilee Hills.",
+    status: "Closed",
+    created_at: new Date(Date.now() - 32 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 9,
+    customer_name: "Venkat Raman",
+    phone: "9441122334",
+    bike_interested: "Honda Activa 6G Premium",
+    service_type: "Commercial Enquiry",
+    message: "Needs 2 Activa scooters for family business delivery. Please share best on-road price.",
+    status: "New",
+    created_at: new Date(Date.now() - 40 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 10,
+    customer_name: "Rohit Sharma",
+    phone: "9811122334",
+    bike_interested: "Kawasaki Ninja ZX-10R",
+    service_type: "Superbike Inspection",
+    message: "Asking for track telemetry and full official Kawasaki service history records.",
     status: "Follow-up",
     created_at: new Date(Date.now() - 48 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 11,
+    customer_name: "Harish Kalyan",
+    phone: "9632145678",
+    bike_interested: "Royal Enfield Continental GT 650",
+    service_type: "Exchange Quotation",
+    message: "Loved the Mr Clean chrome finish. Enquiring about EMI options and test ride.",
+    status: "Contacted",
+    created_at: new Date(Date.now() - 55 * 3600 * 1000).toISOString()
+  },
+  {
+    id: 12,
+    customer_name: "Mohammed Farhan",
+    phone: "9885544332",
+    bike_interested: "Dainese Misano 2 D-Air Race Suit",
+    service_type: "Riding Gear Fitting",
+    message: "Enquiring about European size 52 availability and fitting session at workshop.",
+    status: "New",
+    created_at: new Date(Date.now() - 60 * 3600 * 1000).toISOString()
   }
 ];
 
@@ -666,7 +962,12 @@ export default function App() {
       const saved = localStorage.getItem('adarsh_bikes');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) && parsed.length > 0 ? parsed.map(mergeBikeDefaults) : SEED_BIKES;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const loadedIds = new Set(parsed.map((p: any) => p.id));
+          const missing = SEED_BIKES.filter(s => !loadedIds.has(s.id));
+          return [...parsed.map(mergeBikeDefaults), ...missing.map(mergeBikeDefaults)];
+        }
+        return SEED_BIKES;
       }
       return SEED_BIKES;
     } catch {
@@ -710,32 +1011,29 @@ export default function App() {
     }
   });
 
-  const [settings, setSettings] = useState(() => {
+  const [settings, setSettings] = useState<SiteSettings>(() => {
     try {
       const saved = localStorage.getItem('adarsh_settings');
-      return saved ? JSON.parse(saved) : {
-        instagram: "adarshmotors.in",
-        whatsapp: "9014540489",
-        salesPhone: "+91 9014540489",
-        email: "contact@adarshmotors.in",
-        address: "Plot 42, Road No. 36, Jubilee Hills, Hyderabad, Telangana 500033",
-        tagline: "PERFORMANCE. REFINED. Hyderabad's premier certified pre-owned superbike hub.",
-        bannerActive: true,
-        bannerText: "⚡ Festive Superbike Carnival: 0% Processing Fee on Kawasaki & BMW models this week! Visit Hyderabad showroom."
-      };
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_SITE_SETTINGS,
+          ...parsed,
+          heroSlides: Array.isArray(parsed.heroSlides) && parsed.heroSlides.length > 0 ? parsed.heroSlides : DEFAULT_HERO_SLIDES
+        };
+      }
+      return DEFAULT_SITE_SETTINGS;
     } catch {
-      return {
-        instagram: "adarshmotors.in",
-        whatsapp: "9014540489",
-        salesPhone: "+91 9014540489",
-        email: "contact@adarshmotors.in",
-        address: "Plot 42, Road No. 36, Jubilee Hills, Hyderabad, Telangana 500033",
-        tagline: "PERFORMANCE. REFINED.",
-        bannerActive: true,
-        bannerText: "⚡ Festive Superbike Carnival: 0% Processing Fee on Kawasaki & BMW models this week!"
-      };
+      return DEFAULT_SITE_SETTINGS;
     }
   });
+
+  // CMS Sub-Tab & Hero Slider editing state
+  const [cmsActiveSubTab, setCmsActiveSubTab] = useState<'helplines' | 'social' | 'hero' | 'banner' | 'dealership' | 'features'>('helplines');
+  const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
+  const [editingHeroSlide, setEditingHeroSlide] = useState<HeroSlideItem | null>(null);
+  const [showSlideEditModal, setShowSlideEditModal] = useState<boolean>(false);
+  const [cmsSaveLoading, setCmsSaveLoading] = useState<boolean>(false);
 
   const [alerts, setAlerts] = useState<{ id: number; type: string; title: string; detail: string; time: string }[]>([
     { id: 1, type: 'lead', title: 'New enquiry received', detail: 'Kiran Varma for Kawasaki Ninja Z900', time: '15m ago' },
@@ -822,6 +1120,15 @@ export default function App() {
   const [auditSearch, setAuditSearch] = useState<string>('');
   const [auditStaffFilter, setAuditStaffFilter] = useState<string>('ALL');
   const [auditModuleFilter, setAuditModuleFilter] = useState<string>('ALL');
+
+  // Dedicated Vehicle Interested Leads Modal & Form States
+  const [selectedBikeForLeads, setSelectedBikeForLeads] = useState<BikeItem | null>(null);
+  const [showAddLeadForBike, setShowAddLeadForBike] = useState<boolean>(false);
+  const [newLeadName, setNewLeadName] = useState<string>('');
+  const [newLeadPhone, setNewLeadPhone] = useState<string>('');
+  const [newLeadServiceType, setNewLeadServiceType] = useState<string>('Test Ride & Finance');
+  const [newLeadMessage, setNewLeadMessage] = useState<string>('');
+  const [newLeadStatus, setNewLeadStatus] = useState<LeadItem['status']>('New');
 
   // Customer Showroom Live Preview States (Exact Customer Website View from Screenshots)
   const [inventoryViewMode, setInventoryViewMode] = useState<'table' | 'showroom'>('showroom');
@@ -1253,6 +1560,26 @@ export default function App() {
 
         const { data: stData } = await supabase.from('staff_users').select('*');
         if (stData && stData.length > 0) setStaff(stData as StaffItem[]);
+
+        const { data: setRows } = await supabase.from('site_settings').select('*');
+        if (setRows && setRows.length > 0) {
+          const cfg = setRows.find(r => r.key === 'global_config' || r.key === 'site_config');
+          if (cfg && cfg.value) {
+            try {
+              const val = typeof cfg.value === 'string' ? JSON.parse(cfg.value) : cfg.value;
+              setSettings(prev => ({ ...prev, ...val }));
+            } catch {}
+          }
+          const heroRow = setRows.find(r => r.key === 'hero_slides');
+          if (heroRow && heroRow.value) {
+            try {
+              const slides = typeof heroRow.value === 'string' ? JSON.parse(heroRow.value) : heroRow.value;
+              if (Array.isArray(slides) && slides.length > 0) {
+                setSettings(prev => ({ ...prev, heroSlides: slides }));
+              }
+            } catch {}
+          }
+        }
       } catch (err) {
         console.warn("Supabase query sync notice", err);
       }
@@ -1807,6 +2134,139 @@ export default function App() {
     return `https://wa.me/${finalPhone}?text=${msg}`;
   };
 
+  const getBikeWhatsAppLink = (b: BikeItem) => {
+    const rawP = cleanPhone(settings.whatsapp || '9014540489');
+    const finalPhone = rawP.startsWith('91') ? rawP : '91' + rawP;
+    const msg = encodeURIComponent(`Hi Adarsh Motors, I am interested in the ${b.name} (${b.year || '2024'} - Offer Price: ${formatINR(b.price)}). Is this vehicle currently available for inspection and test ride at your showroom?`);
+    return `https://wa.me/${finalPhone}?text=${msg}`;
+  };
+
+  // Dedicated helper to retrieve all customer inquiries for a specific bike
+  const getBikeLeads = (bike: BikeItem): LeadItem[] => {
+    if (!bike) return [];
+    const bName = (bike.name || '').toLowerCase().trim();
+    // Distinctive keywords from bike name
+    const nameKeywords = bName
+      .split(/\s+/)
+      .filter(w => w.length >= 3 && !['motor', 'bike', 'edition', 'premium', 'with', 'gear', 'suit'].includes(w));
+
+    return leads.filter(l => {
+      if (!l.bike_interested) return false;
+      const lBike = l.bike_interested.toLowerCase().trim();
+      if (lBike.includes(bName) || bName.includes(lBike)) return true;
+      return nameKeywords.some(kw => lBike.includes(kw));
+    });
+  };
+
+  // Handler to register a new lead for the selected bike directly
+  const handleAddBikeLead = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedBikeForLeads) return;
+    if (!newLeadName.trim() || !newLeadPhone.trim()) {
+      showToast('Please enter both customer name and phone number.');
+      return;
+    }
+
+    const newLead: LeadItem = {
+      id: Date.now(),
+      customer_name: newLeadName.trim(),
+      phone: newLeadPhone.trim(),
+      bike_interested: selectedBikeForLeads.name,
+      service_type: newLeadServiceType || 'Purchase Booking',
+      message: newLeadMessage.trim() || `Customer requested showroom inquiry for ${selectedBikeForLeads.name}.`,
+      status: newLeadStatus,
+      created_at: new Date().toISOString()
+    };
+
+    setLeads(prev => [newLead, ...prev]);
+    showToast(`Recorded new inquiry for ${selectedBikeForLeads.name}!`);
+    logAuditAction(
+      'lead_status',
+      'Leads CRM',
+      `${currentUser?.name || 'Staff'} recorded new inquiry for ${selectedBikeForLeads.name} from ${newLead.customer_name}`,
+      newLead.id,
+      `${newLead.customer_name} (${newLead.phone})`,
+      { notes: `Vehicle: ${selectedBikeForLeads.name}, Service: ${newLead.service_type}` }
+    );
+
+    try {
+      await supabase.from('leads').insert([{
+        customer_name: newLead.customer_name,
+        phone: newLead.phone,
+        bike_interested: newLead.bike_interested,
+        service_type: newLead.service_type,
+        message: newLead.message,
+        status: newLead.status
+      }]);
+    } catch (err) {
+      console.warn("Supabase lead sync notice", err);
+    }
+
+    setNewLeadName('');
+    setNewLeadPhone('');
+    setNewLeadMessage('');
+    setShowAddLeadForBike(false);
+  };
+
+  // CMS Settings Save & Supabase Sync Handler
+  const handleSaveCmsSettings = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setCmsSaveLoading(true);
+
+    try {
+      localStorage.setItem('adarsh_settings', JSON.stringify(settings));
+    } catch {}
+
+    showToast('Customer portal settings saved & synced live!');
+
+    logAuditAction(
+      'settings_edit',
+      'CMS Settings',
+      `${currentUser?.name || 'Owner'} updated customer portal settings (helplines, social links, hero slides)`,
+      undefined,
+      'Site Settings',
+      { notes: `Sales Phone: ${settings.salesPhone}, WhatsApp: ${settings.whatsapp}, Slides: ${settings.heroSlides?.length || 5}` }
+    );
+
+    // Sync to Supabase site_settings table
+    try {
+      await supabase.from('site_settings').upsert({
+        key: 'global_config',
+        value: settings,
+        updated_at: new Date().toISOString()
+      });
+      await supabase.from('site_settings').upsert({
+        key: 'hero_slides',
+        value: settings.heroSlides,
+        updated_at: new Date().toISOString()
+      });
+      await supabase.from('site_settings').upsert({
+        key: 'contact_phone',
+        value: settings.salesPhone,
+        updated_at: new Date().toISOString()
+      });
+    } catch (err) {
+      console.warn("Supabase settings sync notice", err);
+    } finally {
+      setTimeout(() => setCmsSaveLoading(false), 400);
+    }
+  };
+
+  // Helper to handle slide image file upload directly from mobile / desktop
+  const handleSlideImageUpload = (file: File, slideId: number) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      setSettings(prev => ({
+        ...prev,
+        heroSlides: prev.heroSlides.map(s => s.id === slideId ? { ...s, image: dataUrl } : s)
+      }));
+      showToast(`Updated banner image for slide #${slideId}!`);
+    };
+    reader.readAsDataURL(file);
+  };
+
   // ==============================================================
   // RENDER AUTH MODAL (IF NOT LOGGED IN)
   // ==============================================================
@@ -2346,7 +2806,18 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <a
+            href={settings.customerSiteUrl || "https://adarsh-motors-site.netlify.app/"}
+            target="_blank"
+            rel="noreferrer"
+            className="px-2 py-1 rounded-lg bg-red-600/15 hover:bg-red-600/25 border border-red-500/30 text-[10px] font-bold text-red-300 flex items-center gap-1 transition"
+            title="Open Live Public Customer Website"
+          >
+            <Globe className="w-3 h-3 text-red-400" />
+            <span className="hidden xs:inline">Customer Site</span>
+            <ExternalLink className="w-2.5 h-2.5 text-slate-400" />
+          </a>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-900">
             {currentUser.role === 'owner' ? 'Owner' : 'Staff'}
           </span>
@@ -2854,256 +3325,384 @@ export default function App() {
                     <option value="Booked">Booked</option>
                     <option value="Sold">Sold</option>
                   </select>
+
+                  {/* View Mode Toggle: 6-Card Grid vs Compact Table */}
+                  <div className="flex items-center gap-1 bg-[#0F1A2C] p-1 rounded-lg border border-white/10 text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setInventoryViewMode('showroom')}
+                      className={`px-2.5 py-1.5 rounded-md font-bold flex items-center gap-1.5 transition ${
+                        inventoryViewMode === 'showroom'
+                          ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                      title="6-Vehicles Per Row Showroom Grid"
+                    >
+                      <LayoutGrid className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">6-Card Grid</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setInventoryViewMode('table')}
+                      className={`px-2.5 py-1.5 rounded-md font-bold flex items-center gap-1.5 transition ${
+                        inventoryViewMode === 'table'
+                          ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                          : 'text-slate-400 hover:text-white'
+                      }`}
+                      title="Compact Table View"
+                    >
+                      <List className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Table View</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* RESPONSIVE INVENTORY VIEW CONTAINER */}
               <div className="bg-[#0B1320]/80 rounded-2xl border border-white/10 overflow-hidden">
-                {/* 1. MOBILE CARDS VIEW (< sm) */}
-                <div className="block sm:hidden divide-y divide-white/10 p-3 space-y-3">
-                  {filteredBikes.length === 0 ? (
-                    <div className="p-8 text-center text-xs text-slate-400">
-                      No vehicles found matching your criteria.
-                    </div>
-                  ) : (
-                    filteredBikes.map((b) => (
-                      <div key={b.id} className="pt-3 first:pt-0 space-y-2.5">
-                        <div className="flex gap-3">
-                          {b.image_url ? (
-                            <img
-                              src={b.image_url}
-                              alt={b.name}
-                              className="w-16 h-16 object-cover rounded-xl border border-white/10 bg-[#080E17] shrink-0"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/public/assets/aistudio/image_f4045ab9.png';
-                              }}
-                            />
-                          ) : (
-                            <div className="w-16 h-16 rounded-xl bg-[#0F1A2C] border border-white/10 flex items-center justify-center text-slate-500 shrink-0">
-                              <Bike className="w-7 h-7" />
-                            </div>
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-1">
-                              <div>
-                                <div className="text-xs font-bold text-white leading-tight truncate">{b.name}</div>
-                                <div className="text-[10px] text-slate-400 mt-0.5">{b.brand} · {b.category}</div>
-                              </div>
-                              <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded border shrink-0 ${
-                                b.status === 'Available'
-                                  ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60'
-                                  : b.status === 'Booked'
-                                  ? 'bg-amber-950/80 text-amber-300 border-amber-800/60'
-                                  : 'bg-red-950/80 text-red-300 border-red-800/60'
-                              }`}>
-                                {b.status}
-                              </span>
-                            </div>
-                            <div className="flex items-baseline justify-between mt-1">
-                              <div className="text-sm font-extrabold text-white font-mono">{formatINR(b.price)}</div>
-                              <div className="text-[10px] text-slate-400 font-mono">{b.year} · {b.km ? b.km.toLocaleString('en-IN') + ' km' : 'New'}</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Specs strip */}
-                        <div className="flex items-center justify-between text-[10px] bg-[#080E17] px-2.5 py-1.5 rounded-lg border border-white/5 font-mono text-slate-300">
-                          <span>⚡ {b.displacement_cc || '1000 cc'}</span>
-                          <span>🚀 {b.max_power || '160 hp'}</span>
-                          <span>⏱️ {b.acceleration || '3.2s'}</span>
-                          <span className="text-slate-400">ID: #{b.id}</span>
-                        </div>
-
-                        {/* Mobile Action Controls */}
-                        <div className="flex items-center justify-between gap-2 pt-1">
-                          <select
-                            value={b.status}
-                            onChange={(e) => {
-                              const newSt = e.target.value as any;
-                              const prevSt = b.status;
-                              setBikes(prev => prev.map(item => item.id === b.id ? { ...item, status: newSt } : item));
-                              showToast(`${b.name} marked as ${newSt}`);
-                              logAuditAction(
-                                'inventory_edit',
-                                'Inventory',
-                                `${currentUser?.name || 'Staff'} changed status of ${b.name} to '${newSt}'`,
-                                b.id,
-                                b.name,
-                                { field: 'status', before: prevSt, after: newSt, notes: 'Quick status change via mobile card' }
-                              );
-                              supabase.from('bikes').update({ status: newSt }).eq('id', b.id).then();
-                            }}
-                            className="text-xs bg-[#0F1A2C] border border-white/10 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none flex-1 font-medium"
-                          >
-                            <option value="Available">Available</option>
-                            <option value="Booked">Booked</option>
-                            <option value="Sold">Sold</option>
-                          </select>
-
-                          <button
-                            type="button"
-                            onClick={() => openCustomerPreview(b)}
-                            className="p-1.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-800/40 transition"
-                            title="Customer Showroom View"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => openEditBikeModal(b)}
-                            className="p-1.5 rounded-lg bg-[#0F1A2C] hover:bg-[#16243C] text-slate-300 border border-white/10 transition"
-                            title="Edit Vehicle"
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (confirm(`Delete ${b.name}?`)) {
-                                setBikes(prev => prev.filter(item => item.id !== b.id));
-                                showToast(`Deleted ${b.name}`);
-                                logAuditAction(
-                                  'inventory_delete',
-                                  'Inventory',
-                                  `${currentUser?.name || 'Staff'} deleted vehicle ${b.name} (ID: #${b.id})`,
-                                  b.id,
-                                  b.name,
-                                  { notes: 'Vehicle removed from showroom stock' }
-                                );
-                                supabase.from('bikes').delete().eq('id', b.id).then();
-                              }
-                            }}
-                            className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/30 transition"
-                            title="Delete Vehicle"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
+                {inventoryViewMode === 'showroom' ? (
+                  /* 6-COLUMNS IN 1 LINE SHOWROOM CARD GRID (MATCHING REFERENCE IMAGE) */
+                  <div className="p-4 sm:p-5">
+                    {filteredBikes.length === 0 ? (
+                      <div className="p-16 text-center text-xs text-slate-400">
+                        <Bike className="w-10 h-10 mx-auto mb-3 text-slate-600 opacity-60" />
+                        No vehicles or gear items found matching your filters.
                       </div>
-                    ))
-                  )}
-                </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-6 gap-3.5">
+                        {filteredBikes.map((b) => (
+                          <div
+                            key={b.id}
+                            className="bg-[#080D17] hover:bg-[#0B1220] border border-white/10 hover:border-red-500/50 rounded-2xl p-3 flex flex-col justify-between transition-all duration-300 shadow-xl group relative overflow-hidden"
+                          >
+                            <div>
+                              {/* Top Badges: PRE-OWNED / NEW + Year */}
+                              <div className="flex items-center justify-between mb-2">
+                                <span
+                                  className={`text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider ${
+                                    b.category === 'Riding Gear'
+                                      ? 'bg-white/10 text-white border border-white/20'
+                                      : 'bg-red-950/80 text-red-400 border border-red-800/60'
+                                  }`}
+                                >
+                                  {b.category === 'Riding Gear' ? 'NEW' : 'PRE-OWNED'}
+                                </span>
+                                <span className="text-[9px] font-mono text-slate-300 bg-black/70 px-1.5 py-0.5 rounded border border-white/10">
+                                  {b.year || '2024'}
+                                </span>
+                              </div>
 
-                {/* 2. DESKTOP TABLE VIEW (sm:block) */}
-                <div className="hidden sm:block overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="text-slate-400 bg-[#080E17]/60 border-b border-white/10 font-semibold uppercase text-[11px]">
-                        <th className="py-3 px-4">VEHICLE / PRODUCT</th>
-                        <th className="py-3 px-4">BRAND</th>
-                        <th className="py-3 px-4">CATEGORY</th>
-                        <th className="py-3 px-4">YEAR & KM</th>
-                        <th className="py-3 px-4">PRICE</th>
-                        <th className="py-3 px-4">STATUS</th>
-                        <th className="py-3 px-4 text-right">ACTIONS</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                      {filteredBikes.map((b) => (
-                        <tr key={b.id} className="hover:bg-white/[0.02] transition">
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-3">
-                              {b.image_url ? (
+                              {/* Vehicle Image Container */}
+                              <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-[#05080F] border border-white/5 mb-2.5">
                                 <img
                                   src={b.image_url}
                                   alt={b.name}
-                                  className="w-12 h-12 object-cover rounded-lg border border-white/10 bg-[#080E17]"
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                   onError={(e) => {
                                     (e.target as HTMLImageElement).src = '/public/assets/aistudio/image_f4045ab9.png';
                                   }}
                                 />
-                              ) : (
-                                <div className="w-12 h-12 rounded-lg bg-[#0F1A2C] border border-white/10 flex items-center justify-center text-slate-500">
-                                  <Bike className="w-6 h-6" />
+                                {/* Bottom Watermark Overlay Matching Reference Screenshot */}
+                                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-1.5 flex items-end justify-between pointer-events-none">
+                                  <span className="text-[8px] font-bold tracking-widest text-slate-400 uppercase opacity-80">
+                                    WORKSHOP CARE
+                                  </span>
+                                  <span
+                                    className={`text-[8px] font-extrabold uppercase px-1 rounded ${
+                                      b.status === 'Available'
+                                        ? 'bg-emerald-500/25 text-emerald-300'
+                                        : b.status === 'Booked'
+                                        ? 'bg-amber-500/25 text-amber-300'
+                                        : 'bg-red-500/25 text-red-300'
+                                    }`}
+                                  >
+                                    {b.status}
+                                  </span>
                                 </div>
-                              )}
-                              <div>
-                                <div className="font-bold text-white">{b.name}</div>
-                                <div className="text-[11px] text-slate-400">ID: #{b.id}</div>
+                              </div>
+
+                              {/* Brand Label */}
+                              <div className="text-[10px] font-black uppercase tracking-widest text-red-500 truncate">
+                                {b.brand}
+                              </div>
+
+                              {/* Vehicle Model Name */}
+                              <h3
+                                className="text-xs sm:text-sm font-black text-white uppercase tracking-tight truncate leading-snug mt-0.5 group-hover:text-red-400 transition-colors"
+                                title={b.name}
+                              >
+                                {b.name}
+                              </h3>
+
+                              {/* Key Specs Line */}
+                              <div className="text-[11px] text-slate-400 font-mono mt-1 flex items-center gap-1.5 truncate">
+                                {b.category === 'Riding Gear' ? (
+                                  <span>Brand New · Level 2 Armor</span>
+                                ) : (
+                                  <span>
+                                    {b.km ? b.km.toLocaleString('en-IN') + ' km' : '1,200 km'} · {b.max_power || '125 hp'}
+                                  </span>
+                                )}
                               </div>
                             </div>
-                          </td>
-                          <td className="py-3 px-4 font-semibold text-slate-300">{b.brand}</td>
-                          <td className="py-3 px-4">
-                            <span className="px-2 py-0.5 rounded bg-[#0F1A2C] text-slate-300 text-[11px] border border-white/5">
-                              {b.category}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 font-mono text-slate-300">
-                            {b.year} · <span className="text-slate-400">{b.km ? b.km.toLocaleString('en-IN') + ' km' : 'New'}</span>
-                          </td>
-                          <td className="py-3 px-4 font-mono font-bold text-white">{formatINR(b.price)}</td>
-                          <td className="py-3 px-4">
-                            <select
-                              value={b.status}
-                              onChange={(e) => {
-                                const newSt = e.target.value as any;
-                                const prevSt = b.status;
-                                setBikes(prev => prev.map(item => item.id === b.id ? { ...item, status: newSt } : item));
-                                showToast(`${b.name} marked as ${newSt}`);
-                                logAuditAction(
-                                  'inventory_edit',
-                                  'Inventory',
-                                  `${currentUser?.name || 'Staff'} changed status of ${b.name} to '${newSt}'`,
-                                  b.id,
-                                  b.name,
-                                  { field: 'status', before: prevSt, after: newSt, notes: 'Quick status change via inventory table' }
+
+                            {/* Offer Price & Buttons */}
+                            <div className="mt-3 pt-2.5 border-t border-white/5">
+                              <div className="flex items-center justify-between text-[9px] mb-0.5">
+                                <span className="font-bold text-slate-400 uppercase tracking-wider">OFFER PRICE</span>
+                                <span className="font-extrabold text-emerald-400 bg-emerald-950/70 border border-emerald-800/50 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                  VERIFIED
+                                </span>
+                              </div>
+
+                              <div className="text-base font-black text-white font-mono tracking-tight">
+                                {formatINR(b.price)}
+                              </div>
+
+                              {/* Dedicated Interested Leads Button for this Specific Vehicle (Replaced Specs & WhatsApp) */}
+                              {(() => {
+                                const bLeads = getBikeLeads(b);
+                                const hasLeads = bLeads.length > 0;
+                                return (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedBikeForLeads(b);
+                                      setShowAddLeadForBike(false);
+                                    }}
+                                    className={`w-full mt-2.5 py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-200 border group/btn ${
+                                      hasLeads
+                                        ? 'bg-gradient-to-r from-red-600/25 via-[#111A2E] to-red-600/15 border-red-500/50 text-white hover:border-red-400 hover:from-red-600/35 shadow-lg shadow-red-950/50'
+                                        : 'bg-[#0F1A2C] hover:bg-[#16243C] border-white/10 text-slate-400 hover:text-white'
+                                    }`}
+                                    title={`Click to view ${bLeads.length} customer inquiries for ${b.name}`}
+                                  >
+                                    <div className="flex items-center gap-1.5 min-w-0">
+                                      <Users className={`w-3.5 h-3.5 shrink-0 ${hasLeads ? 'text-red-400 group-hover/btn:scale-110 transition-transform' : 'text-slate-500'}`} />
+                                      <span className="truncate text-[11px] font-bold">Interested Leads</span>
+                                    </div>
+                                    <span
+                                      className={`px-2 py-0.5 rounded-full text-[10px] font-black font-mono shrink-0 transition-colors ${
+                                        hasLeads
+                                          ? 'bg-red-600 text-white shadow-sm shadow-red-600/60'
+                                          : 'bg-white/5 text-slate-400 border border-white/10'
+                                      }`}
+                                    >
+                                      {bLeads.length} {bLeads.length === 1 ? 'Lead' : 'Leads'}
+                                    </span>
+                                  </button>
                                 );
-                                supabase.from('bikes').update({ status: newSt }).eq('id', b.id).then();
-                              }}
-                              className="text-xs bg-[#0F1A2C] border border-white/10 rounded px-2 py-1 text-slate-200 focus:outline-none"
-                            >
-                              <option value="Available">Available</option>
-                              <option value="Booked">Booked</option>
-                              <option value="Sold">Sold</option>
-                            </select>
-                          </td>
-                          <td className="py-3 px-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
-                              <button
-                                onClick={() => openCustomerPreview(b)}
-                                className="p-1.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-800/40 transition"
-                                title="Customer Showroom View"
-                              >
-                                <Eye className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                onClick={() => openEditBikeModal(b)}
-                                className="p-1.5 rounded-lg bg-[#0F1A2C] hover:bg-[#16243C] text-slate-300 transition"
-                                title="Edit Vehicle"
-                              >
-                                <Pencil className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                onClick={() => {
-                                  if (confirm(`Delete ${b.name}?`)) {
-                                    setBikes(prev => prev.filter(item => item.id !== b.id));
-                                    showToast(`Deleted ${b.name}`);
+                              })()}
+
+                              {/* Staff / Owner Quick Admin Actions */}
+                              <div className="flex items-center justify-between gap-1.5 mt-2.5 pt-2 border-t border-white/5">
+                                <select
+                                  value={b.status}
+                                  onChange={(e) => {
+                                    const newSt = e.target.value as any;
+                                    const prevSt = b.status;
+                                    setBikes(prev => prev.map(item => item.id === b.id ? { ...item, status: newSt } : item));
+                                    showToast(`${b.name} marked as ${newSt}`);
                                     logAuditAction(
-                                      'inventory_delete',
+                                      'inventory_edit',
                                       'Inventory',
-                                      `${currentUser?.name || 'Staff'} deleted vehicle ${b.name} (ID: #${b.id})`,
+                                      `${currentUser?.name || 'Staff'} changed status of ${b.name} to '${newSt}'`,
                                       b.id,
                                       b.name,
-                                      { notes: 'Vehicle deleted from showroom stock' }
+                                      { field: 'status', before: prevSt, after: newSt, notes: 'Quick status change via 6-column card' }
                                     );
-                                    supabase.from('bikes').delete().eq('id', b.id).then();
-                                  }
-                                }}
-                                className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/30 transition"
-                                title="Delete Vehicle"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
+                                    supabase.from('bikes').update({ status: newSt }).eq('id', b.id).then();
+                                  }}
+                                  className="text-[10px] bg-[#0F1A2C] border border-white/10 rounded px-1.5 py-1 text-slate-300 focus:outline-none flex-1 font-medium"
+                                >
+                                  <option value="Available">Available</option>
+                                  <option value="Booked">Booked</option>
+                                  <option value="Sold">Sold</option>
+                                </select>
+
+                                <button
+                                  type="button"
+                                  onClick={() => openEditBikeModal(b)}
+                                  className="p-1 rounded bg-[#0F1A2C] hover:bg-[#16243C] text-slate-300 border border-white/10 transition"
+                                  title="Edit Vehicle Specs & Pricing"
+                                >
+                                  <Pencil className="w-3 h-3 text-cyan-400" />
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (confirm(`Delete ${b.name}?`)) {
+                                      setBikes(prev => prev.filter(item => item.id !== b.id));
+                                      showToast(`Deleted ${b.name}`);
+                                      logAuditAction(
+                                        'inventory_delete',
+                                        'Inventory',
+                                        `${currentUser?.name || 'Staff'} deleted vehicle ${b.name} (ID: #${b.id})`,
+                                        b.id,
+                                        b.name,
+                                        { notes: 'Vehicle deleted from showroom stock' }
+                                      );
+                                      supabase.from('bikes').delete().eq('id', b.id).then();
+                                    }
+                                  }}
+                                  className="p-1 rounded bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/30 transition"
+                                  title="Delete Vehicle"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </button>
+                              </div>
                             </div>
-                          </td>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Compact Table View (Fallback when toggled) */
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="text-slate-400 bg-[#080E17]/60 border-b border-white/10 font-semibold uppercase text-[11px]">
+                          <th className="py-3 px-4">VEHICLE / PRODUCT</th>
+                          <th className="py-3 px-4">BRAND</th>
+                          <th className="py-3 px-4">CATEGORY</th>
+                          <th className="py-3 px-4">YEAR & KM</th>
+                          <th className="py-3 px-4">PRICE</th>
+                          <th className="py-3 px-4">STATUS</th>
+                          <th className="py-3 px-4 text-center">INTERESTED LEADS</th>
+                          <th className="py-3 px-4 text-right">ACTIONS</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {filteredBikes.map((b) => (
+                          <tr key={b.id} className="hover:bg-white/[0.02] transition">
+                            <td className="py-3 px-4">
+                              <div className="flex items-center gap-3">
+                                {b.image_url ? (
+                                  <img
+                                    src={b.image_url}
+                                    alt={b.name}
+                                    className="w-12 h-12 object-cover rounded-lg border border-white/10 bg-[#080E17]"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = '/public/assets/aistudio/image_f4045ab9.png';
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="w-12 h-12 rounded-lg bg-[#0F1A2C] border border-white/10 flex items-center justify-center text-slate-500">
+                                    <Bike className="w-6 h-6" />
+                                  </div>
+                                )}
+                                <div>
+                                  <div className="font-bold text-white">{b.name}</div>
+                                  <div className="text-[11px] text-slate-400">ID: #{b.id}</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3 px-4 font-semibold text-slate-300">{b.brand}</td>
+                            <td className="py-3 px-4">
+                              <span className="px-2 py-0.5 rounded bg-[#0F1A2C] text-slate-300 text-[11px] border border-white/5">
+                                {b.category}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 font-mono text-slate-300">
+                              {b.year} · <span className="text-slate-400">{b.km ? b.km.toLocaleString('en-IN') + ' km' : 'New'}</span>
+                            </td>
+                            <td className="py-3 px-4 font-mono font-bold text-white">{formatINR(b.price)}</td>
+                            <td className="py-3 px-4">
+                              <select
+                                value={b.status}
+                                onChange={(e) => {
+                                  const newSt = e.target.value as any;
+                                  const prevSt = b.status;
+                                  setBikes(prev => prev.map(item => item.id === b.id ? { ...item, status: newSt } : item));
+                                  showToast(`${b.name} marked as ${newSt}`);
+                                  logAuditAction(
+                                    'inventory_edit',
+                                    'Inventory',
+                                    `${currentUser?.name || 'Staff'} changed status of ${b.name} to '${newSt}'`,
+                                    b.id,
+                                    b.name,
+                                    { field: 'status', before: prevSt, after: newSt, notes: 'Quick status change via inventory table' }
+                                  );
+                                  supabase.from('bikes').update({ status: newSt }).eq('id', b.id).then();
+                                }}
+                                className="text-xs bg-[#0F1A2C] border border-white/10 rounded px-2 py-1 text-slate-200 focus:outline-none"
+                              >
+                                <option value="Available">Available</option>
+                                <option value="Booked">Booked</option>
+                                <option value="Sold">Sold</option>
+                              </select>
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              {(() => {
+                                const bLeads = getBikeLeads(b);
+                                const hasLeads = bLeads.length > 0;
+                                return (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setSelectedBikeForLeads(b);
+                                      setShowAddLeadForBike(false);
+                                    }}
+                                    className={`px-2.5 py-1 rounded-lg text-xs font-bold inline-flex items-center gap-1.5 border transition ${
+                                      hasLeads
+                                        ? 'bg-red-600/20 hover:bg-red-600/30 border-red-500/40 text-red-200 shadow-sm'
+                                        : 'bg-[#0F1A2C] hover:bg-[#16243C] border-white/10 text-slate-400'
+                                    }`}
+                                    title={`Click to view ${bLeads.length} leads for ${b.name}`}
+                                  >
+                                    <Users className={`w-3.5 h-3.5 ${hasLeads ? 'text-red-400' : 'text-slate-500'}`} />
+                                    <span>{bLeads.length} {bLeads.length === 1 ? 'Lead' : 'Leads'}</span>
+                                  </button>
+                                );
+                              })()}
+                            </td>
+                            <td className="py-3 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => openCustomerPreview(b)}
+                                  className="p-1.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-800/40 transition"
+                                  title="Customer Showroom View"
+                                >
+                                  <Eye className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => openEditBikeModal(b)}
+                                  className="p-1.5 rounded-lg bg-[#0F1A2C] hover:bg-[#16243C] text-slate-300 transition"
+                                  title="Edit Vehicle"
+                                >
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (confirm(`Delete ${b.name}?`)) {
+                                      setBikes(prev => prev.filter(item => item.id !== b.id));
+                                      showToast(`Deleted ${b.name}`);
+                                      logAuditAction(
+                                        'inventory_delete',
+                                        'Inventory',
+                                        `${currentUser?.name || 'Staff'} deleted vehicle ${b.name} (ID: #${b.id})`,
+                                        b.id,
+                                        b.name,
+                                        { notes: 'Vehicle deleted from showroom stock' }
+                                      );
+                                      supabase.from('bikes').delete().eq('id', b.id).then();
+                                    }
+                                  }}
+                                  className="p-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/30 transition"
+                                  title="Delete Vehicle"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -3807,102 +4406,1822 @@ export default function App() {
           {/* TAB 6: DYNAMIC CMS & SOCIAL SETTINGS                           */}
           {/* ============================================================== */}
           {activeTab === 'settings' && hasAccess('settings') && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-black text-white tracking-tight">Dynamic CMS & Social Media Settings</h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  Modify customer-facing contact numbers, Instagram handles, and top announcement banner text without code changes.
-                </p>
+            <div className="space-y-6 pb-20 sm:pb-8 max-w-7xl mx-auto w-full">
+              {/* Top Executive Studio Header */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#0B1320] via-[#0E1A2E] to-[#0B1320] border border-white/10 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div className="relative z-10 space-y-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                      Supabase Live Synced
+                    </span>
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">
+                      Adarsh Motors CMS
+                    </span>
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono text-slate-400 bg-white/5 border border-white/10">
+                      table: site_settings
+                    </span>
+                  </div>
+
+                  <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    <Sliders className="w-5 h-5 text-red-500" />
+                    <span>Customer Website Control Studio</span>
+                  </h2>
+
+                  <p className="text-xs text-slate-400 max-w-2xl">
+                    Live control center for customer helplines, WhatsApp desk, social links, hero banner slides, and feature switches on{' '}
+                    <a
+                      href="https://adarsh-motors-site.netlify.app/"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-cyan-400 font-mono font-bold hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>adarsh-motors-site.netlify.app</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </p>
+                </div>
+
+                <div className="relative z-10 flex flex-wrap items-center gap-2.5 pt-2 md:pt-0">
+                  <a
+                    href="https://adarsh-motors-site.netlify.app/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-4 py-2.5 rounded-xl bg-[#080E17] hover:bg-[#111A2E] border border-white/10 text-slate-200 text-xs font-bold flex items-center gap-2 transition hover:text-white hover:border-cyan-500/40"
+                    title="Open Live Public Customer Website"
+                  >
+                    <Globe className="w-4 h-4 text-cyan-400" />
+                    <span>Preview Live Site</span>
+                    <ExternalLink className="w-3 h-3 text-slate-500" />
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSaveCmsSettings()}
+                    disabled={cmsSaveLoading}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-black text-xs flex items-center gap-2 shadow-xl shadow-red-600/30 transition-all active:scale-95 disabled:opacity-50 border border-red-500/40"
+                  >
+                    {cmsSaveLoading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Publishing to Site...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        <span>Save & Publish Live</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
-              <div className="bg-[#0B1320]/80 p-6 rounded-2xl border border-white/10 max-w-2xl">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    showToast('CMS settings saved & live on customer site!');
-                    supabase.from('site_settings').upsert({ key: 'global_config', value: JSON.stringify(settings) }).then();
-                  }}
-                  className="space-y-5"
+              {/* Segmented Pill Navigation Bar */}
+              <div className="p-1.5 bg-[#0B1320] border border-white/10 rounded-2xl shadow-xl flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+                <button
+                  type="button"
+                  onClick={() => setCmsActiveSubTab('helplines')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                    cmsActiveSubTab === 'helplines'
+                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-600/30 border border-red-400/30'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                  }`}
                 >
-                  <div className="p-4 rounded-xl bg-[#0F1A2C] border border-white/10">
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="text-xs font-semibold text-white uppercase tracking-wider">
-                        Top Promo Announcement Banner
+                  <PhoneCall className="w-3.5 h-3.5" />
+                  <span>Showroom Helplines</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${cmsActiveSubTab === 'helplines' ? 'bg-black/30 text-white' : 'bg-white/10 text-slate-400'}`}>
+                    7
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCmsActiveSubTab('social')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                    cmsActiveSubTab === 'social'
+                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-600/30 border border-red-400/30'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span>Social Channels</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${cmsActiveSubTab === 'social' ? 'bg-black/30 text-white' : 'bg-white/10 text-slate-400'}`}>
+                    6
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCmsActiveSubTab('hero')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                    cmsActiveSubTab === 'hero'
+                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-600/30 border border-red-400/30'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>Hero Slider Studio</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${cmsActiveSubTab === 'hero' ? 'bg-black/30 text-white' : 'bg-white/10 text-slate-400'}`}>
+                    5 Slides
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCmsActiveSubTab('banner')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                    cmsActiveSubTab === 'banner'
+                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-600/30 border border-red-400/30'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Promo Ticker Banner</span>
+                  <span className={`w-2 h-2 rounded-full ${settings.bannerActive ? 'bg-emerald-400' : 'bg-slate-600'}`}></span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCmsActiveSubTab('dealership')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                    cmsActiveSubTab === 'dealership'
+                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-600/30 border border-red-400/30'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <Building className="w-3.5 h-3.5" />
+                  <span>Dealership & Hours</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCmsActiveSubTab('features')}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 shrink-0 ${
+                    cmsActiveSubTab === 'features'
+                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-600/30 border border-red-400/30'
+                      : 'text-slate-400 hover:text-white hover:bg-white/5 border border-transparent'
+                  }`}
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Feature Switches</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded font-mono bg-white/10 text-slate-400">
+                    6
+                  </span>
+                </button>
+              </div>
+
+              {/* ============================================================== */}
+              {/* SUBTAB 1: CUSTOMER HELPLINES & DIRECT CALL NUMBERS             */}
+              {/* ============================================================== */}
+              {cmsActiveSubTab === 'helplines' && (
+                <div className="space-y-6">
+                  {/* Slim Executive Notice Bar */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-r from-red-600/10 via-amber-500/10 to-transparent border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center shrink-0 border border-red-500/30">
+                        <PhoneCall className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-white flex items-center gap-2">
+                          <span>Public Customer Helplines Routing</span>
+                          <span className="px-2 py-0.2 rounded-full text-[9px] font-black uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            Dynamic Sync
+                          </span>
+                        </h4>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          Numbers configured below are live-routed on <span className="text-cyan-300 font-mono">adarsh-motors-site.netlify.app</span> across vehicle cards, header pills, and emergency docks.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <a
+                        href={`tel:${cleanPhone(settings.salesPhone || '9014540489')}`}
+                        className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition border border-white/10"
+                      >
+                        <PhoneCall className="w-3.5 h-3.5 text-red-400" />
+                        <span>Test Call</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveCmsSettings()}
+                        className="px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-red-600/30"
+                      >
+                        <Save className="w-3.5 h-3.5" />
+                        <span>Save Helplines</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Section A: Primary Touchpoints */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                          Primary Customer Touchpoints & WhatsApp
+                        </h3>
+                      </div>
+                      <span className="text-[11px] text-slate-400 font-mono">Active on all vehicle listings</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* 1. Main Showroom Helpline */}
+                      <div className="p-5 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-red-500/30 transition-all space-y-4 shadow-xl">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-red-600/15 border border-red-500/30 text-red-400 flex items-center justify-center font-bold">
+                              <Phone className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-black text-white">Sales & Showroom Hotline</h4>
+                              <p className="text-[11px] text-slate-400">Header phone pill & incoming buyer calls</p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-red-950/80 text-red-400 border border-red-900/50">
+                            Header Pill
+                          </span>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Phone Number (With Country Code)
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <div className="relative flex-1">
+                              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-red-400 font-mono text-xs font-bold">
+                                🇮🇳 +91
+                              </span>
+                              <input
+                                type="text"
+                                value={settings.salesPhone || ''}
+                                onChange={(e) => setSettings({ ...settings, salesPhone: e.target.value })}
+                                placeholder="9014540489"
+                                className="w-full pl-16 pr-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white font-mono placeholder-slate-600 focus:outline-none focus:border-red-500"
+                              />
+                            </div>
+                            <a
+                              href={`tel:${cleanPhone(settings.salesPhone || '9014540489')}`}
+                              className="px-3.5 py-2.5 rounded-xl bg-red-600/15 hover:bg-red-600/25 border border-red-500/30 text-red-300 text-xs font-bold flex items-center gap-1.5 transition shrink-0"
+                              title="Test Phone Call"
+                            >
+                              <PhoneCall className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Call</span>
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                navigator.clipboard.writeText(settings.salesPhone || '9014540489');
+                                showToast('Copied showroom phone number!');
+                              }}
+                              className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10 transition shrink-0"
+                              title="Copy Phone Number"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 2. Official WhatsApp Desk */}
+                      <div className="p-5 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-emerald-500/30 transition-all space-y-4 shadow-xl">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-emerald-600/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold">
+                              <MessageSquare className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-black text-white">Official WhatsApp Desk</h4>
+                              <p className="text-[11px] text-slate-400">All vehicle inventory card chats & floating widget</p>
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-900/50">
+                            WhatsApp
+                          </span>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            WhatsApp Phone (Digits Only)
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <div className="relative flex-1">
+                              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-emerald-400 font-mono text-xs font-bold">
+                                🇮🇳 +91
+                              </span>
+                              <input
+                                type="text"
+                                value={settings.whatsapp || ''}
+                                onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
+                                placeholder="9014540489"
+                                className="w-full pl-16 pr-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-emerald-400 font-mono placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                              />
+                            </div>
+                            <a
+                              href={`https://wa.me/91${cleanPhone(settings.whatsapp || '9014540489')}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-3.5 py-2.5 rounded-xl bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition shrink-0"
+                              title="Test WhatsApp Chat"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Chat</span>
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                navigator.clipboard.writeText(settings.whatsapp || '9014540489');
+                                showToast('Copied WhatsApp phone number!');
+                              }}
+                              className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10 transition shrink-0"
+                              title="Copy WhatsApp Number"
+                            >
+                              <Copy className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 3. WhatsApp Pre-filled Greeting Simulator */}
+                      <div className="p-5 rounded-2xl bg-[#0B1320] border border-white/10 md:col-span-2 space-y-3 shadow-xl">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-emerald-400" />
+                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">
+                              Customer WhatsApp Welcome Greeting Template
+                            </h4>
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            Auto-filled when customer clicks WhatsApp on any bike
+                          </span>
+                        </div>
+
+                        {/* WhatsApp Bubble Preview */}
+                        <div className="p-3.5 rounded-xl bg-[#07130F] border border-emerald-900/40 relative">
+                          <div className="flex items-start gap-2.5">
+                            <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] shrink-0">
+                              WA
+                            </div>
+                            <div className="flex-1 bg-[#122A20] p-3 rounded-2xl rounded-tl-none border border-emerald-500/20 text-xs text-emerald-100 shadow-md">
+                              <p className="italic leading-relaxed font-sans">
+                                "{settings.whatsappGreeting || 'Hello Adarsh Motors, I am interested in viewing certified superbikes at your Hyderabad showroom.'}"
+                              </p>
+                              <div className="text-[10px] text-emerald-400/70 font-mono mt-1 text-right flex items-center justify-end gap-1">
+                                <span>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                <span>✓✓</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                            Edit Greeting Copy
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={settings.whatsappGreeting || ''}
+                            onChange={(e) => setSettings({ ...settings, whatsappGreeting: e.target.value })}
+                            placeholder="Hello Adarsh Motors, I am interested in viewing certified superbikes at your Hyderabad showroom."
+                            className="w-full px-3.5 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-sans"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section B: Departmental Helplines */}
+                  <div className="space-y-4 pt-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-cyan-500"></span>
+                        <h3 className="text-xs font-bold text-white uppercase tracking-wider">
+                          Departmental Helplines & Emergency Desk (5 Lines)
+                        </h3>
+                      </div>
+                      <span className="text-[11px] text-slate-400 font-mono">Specialized direct lines</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {/* Workshop & Dyno Support */}
+                      <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-cyan-500/30 transition-all space-y-3 shadow-md flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center border border-cyan-500/20">
+                                <Wrench className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-black text-white">Workshop & Dyno</h4>
+                                <p className="text-[10px] text-slate-400">Service appointments</p>
+                              </div>
+                            </div>
+                            <a
+                              href={`tel:${cleanPhone(settings.servicePhone || '9848012345')}`}
+                              className="p-1.5 rounded-lg bg-cyan-950/40 text-cyan-400 hover:text-white border border-cyan-800/40 transition"
+                              title="Call Workshop"
+                            >
+                              <PhoneCall className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-mono text-[11px]">
+                            +91
+                          </span>
+                          <input
+                            type="text"
+                            value={settings.servicePhone || ''}
+                            onChange={(e) => setSettings({ ...settings, servicePhone: e.target.value })}
+                            placeholder="9848012345"
+                            className="w-full pl-10 pr-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-cyan-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* 24x7 Emergency RSA */}
+                      <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-red-500/30 transition-all space-y-3 shadow-md flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center border border-red-500/20">
+                                <AlertTriangle className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-black text-white">24x7 Roadside RSA</h4>
+                                <p className="text-[10px] text-slate-400">Emergency breakdown</p>
+                              </div>
+                            </div>
+                            <a
+                              href={`tel:${cleanPhone(settings.rsaPhone || '18004259999')}`}
+                              className="p-1.5 rounded-lg bg-red-950/40 text-red-400 hover:text-white border border-red-800/40 transition"
+                              title="Call RSA"
+                            >
+                              <PhoneCall className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={settings.rsaPhone || ''}
+                            onChange={(e) => setSettings({ ...settings, rsaPhone: e.target.value })}
+                            placeholder="1800-425-9999"
+                            className="w-full px-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-red-400 font-mono focus:outline-none focus:border-red-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Sell Bike Trade-In Desk */}
+                      <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-amber-500/30 transition-all space-y-3 shadow-md flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-amber-600/20 text-amber-400 flex items-center justify-center border border-amber-500/20">
+                                <TrendingUp className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-black text-white">Sell Bike in 15 Mins</h4>
+                                <p className="text-[10px] text-slate-400">Valuation & payout desk</p>
+                              </div>
+                            </div>
+                            <a
+                              href={`tel:${cleanPhone(settings.tradeInPhone || '9014540489')}`}
+                              className="p-1.5 rounded-lg bg-amber-950/40 text-amber-400 hover:text-white border border-amber-800/40 transition"
+                              title="Call Procurement"
+                            >
+                              <PhoneCall className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-mono text-[11px]">
+                            +91
+                          </span>
+                          <input
+                            type="text"
+                            value={settings.tradeInPhone || ''}
+                            onChange={(e) => setSettings({ ...settings, tradeInPhone: e.target.value })}
+                            placeholder="9014540489"
+                            className="w-full pl-10 pr-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-amber-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* RTO & Billing Desk */}
+                      <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-blue-500/30 transition-all space-y-3 shadow-md flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center border border-blue-500/20">
+                                <FileText className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-black text-white">RTO & Billing Desk</h4>
+                                <p className="text-[10px] text-slate-400">Smart RC & Tax Invoices</p>
+                              </div>
+                            </div>
+                            <a
+                              href={`tel:${cleanPhone(settings.billingPhone || '9849112233')}`}
+                              className="p-1.5 rounded-lg bg-blue-950/40 text-blue-400 hover:text-white border border-blue-800/40 transition"
+                              title="Call Billing"
+                            >
+                              <PhoneCall className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-mono text-[11px]">
+                            +91
+                          </span>
+                          <input
+                            type="text"
+                            value={settings.billingPhone || ''}
+                            onChange={(e) => setSettings({ ...settings, billingPhone: e.target.value })}
+                            placeholder="9849112233"
+                            className="w-full pl-10 pr-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Owner VIP Concierge Direct Escalation */}
+                      <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 hover:border-amber-500/30 transition-all space-y-3 shadow-md sm:col-span-2 lg:col-span-2 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/20">
+                                <Crown className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <h4 className="text-xs font-black text-white">Owner VIP Concierge Escalation</h4>
+                                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-400 border border-amber-500/25">
+                                    Pavan Kumar
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-slate-400">Direct VIP escalation line for high-ticket bookings and customer disputes</p>
+                              </div>
+                            </div>
+                            <a
+                              href={`tel:${cleanPhone(settings.ownerPhone || '9014540489')}`}
+                              className="p-1.5 rounded-lg bg-amber-950/40 text-amber-400 hover:text-white border border-amber-800/40 transition"
+                              title="Call Owner"
+                            >
+                              <PhoneCall className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-amber-400 font-mono text-[11px] font-bold">
+                            +91
+                          </span>
+                          <input
+                            type="text"
+                            value={settings.ownerPhone || ''}
+                            onChange={(e) => setSettings({ ...settings, ownerPhone: e.target.value })}
+                            placeholder="9014540489"
+                            className="w-full pl-10 pr-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-amber-400 font-mono font-bold focus:outline-none focus:border-amber-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ============================================================== */}
+              {/* SUBTAB 2: SOCIAL MEDIA CHANNELS & HANDLES                      */}
+              {/* ============================================================== */}
+              {cmsActiveSubTab === 'social' && (
+                <div className="space-y-6">
+                  <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300 flex items-start gap-3">
+                    <Share2 className="w-4 h-4 flex-shrink-0 mt-0.5 text-purple-400" />
+                    <div>
+                      <span className="font-bold">Manage all public customer social links and handles.</span> These icons and links appear in the customer website footer, floating social dock, and mobile menu.
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* 1. Instagram */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#0B1320]/90 border border-white/10 hover:border-pink-500/30 transition space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center font-bold">
+                            IG
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-white">Instagram</h4>
+                            <p className="text-[10px] text-slate-400">Reels & Delivery Handover Photos</p>
+                          </div>
+                        </div>
+                        <a
+                          href={`https://instagram.com/${(settings.instagram || 'adarshmotors.in').replace('@', '')}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[10px] text-pink-400 hover:underline flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          <span>Open</span>
+                        </a>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Instagram Handle</label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-2.5 text-xs text-slate-500">@</span>
+                          <input
+                            type="text"
+                            value={(settings.instagram || '').replace(/^@/, '')}
+                            onChange={(e) => setSettings({ ...settings, instagram: e.target.value.replace(/^@/, '') })}
+                            placeholder="adarshmotors.in"
+                            className="w-full pl-7 pr-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-pink-500 font-mono"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2. YouTube Channel */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#0B1320]/90 border border-white/10 hover:border-red-500/30 transition space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center font-bold">
+                            YT
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-white">YouTube Channel</h4>
+                            <p className="text-[10px] text-slate-400">Dyno Runs & Exhaust Acoustics</p>
+                          </div>
+                        </div>
+                        {settings.youtube && (
+                          <a
+                            href={settings.youtube}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[10px] text-red-400 hover:underline flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            <span>Open</span>
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">YouTube URL</label>
+                        <input
+                          type="text"
+                          value={settings.youtube || ''}
+                          onChange={(e) => setSettings({ ...settings, youtube: e.target.value })}
+                          placeholder="https://youtube.com/@adarshmotors"
+                          className="w-full px-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 3. Facebook Official */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#0B1320]/90 border border-white/10 hover:border-blue-500/30 transition space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold">
+                            FB
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-white">Facebook Page</h4>
+                            <p className="text-[10px] text-slate-400">Community & Showroom Announcements</p>
+                          </div>
+                        </div>
+                        {settings.facebook && (
+                          <a
+                            href={settings.facebook}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[10px] text-blue-400 hover:underline flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            <span>Open</span>
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Facebook URL</label>
+                        <input
+                          type="text"
+                          value={settings.facebook || ''}
+                          onChange={(e) => setSettings({ ...settings, facebook: e.target.value })}
+                          placeholder="https://facebook.com/adarshmotorshyderabad"
+                          className="w-full px-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 4. Twitter / X */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#0B1320]/90 border border-white/10 hover:border-slate-400/30 transition space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-white/10 text-white flex items-center justify-center font-bold font-mono">
+                            𝕏
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-white">X (Twitter)</h4>
+                            <p className="text-[10px] text-slate-400">Official Dealership Handle</p>
+                          </div>
+                        </div>
+                        {settings.twitter && (
+                          <a
+                            href={settings.twitter}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[10px] text-cyan-400 hover:underline flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            <span>Open</span>
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Twitter / X URL</label>
+                        <input
+                          type="text"
+                          value={settings.twitter || ''}
+                          onChange={(e) => setSettings({ ...settings, twitter: e.target.value })}
+                          placeholder="https://x.com/adarshmotors"
+                          className="w-full px-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-slate-400 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 5. Telegram VIP Riders Club */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#0B1320]/90 border border-white/10 hover:border-cyan-500/30 transition space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                            TG
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-white">Telegram VIP Riders Club</h4>
+                            <p className="text-[10px] text-slate-400">Sunday Superbike Tour Coordination</p>
+                          </div>
+                        </div>
+                        {settings.telegram && (
+                          <a
+                            href={settings.telegram}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[10px] text-cyan-400 hover:underline flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            <span>Open</span>
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Telegram Channel Link</label>
+                        <input
+                          type="text"
+                          value={settings.telegram || ''}
+                          onChange={(e) => setSettings({ ...settings, telegram: e.target.value })}
+                          placeholder="https://t.me/adarshmotorsvip"
+                          className="w-full px-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-cyan-500 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    {/* 6. Threads */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#0B1320]/90 border border-white/10 hover:border-white/30 transition space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-xl bg-white/10 text-white flex items-center justify-center font-bold">
+                            @
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-white">Threads</h4>
+                            <p className="text-[10px] text-slate-400">Micro-updates & Superbike banter</p>
+                          </div>
+                        </div>
+                        {settings.threads && (
+                          <a
+                            href={settings.threads}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[10px] text-slate-300 hover:underline flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            <span>Open</span>
+                          </a>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-300 uppercase tracking-wider">Threads URL</label>
+                        <input
+                          type="text"
+                          value={settings.threads || ''}
+                          onChange={(e) => setSettings({ ...settings, threads: e.target.value })}
+                          placeholder="https://threads.net/@adarshmotors.in"
+                          className="w-full px-3 py-2 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-white/40 font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ============================================================== */}
+              {/* SUBTAB 3: HERO SLIDER & FRONT PAGE BANNER MANAGER (5 SLIDES)   */}
+              {/* ============================================================== */}
+              {cmsActiveSubTab === 'hero' && (
+                <div className="space-y-6">
+                  {/* Top Slide Selector Pills */}
+                  <div className="p-3.5 bg-[#0B1320] border border-white/10 rounded-2xl shadow-lg space-y-2">
+                    <div className="flex items-center justify-between px-1">
+                      <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <Layers className="w-3.5 h-3.5 text-red-400" />
+                        <span>Select Front Page Slide (5 Customer Slides)</span>
+                      </span>
+                      <span className="text-[11px] text-cyan-400 font-mono">
+                        Editing Slide #{activeSlideIndex + 1} of 5
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                      {(settings.heroSlides || DEFAULT_HERO_SLIDES).map((slide, idx) => {
+                        const isSelected = activeSlideIndex === idx;
+                        return (
+                          <button
+                            key={slide.id || idx}
+                            type="button"
+                            onClick={() => setActiveSlideIndex(idx)}
+                            className={`p-2.5 rounded-xl border text-left transition flex items-center gap-2.5 relative overflow-hidden ${
+                              isSelected
+                                ? 'bg-red-600/15 border-red-500/80 shadow-md shadow-red-600/30'
+                                : 'bg-[#080E17] border-white/10 hover:border-white/25'
+                            }`}
+                          >
+                            <img
+                              src={slide.image || "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=200&q=80"}
+                              alt={slide.title}
+                              className="w-10 h-10 rounded-lg object-cover shrink-0 border border-white/10"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center justify-between">
+                                <span className={`text-[10px] font-black uppercase ${isSelected ? 'text-red-400' : 'text-slate-400'}`}>
+                                  Slide #{idx + 1}
+                                </span>
+                                <span className={`w-1.5 h-1.5 rounded-full ${slide.isActive ? 'bg-emerald-400' : 'bg-slate-600'}`}></span>
+                              </div>
+                              <div className="text-xs font-bold text-white truncate leading-tight mt-0.5">
+                                {slide.title}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* ACTIVE SLIDE STUDIO: Split Preview + Clean Form */}
+                  {(() => {
+                    const currentSlide = (settings.heroSlides || DEFAULT_HERO_SLIDES)[activeSlideIndex] || (settings.heroSlides || DEFAULT_HERO_SLIDES)[0];
+
+                    const updateActiveSlide = (fields: Partial<HeroSlideItem>) => {
+                      const updatedSlides = (settings.heroSlides || DEFAULT_HERO_SLIDES).map((s, idx) =>
+                        idx === activeSlideIndex ? { ...s, ...fields } : s
+                      );
+                      setSettings({ ...settings, heroSlides: updatedSlides });
+                    };
+
+                    return (
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        {/* Left: Cinema Live Mockup Preview (5 Cols) */}
+                        <div className="lg:col-span-5 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                              <Eye className="w-3.5 h-3.5 text-cyan-400" />
+                              <span>Live Customer Preview</span>
+                            </span>
+                            <span className="text-[10px] text-slate-500 font-mono">16:9 Display Aspect</span>
+                          </div>
+
+                          {/* 16:9 Cinema Card */}
+                          <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/15 bg-black shadow-2xl group">
+                            <img
+                              src={currentSlide.image}
+                              alt={currentSlide.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                            />
+                            {/* Dark Luxury Vignette */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-5 flex flex-col justify-end">
+                              <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-1">
+                                {currentSlide.badge || "ESTD 2001"}
+                              </span>
+                              <h3 className="text-base sm:text-lg font-black text-white leading-tight drop-shadow-md">
+                                {currentSlide.title}
+                              </h3>
+                              <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-relaxed">
+                                {currentSlide.subtitle}
+                              </p>
+                              <div className="mt-3 inline-block max-w-fit">
+                                <span className="px-3.5 py-1.5 rounded-xl bg-red-600 text-white font-bold text-xs shadow-lg shadow-red-600/40">
+                                  {currentSlide.buttonText || "Explore"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Status Pill on top left */}
+                            <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-white flex items-center gap-1.5 border border-white/10">
+                              <span className={`w-1.5 h-1.5 rounded-full ${currentSlide.isActive ? 'bg-emerald-400' : 'bg-red-500'}`}></span>
+                              <span>Slide #{activeSlideIndex + 1} {currentSlide.isActive ? 'Active' : 'Hidden'}</span>
+                            </div>
+                          </div>
+
+                          {/* Quick Photo Upload & Presets */}
+                          <div className="p-3.5 rounded-xl bg-[#0B1320] border border-white/10 space-y-2.5">
+                            <div className="flex items-center justify-between text-[11px] font-bold text-slate-300">
+                              <span>Change Slide Photo</span>
+                              <label className="text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1">
+                                <Upload className="w-3 h-3" />
+                                <span>Upload Device Image</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    if (e.target.files && e.target.files[0]) {
+                                      handleSlideImageUpload(e.target.files[0], currentSlide.id);
+                                    }
+                                  }}
+                                />
+                              </label>
+                            </div>
+
+                            <div className="grid grid-cols-4 gap-1.5">
+                              {[
+                                { name: "Kawasaki", url: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80" },
+                                { name: "Ducati", url: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80" },
+                                { name: "BMW", url: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=800&q=80" },
+                                { name: "Studio", url: "/public/assets/aistudio/Screenshot_2026-10-27_171108_18bf6569.png" }
+                              ].map((p, pIdx) => (
+                                <button
+                                  key={pIdx}
+                                  type="button"
+                                  onClick={() => updateActiveSlide({ image: p.url })}
+                                  className="aspect-video rounded-lg overflow-hidden border border-white/10 hover:border-red-500 relative group transition"
+                                  title={`Set wallpaper: ${p.name}`}
+                                >
+                                  <img src={p.url} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition" />
+                                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-[9px] font-bold text-white">
+                                    {p.name}
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Clean, Aligned Form Controls (7 Cols) */}
+                        <div className="lg:col-span-7 p-5 sm:p-6 rounded-2xl bg-[#0B1320] border border-white/10 space-y-4 shadow-lg">
+                          <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                            <div>
+                              <h4 className="text-sm font-bold text-white">Slide #{activeSlideIndex + 1} Configuration</h4>
+                              <p className="text-[11px] text-slate-400">Edit headline copy, call-to-action button, and destination target</p>
+                            </div>
+
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <span className="text-xs font-bold text-slate-300">
+                                {currentSlide.isActive ? 'Live on Website' : 'Hidden'}
+                              </span>
+                              <input
+                                type="checkbox"
+                                checked={currentSlide.isActive}
+                                onChange={(e) => updateActiveSlide({ isActive: e.target.checked })}
+                                className="w-5 h-5 rounded bg-slate-800 text-red-600 focus:ring-0 border-white/20 cursor-pointer"
+                              />
+                            </label>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                              <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                                Top Badge Text
+                              </label>
+                              <input
+                                type="text"
+                                value={currentSlide.badge || ''}
+                                onChange={(e) => updateActiveSlide({ badge: e.target.value })}
+                                placeholder="LUXURY SUPERBIKES • ESTD 2001"
+                                className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500 font-sans"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                                Button Label
+                              </label>
+                              <input
+                                type="text"
+                                value={currentSlide.buttonText || ''}
+                                onChange={(e) => updateActiveSlide({ buttonText: e.target.value })}
+                                placeholder="Explore 6-Card Fleet"
+                                className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                              Main Slide Headline
+                            </label>
+                            <input
+                              type="text"
+                              value={currentSlide.title || ''}
+                              onChange={(e) => updateActiveSlide({ title: e.target.value })}
+                              placeholder="BUY YOUR DREAM SUPERBIKE"
+                              className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-sm font-bold text-white focus:outline-none focus:border-red-500 font-sans"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                              Subtitle Description
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={currentSlide.subtitle || ''}
+                              onChange={(e) => updateActiveSlide({ subtitle: e.target.value })}
+                              placeholder="48-Point Certified Superbikes, Transparent Pricing & 1-Year Comprehensive Warranty."
+                              className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-red-500 leading-relaxed font-sans"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div>
+                              <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                                Button Destination Link
+                              </label>
+                              <select
+                                value={currentSlide.buttonTarget || '#inventory'}
+                                onChange={(e) => updateActiveSlide({ buttonTarget: e.target.value })}
+                                className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500"
+                              >
+                                <option value="#inventory">#inventory (Showroom Fleet)</option>
+                                <option value="#sell-modal">#sell-modal (Sell Bike Modal)</option>
+                                <option value="#workshop">#workshop (Dyno & Service)</option>
+                                <option value="#finance">#finance (EMI Calculator)</option>
+                                <option value="#community">#community (VIP Riders Club)</option>
+                                <option value="#locations">#locations (Showroom Maps)</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                                Photo Image URL
+                              </label>
+                              <input
+                                type="text"
+                                value={currentSlide.image || ''}
+                                onChange={(e) => updateActiveSlide({ image: e.target.value })}
+                                placeholder="https://..."
+                                className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-cyan-400 font-mono truncate focus:outline-none focus:border-cyan-500"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Slide Navigation Buttons */}
+                          <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                disabled={activeSlideIndex === 0}
+                                onClick={() => setActiveSlideIndex(prev => Math.max(0, prev - 1))}
+                                className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 transition"
+                              >
+                                <ChevronLeft className="w-3.5 h-3.5" />
+                                <span>Previous</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                disabled={activeSlideIndex >= (settings.heroSlides || DEFAULT_HERO_SLIDES).length - 1}
+                                onClick={() => setActiveSlideIndex(prev => Math.min((settings.heroSlides || DEFAULT_HERO_SLIDES).length - 1, prev + 1))}
+                                className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 hover:text-white disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 transition"
+                              >
+                                <span>Next</span>
+                                <ChevronRight className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => handleSaveCmsSettings()}
+                              className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-red-600/30 transition"
+                            >
+                              <Save className="w-3.5 h-3.5" />
+                              <span>Save Slide #{activeSlideIndex + 1}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {/* ============================================================== */}
+              {/* SUBTAB 4: TOP ANNOUNCEMENT / PROMO TICKER BANNER               */}
+              {/* ============================================================== */}
+              {/* ============================================================== */}
+              {/* SUBTAB 4: TOP ANNOUNCEMENT / PROMO TICKER BANNER               */}
+              {/* ============================================================== */}
+              {cmsActiveSubTab === 'banner' && (
+                <div className="space-y-6">
+                  {/* Live Website Top-Bar Browser Mockup */}
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Live Customer Announcement Ticker Preview</span>
+                      </span>
+                      <span className="text-[10px] text-cyan-400 font-mono">Top of adarsh-motors-site.netlify.app</span>
+                    </div>
+
+                    <div className="rounded-2xl border border-white/10 bg-[#080E17] overflow-hidden shadow-2xl">
+                      {/* Simulated Browser Chrome */}
+                      <div className="px-4 py-2 bg-[#05080E] border-b border-white/5 flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+                        <span className="ml-2 px-3 py-0.5 rounded-md bg-white/5 text-[10px] font-mono text-slate-400 truncate max-w-xs">
+                          https://adarsh-motors-site.netlify.app
+                        </span>
+                      </div>
+
+                      {/* Announcement Bar */}
+                      {settings.bannerActive ? (
+                        <div className="p-3 sm:p-3.5 bg-gradient-to-r from-red-700 via-red-600 to-amber-600 text-white flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left transition-all">
+                          <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                            <span className="px-2.5 py-0.5 rounded bg-black/40 backdrop-blur-md text-[10px] font-black uppercase tracking-widest text-amber-300 border border-amber-300/30 shrink-0">
+                              {settings.bannerBadge || '⚡ FESTIVE DROP'}
+                            </span>
+                            <p className="text-xs font-bold tracking-tight truncate">
+                              {settings.bannerText || '⚡ Festive Superbike Carnival: 0% Processing Fee on all BMW & Ducati models this weekend!'}
+                            </p>
+                          </div>
+
+                          <span className="px-3.5 py-1.5 rounded-lg bg-black text-amber-300 text-xs font-black uppercase tracking-wider hover:bg-neutral-900 cursor-pointer shadow-lg shrink-0 flex items-center gap-1">
+                            <span>{settings.bannerCtaText || 'Claim Offer'}</span>
+                            <ArrowRight className="w-3 h-3" />
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="p-3 bg-slate-900/50 text-slate-400 text-xs text-center font-medium italic">
+                          Announcement ticker is currently hidden on the customer website. Toggle 'Enable Announcement Ticker' below to activate.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 1-Click Fast Presets */}
+                  <div className="p-4 rounded-2xl bg-[#0B1320] border border-white/10 space-y-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      Instant 1-Click Ticker Presets:
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSettings(prev => ({
+                            ...prev,
+                            bannerActive: true,
+                            bannerBadge: '⚡ FESTIVE CARNIVAL',
+                            bannerText: 'Diwali Superbike Carnival: 0% Down-Payment & Free Exhaust Tuning on all bikes!',
+                            bannerCtaText: 'Claim Festive Offer',
+                            bannerCtaLink: '#inventory'
+                          }));
+                          showToast('Loaded Festive Carnival preset!');
+                        }}
+                        className="p-2 rounded-xl bg-[#080E17] hover:bg-white/5 border border-white/10 text-left transition"
+                      >
+                        <div className="text-[11px] font-bold text-amber-400 truncate">⚡ Festive Carnival</div>
+                        <div className="text-[9px] text-slate-400 truncate">0% Down-Payment</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSettings(prev => ({
+                            ...prev,
+                            bannerActive: true,
+                            bannerBadge: '🏁 TRACK DAY SPECIAL',
+                            bannerText: 'Sunday Track Day: Complimentary Dyno Run with every full superbike service booking!',
+                            bannerCtaText: 'Book Dyno Run',
+                            bannerCtaLink: '#workshop'
+                          }));
+                          showToast('Loaded Track Day preset!');
+                        }}
+                        className="p-2 rounded-xl bg-[#080E17] hover:bg-white/5 border border-white/10 text-left transition"
+                      >
+                        <div className="text-[11px] font-bold text-cyan-400 truncate">🏁 Track Day Dyno</div>
+                        <div className="text-[9px] text-slate-400 truncate">Free dyno horsepower run</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSettings(prev => ({
+                            ...prev,
+                            bannerActive: true,
+                            bannerBadge: '💰 SPOT CASH',
+                            bannerText: 'Sell Your Superbike in 15 Minutes: Instant IMPS bank transfer & free doorstep evaluation!',
+                            bannerCtaText: 'Get Valuation',
+                            bannerCtaLink: '#sell-modal'
+                          }));
+                          showToast('Loaded Sell Bike preset!');
+                        }}
+                        className="p-2 rounded-xl bg-[#080E17] hover:bg-white/5 border border-white/10 text-left transition"
+                      >
+                        <div className="text-[11px] font-bold text-emerald-400 truncate">💰 Instant Valuation</div>
+                        <div className="text-[9px] text-slate-400 truncate">Spot payout in 15 mins</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSettings(prev => ({
+                            ...prev,
+                            bannerActive: true,
+                            bannerBadge: '✨ FRESH ARRIVALS',
+                            bannerText: 'Just Landed: Certified 2024 Ducati Diavel V4 & Kawasaki Ninja Z900 ready in showroom!',
+                            bannerCtaText: 'View Fleet',
+                            bannerCtaLink: '#inventory'
+                          }));
+                          showToast('Loaded Fresh Arrivals preset!');
+                        }}
+                        className="p-2 rounded-xl bg-[#080E17] hover:bg-white/5 border border-white/10 text-left transition"
+                      >
+                        <div className="text-[11px] font-bold text-purple-400 truncate">✨ Fresh Arrivals</div>
+                        <div className="text-[9px] text-slate-400 truncate">2024 Diavel & Ninja</div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Form Controls */}
+                  <div className="p-5 sm:p-6 rounded-2xl bg-[#0B1320] border border-white/10 space-y-4 shadow-xl">
+                    <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                      <div>
+                        <h4 className="text-sm font-black text-white">Top Announcement Ticker Controls</h4>
+                        <p className="text-[11px] text-slate-400">Controls the headline banner at the very top of the customer website.</p>
+                      </div>
+
+                      <label className="flex items-center gap-2.5 cursor-pointer bg-[#080E17] px-3 py-1.5 rounded-xl border border-white/10">
+                        <span className={`text-xs font-bold ${settings.bannerActive ? 'text-emerald-400' : 'text-slate-400'}`}>
+                          {settings.bannerActive ? 'Ticker Active' : 'Ticker Hidden'}
+                        </span>
+                        <input
+                          type="checkbox"
+                          checked={settings.bannerActive}
+                          onChange={(e) => setSettings({ ...settings, bannerActive: e.target.checked })}
+                          className="w-5 h-5 rounded bg-slate-800 text-red-600 focus:ring-0 border-white/20 cursor-pointer"
+                        />
                       </label>
-                      <input
-                        type="checkbox"
-                        checked={settings.bannerActive}
-                        onChange={(e) => setSettings({ ...settings, bannerActive: e.target.checked })}
-                        className="rounded bg-slate-700 text-red-600 focus:ring-0"
-                      />
                     </div>
-                    <textarea
-                      rows={2}
-                      value={settings.bannerText}
-                      onChange={(e) => setSettings({ ...settings, bannerText: e.target.value })}
-                      className="w-full px-3 py-2 bg-[#080E17] border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
-                    />
-                  </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-medium text-slate-300 uppercase mb-1">Instagram Handle</label>
-                      <input
-                        type="text"
-                        value={settings.instagram}
-                        onChange={(e) => setSettings({ ...settings, instagram: e.target.value })}
-                        className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-300 uppercase mb-1">WhatsApp Official</label>
-                      <input
-                        type="text"
-                        value={settings.whatsapp}
-                        onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
-                        className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500 font-mono"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-300 uppercase mb-1">Sales Hotline Phone</label>
-                      <input
-                        type="text"
-                        value={settings.salesPhone}
-                        onChange={(e) => setSettings({ ...settings, salesPhone: e.target.value })}
-                        className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500 font-mono"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-slate-300 uppercase mb-1">Support Email</label>
-                      <input
-                        type="email"
-                        value={settings.email}
-                        onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                        className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500"
-                      />
-                    </div>
-                  </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                          Ticker Badge Tag
+                        </label>
+                        <input
+                          type="text"
+                          value={settings.bannerBadge || ''}
+                          onChange={(e) => setSettings({ ...settings, bannerBadge: e.target.value })}
+                          placeholder="⚡ FESTIVE DROP"
+                          className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500 font-bold"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-300 uppercase mb-1">Flagship Showroom Address</label>
-                    <input
-                      type="text"
-                      value={settings.address}
-                      onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                      className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none focus:border-red-500"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                          Call-to-Action (CTA) Button Label
+                        </label>
+                        <input
+                          type="text"
+                          value={settings.bannerCtaText || ''}
+                          onChange={(e) => setSettings({ ...settings, bannerCtaText: e.target.value })}
+                          placeholder="Claim Offer"
+                          className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500 font-bold"
+                        />
+                      </div>
+                    </div>
 
-                  <div className="pt-3 border-t border-white/10 flex justify-end">
-                    <button
-                      type="submit"
-                      className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-red-600/30 transition"
-                    >
-                      <Save className="w-4 h-4" />
-                      <span>Save CMS Settings</span>
-                    </button>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                        Main Announcement Copy
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={settings.bannerText || ''}
+                        onChange={(e) => setSettings({ ...settings, bannerText: e.target.value })}
+                        placeholder="Type promotional headline or announcement here..."
+                        className="w-full px-3.5 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500 font-sans leading-relaxed"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                          CTA Button Destination Anchor
+                        </label>
+                        <select
+                          value={settings.bannerCtaLink || '#inventory'}
+                          onChange={(e) => setSettings({ ...settings, bannerCtaLink: e.target.value })}
+                          className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500"
+                        >
+                          <option value="#inventory">#inventory (Showroom Fleet)</option>
+                          <option value="#sell-modal">#sell-modal (Sell Bike Modal)</option>
+                          <option value="#finance">#finance (EMI Schemes)</option>
+                          <option value="#workshop">#workshop (Workshop Dyno)</option>
+                          <option value="#locations">#locations (Showroom Locations)</option>
+                        </select>
+                      </div>
+
+                      <div className="flex items-end">
+                        <button
+                          type="button"
+                          onClick={() => handleSaveCmsSettings()}
+                          className="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-red-600/30 transition"
+                        >
+                          <Save className="w-3.5 h-3.5" />
+                          <span>Publish Announcement Live</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </form>
+                </div>
+              )}
+
+              {/* ============================================================== */}
+              {/* SUBTAB 5: DEALERSHIP IDENTITY & OPERATING HOURS               */}
+              {/* ============================================================== */}
+              {cmsActiveSubTab === 'dealership' && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    {/* Card 1: Brand Credentials */}
+                    <div className="p-5 sm:p-6 rounded-2xl bg-[#0B1320] border border-white/10 space-y-4 shadow-xl">
+                      <div className="flex items-center gap-2.5 pb-3 border-b border-white/10">
+                        <div className="w-8 h-8 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center font-bold">
+                          <Building className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-black text-white">Dealership Legal Credentials</h4>
+                          <p className="text-[10px] text-slate-400">Legal business entity, brand statement & tagline</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3.5">
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                            Dealership Legal Name
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.dealershipName || ''}
+                            onChange={(e) => setSettings({ ...settings, dealershipName: e.target.value })}
+                            placeholder="ADARSH MOTORS DEALERSHIP PVT LTD"
+                            className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500 font-bold"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                            Brand Tagline
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.tagline || ''}
+                            onChange={(e) => setSettings({ ...settings, tagline: e.target.value })}
+                            placeholder="THE BIKER'S PARADISE"
+                            className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-amber-400 focus:outline-none focus:border-red-500 font-bold"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                            Dealership Legacy & Heritage Statement
+                          </label>
+                          <textarea
+                            rows={3}
+                            value={settings.subtitle || ''}
+                            onChange={(e) => setSettings({ ...settings, subtitle: e.target.value })}
+                            placeholder="Hyderabad's Premier Certified Pre-Owned Superbike Studio & Dyno Hub since 2001."
+                            className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500 leading-relaxed font-sans"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                            GSTIN Tax Registration Number
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.gstin || ''}
+                            onChange={(e) => setSettings({ ...settings, gstin: e.target.value })}
+                            placeholder="36AADCA1234F1Z8"
+                            className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-red-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card 2: Showroom Logistics & Contact */}
+                    <div className="p-5 sm:p-6 rounded-2xl bg-[#0B1320] border border-white/10 space-y-4 shadow-xl">
+                      <div className="flex items-center gap-2.5 pb-3 border-b border-white/10">
+                        <div className="w-8 h-8 rounded-xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center font-bold">
+                          <MapPin className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-black text-white">Showroom Location & Timings</h4>
+                          <p className="text-[10px] text-slate-400">Physical address, navigation pin & opening hours</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3.5">
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                            Flagship Showroom Physical Address
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.address || ''}
+                            onChange={(e) => setSettings({ ...settings, address: e.target.value })}
+                            placeholder="Plot 42, Road No. 36, Jubilee Hills, Hyderabad, Telangana 500033"
+                            className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                            Google Maps Direction URL
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              value={settings.googleMapsUrl || ''}
+                              onChange={(e) => setSettings({ ...settings, googleMapsUrl: e.target.value })}
+                              placeholder="https://maps.google.com/?q=Jubilee+Hills+Hyderabad"
+                              className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-cyan-400 font-mono focus:outline-none focus:border-cyan-500"
+                            />
+                            {settings.googleMapsUrl && (
+                              <a
+                                href={settings.googleMapsUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-cyan-400 hover:text-white border border-white/10 transition shrink-0"
+                                title="Open Google Maps Pin"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                            Operating Hours (Customer Display)
+                          </label>
+                          <input
+                            type="text"
+                            value={settings.workingHours || ''}
+                            onChange={(e) => setSettings({ ...settings, workingHours: e.target.value })}
+                            placeholder="Mon - Sat: 9:30 AM - 8:30 PM | Sunday: 10:00 AM - 6:00 PM"
+                            className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
+                            Official Customer Support Email
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="email"
+                              value={settings.email || ''}
+                              onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                              placeholder="contact@adarshmotors.in"
+                              className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white focus:outline-none focus:border-red-500"
+                            />
+                            {settings.email && (
+                              <a
+                                href={`mailto:${settings.email}`}
+                                className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition shrink-0"
+                                title="Send Test Email"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ============================================================== */}
+              {/* SUBTAB 6: PUBLIC PORTAL FEATURE TOGGLES & FINANCE SETTINGS     */}
+              {/* ============================================================== */}
+              {cmsActiveSubTab === 'features' && (
+                <div className="space-y-6">
+                  <div className="p-5 sm:p-6 rounded-2xl bg-[#0B1320] border border-white/10 space-y-5 shadow-xl">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+                      <div>
+                        <h4 className="text-sm font-black text-white">Public Customer Website Feature Switches</h4>
+                        <p className="text-[11px] text-slate-400">
+                          Toggle interactive portals, booking engines, and calculator parameters shown on the customer site.
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleSaveCmsSettings()}
+                        className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-red-600/30 transition shrink-0"
+                      >
+                        <Save className="w-3.5 h-3.5" />
+                        <span>Save Feature Switches</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {/* 1. Sell Bike Feature Toggle */}
+                      <div className="p-4 rounded-2xl bg-[#080E17] border border-white/10 hover:border-red-500/30 transition-all flex flex-col justify-between space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center font-bold">
+                              <TrendingUp className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-white">Sell Bike in 15 Mins</div>
+                              <div className="text-[10px] text-slate-400">Header button & cash valuation modal</div>
+                            </div>
+                          </div>
+                          <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${settings.enableSellBike ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-500'}`}>
+                            {settings.enableSellBike ? 'ACTIVE' : 'OFF'}
+                          </span>
+                        </div>
+                        <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-white/5">
+                          <span className="text-[11px] text-slate-400">Display Sell Bike Portal</span>
+                          <input
+                            type="checkbox"
+                            checked={settings.enableSellBike}
+                            onChange={(e) => setSettings({ ...settings, enableSellBike: e.target.checked })}
+                            className="w-5 h-5 rounded bg-slate-800 text-red-600 focus:ring-0 border-white/20 cursor-pointer"
+                          />
+                        </label>
+                      </div>
+
+                      {/* 2. Workshop & Dyno Booking */}
+                      <div className="p-4 rounded-2xl bg-[#080E17] border border-white/10 hover:border-cyan-500/30 transition-all flex flex-col justify-between space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center font-bold">
+                              <Wrench className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-white">Workshop & Dyno Booking</div>
+                              <div className="text-[10px] text-slate-400">Servicing, fluid flush & dyno scheduling</div>
+                            </div>
+                          </div>
+                          <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${settings.enableWorkshopBooking ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-500'}`}>
+                            {settings.enableWorkshopBooking ? 'ACTIVE' : 'OFF'}
+                          </span>
+                        </div>
+                        <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-white/5">
+                          <span className="text-[11px] text-slate-400">Display Workshop Booking</span>
+                          <input
+                            type="checkbox"
+                            checked={settings.enableWorkshopBooking}
+                            onChange={(e) => setSettings({ ...settings, enableWorkshopBooking: e.target.checked })}
+                            className="w-5 h-5 rounded bg-slate-800 text-red-600 focus:ring-0 border-white/20 cursor-pointer"
+                          />
+                        </label>
+                      </div>
+
+                      {/* 3. Test Ride Scheduler */}
+                      <div className="p-4 rounded-2xl bg-[#080E17] border border-white/10 hover:border-amber-500/30 transition-all flex flex-col justify-between space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-amber-600/20 text-amber-400 flex items-center justify-center font-bold">
+                              <Bike className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-white">Online Test Ride Scheduler</div>
+                              <div className="text-[10px] text-slate-400">Direct booking on vehicle inspection page</div>
+                            </div>
+                          </div>
+                          <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${settings.enableTestRide ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-500'}`}>
+                            {settings.enableTestRide ? 'ACTIVE' : 'OFF'}
+                          </span>
+                        </div>
+                        <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-white/5">
+                          <span className="text-[11px] text-slate-400">Display Test Ride Slots</span>
+                          <input
+                            type="checkbox"
+                            checked={settings.enableTestRide}
+                            onChange={(e) => setSettings({ ...settings, enableTestRide: e.target.checked })}
+                            className="w-5 h-5 rounded bg-slate-800 text-red-600 focus:ring-0 border-white/20 cursor-pointer"
+                          />
+                        </label>
+                      </div>
+
+                      {/* 4. EMI Finance Calculator */}
+                      <div className="p-4 rounded-2xl bg-[#080E17] border border-white/10 hover:border-emerald-500/30 transition-all flex flex-col justify-between space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold">
+                              <Calculator className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-white">Superbike EMI Calculator</div>
+                              <div className="text-[10px] text-slate-400">Interactive monthly installment slider</div>
+                            </div>
+                          </div>
+                          <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${settings.enableEmiCalculator ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-500'}`}>
+                            {settings.enableEmiCalculator ? 'ACTIVE' : 'OFF'}
+                          </span>
+                        </div>
+                        <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-white/5">
+                          <span className="text-[11px] text-slate-400">Display EMI Calculator</span>
+                          <input
+                            type="checkbox"
+                            checked={settings.enableEmiCalculator}
+                            onChange={(e) => setSettings({ ...settings, enableEmiCalculator: e.target.checked })}
+                            className="w-5 h-5 rounded bg-slate-800 text-red-600 focus:ring-0 border-white/20 cursor-pointer"
+                          />
+                        </label>
+                      </div>
+
+                      {/* 5. Free 1-Year RSA Promo */}
+                      <div className="p-4 rounded-2xl bg-[#080E17] border border-white/10 hover:border-pink-500/30 transition-all flex flex-col justify-between space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-pink-600/20 text-pink-400 flex items-center justify-center font-bold">
+                              <ShieldCheck className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-white">1-Year RSA Promo Badge</div>
+                              <div className="text-[10px] text-slate-400">'Free Roadside Assistance' trust badge</div>
+                            </div>
+                          </div>
+                          <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${settings.freeRsaPromo ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-500'}`}>
+                            {settings.freeRsaPromo ? 'ACTIVE' : 'OFF'}
+                          </span>
+                        </div>
+                        <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-white/5">
+                          <span className="text-[11px] text-slate-400">Display RSA Badge</span>
+                          <input
+                            type="checkbox"
+                            checked={settings.freeRsaPromo}
+                            onChange={(e) => setSettings({ ...settings, freeRsaPromo: e.target.checked })}
+                            className="w-5 h-5 rounded bg-slate-800 text-red-600 focus:ring-0 border-white/20 cursor-pointer"
+                          />
+                        </label>
+                      </div>
+
+                      {/* 6. Customer Hub / Garage Login */}
+                      <div className="p-4 rounded-2xl bg-[#080E17] border border-white/10 hover:border-purple-500/30 transition-all flex flex-col justify-between space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold">
+                              <Car className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-white">VIP Garage & Invoices</div>
+                              <div className="text-[10px] text-slate-400">Buyer portal for bills & RC paperwork</div>
+                            </div>
+                          </div>
+                          <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${settings.enableCustomerHub ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-500'}`}>
+                            {settings.enableCustomerHub ? 'ACTIVE' : 'OFF'}
+                          </span>
+                        </div>
+                        <label className="flex items-center justify-between cursor-pointer pt-2 border-t border-white/5">
+                          <span className="text-[11px] text-slate-400">Display Customer Garage</span>
+                          <input
+                            type="checkbox"
+                            checked={settings.enableCustomerHub}
+                            onChange={(e) => setSettings({ ...settings, enableCustomerHub: e.target.checked })}
+                            className="w-5 h-5 rounded bg-slate-800 text-red-600 focus:ring-0 border-white/20 cursor-pointer"
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* EMI Loan Parameters */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                          Default EMI Annual Interest Rate (%)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={settings.defaultEmiInterestRate || 8.5}
+                          onChange={(e) => setSettings({ ...settings, defaultEmiInterestRate: Number(e.target.value) })}
+                          placeholder="8.5"
+                          className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-red-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-300 uppercase mb-1">
+                          Maximum Loan Tenure (Months)
+                        </label>
+                        <input
+                          type="number"
+                          value={settings.defaultMaxEmiTenureMonths || 60}
+                          onChange={(e) => setSettings({ ...settings, defaultMaxEmiTenureMonths: Number(e.target.value) })}
+                          placeholder="60"
+                          className="w-full px-3 py-2.5 bg-[#080E17] border border-white/10 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-red-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Desktop Save Action Bar */}
+              <div className="hidden sm:flex items-center justify-between p-4 rounded-2xl bg-[#0B1320] border border-white/10 shadow-lg">
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Changes are staged locally and pushed to Supabase <code className="text-cyan-400 font-mono">site_settings</code> upon clicking save.</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSettings(DEFAULT_SITE_SETTINGS);
+                      showToast('Reset all CMS settings to dealership factory defaults!');
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-xs font-semibold transition"
+                  >
+                    Reset Defaults
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSaveCmsSettings()}
+                    disabled={cmsSaveLoading}
+                    className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-red-600/30 transition active:scale-95 disabled:opacity-50"
+                  >
+                    {cmsSaveLoading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Syncing to Supabase...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        <span>Save & Publish Live</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Floating Mobile Sticky Save Bar (for superior mobile ergonomics) */}
+              <div className="sm:hidden fixed bottom-3 inset-x-3 z-40 bg-[#0B1320]/95 backdrop-blur-xl border border-white/15 p-3 rounded-2xl flex items-center justify-between shadow-2xl">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="text-[11px] font-bold text-white">CMS Ready</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <a
+                    href="https://adarsh-motors-site.netlify.app/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-2 rounded-xl bg-[#080E17] border border-white/15 text-slate-300 text-xs font-semibold"
+                  >
+                    Preview
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => handleSaveCmsSettings()}
+                    disabled={cmsSaveLoading}
+                    className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-red-600/40"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Save & Publish</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -7160,6 +9479,320 @@ export default function App() {
                 <span className="font-bold text-slate-800 block">Financial Controller / Auditor</span>
                 <span className="text-[10px] text-slate-400">Ledger Verification & Stamp</span>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* VEHICLE-SPECIFIC INTERESTED LEADS MODAL */}
+      {selectedBikeForLeads && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md">
+          <div className="w-full max-w-2xl bg-[#0B1320] border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 border-b border-white/10 bg-[#080E17]/80 flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#05080F] border border-white/10 shrink-0">
+                  <img
+                    src={selectedBikeForLeads.image_url}
+                    alt={selectedBikeForLeads.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/public/assets/aistudio/image_f4045ab9.png';
+                    }}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-800">
+                      {selectedBikeForLeads.brand}
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-300 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">
+                      {selectedBikeForLeads.year || '2024'}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
+                      {selectedBikeForLeads.status}
+                    </span>
+                  </div>
+                  <h3 className="text-base sm:text-lg font-black text-white uppercase tracking-tight truncate mt-1">
+                    {selectedBikeForLeads.name}
+                  </h3>
+                  <div className="text-xs text-slate-400 font-mono flex items-center gap-2 mt-0.5 flex-wrap">
+                    <span>Offer Price: <strong className="text-white">{formatINR(selectedBikeForLeads.price)}</strong></span>
+                    <span>•</span>
+                    <span className="text-red-400 font-bold">
+                      {getBikeLeads(selectedBikeForLeads).length} {getBikeLeads(selectedBikeForLeads).length === 1 ? 'Customer Interested' : 'Customers Interested'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedBikeForLeads(null);
+                  setShowAddLeadForBike(false);
+                }}
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Sub-header Controls */}
+            <div className="px-4 sm:px-5 py-3 bg-[#0D1626]/80 border-b border-white/5 flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2 text-xs text-slate-300">
+                <Users className="w-4 h-4 text-red-400" />
+                <span className="font-semibold">Inquiries & Buyer Leads for this specific model</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddLeadForBike(prev => !prev)}
+                  className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-md shadow-red-600/30 transition"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{showAddLeadForBike ? 'Cancel' : '+ Add Lead'}</span>
+                </button>
+                {hasAccess('leads') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLeadsSearch(selectedBikeForLeads.name);
+                      setSelectedBikeForLeads(null);
+                      setActiveTab('leads');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-[#0F1A2C] hover:bg-[#16243C] text-slate-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1 transition"
+                  >
+                    <span>Full CRM</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Quick Add Form Dropdown */}
+            {showAddLeadForBike && (
+              <form onSubmit={handleAddBikeLead} className="p-4 bg-[#070C15] border-b border-white/10 space-y-3">
+                <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <PhoneCall className="w-3.5 h-3.5 text-red-400" />
+                  <span>Record Customer Inquiry for {selectedBikeForLeads.name}</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-[11px] text-slate-400 mb-1">Customer Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newLeadName}
+                      onChange={(e) => setNewLeadName(e.target.value)}
+                      placeholder="e.g. Vikram Reddy"
+                      className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] text-slate-400 mb-1">Mobile Phone (10 digits) *</label>
+                    <input
+                      type="tel"
+                      required
+                      value={newLeadPhone}
+                      onChange={(e) => setNewLeadPhone(e.target.value)}
+                      placeholder="e.g. 9848012345"
+                      className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500 font-mono"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-[11px] text-slate-400 mb-1">Enquiry / Request Type</label>
+                    <select
+                      value={newLeadServiceType}
+                      onChange={(e) => setNewLeadServiceType(e.target.value)}
+                      className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none"
+                    >
+                      <option value="Test Ride & Finance">Test Ride & Finance</option>
+                      <option value="Purchase Booking">Purchase Booking / Token</option>
+                      <option value="Exchange Quotation">Exchange / Trade-In</option>
+                      <option value="Price & EMI Enquiry">Price & EMI Enquiry</option>
+                      <option value="Doorstep Inspection">Doorstep Inspection</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] text-slate-400 mb-1">Initial Status</label>
+                    <select
+                      value={newLeadStatus}
+                      onChange={(e) => setNewLeadStatus(e.target.value as any)}
+                      className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white focus:outline-none"
+                    >
+                      <option value="New">New</option>
+                      <option value="Contacted">Contacted</option>
+                      <option value="Follow-up">Follow-up</option>
+                      <option value="Closed">Closed</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[11px] text-slate-400 mb-1">Customer Note / Request Details</label>
+                  <input
+                    type="text"
+                    value={newLeadMessage}
+                    onChange={(e) => setNewLeadMessage(e.target.value)}
+                    placeholder="e.g. Wants Sunday 4 PM test ride at Jubilee Hills showroom. Ready with 50% token."
+                    className="w-full px-3 py-2 bg-[#0F1A2C] border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-red-500"
+                  />
+                </div>
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddLeadForBike(false)}
+                    className="px-3 py-1.5 rounded-lg bg-[#0F1A2C] text-slate-400 hover:text-white text-xs font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-md shadow-red-600/30"
+                  >
+                    Save Lead
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Leads List Body */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
+              {(() => {
+                const bLeads = getBikeLeads(selectedBikeForLeads);
+                if (bLeads.length === 0) {
+                  return (
+                    <div className="text-center py-12 px-4">
+                      <div className="w-12 h-12 rounded-full bg-[#0F1A2C] border border-white/10 flex items-center justify-center mx-auto mb-3 text-slate-500">
+                        <Users className="w-6 h-6 text-slate-500" />
+                      </div>
+                      <h4 className="text-sm font-bold text-white mb-1">No Leads Recorded Yet</h4>
+                      <p className="text-xs text-slate-400 max-w-sm mx-auto mb-4">
+                        There are currently no customer inquiries registered for {selectedBikeForLeads.name}.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowAddLeadForBike(true)}
+                        className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs inline-flex items-center gap-1.5 shadow-md shadow-red-600/30 transition"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Record First Lead for this Bike</span>
+                      </button>
+                    </div>
+                  );
+                }
+
+                return bLeads.map((lead) => (
+                  <div
+                    key={lead.id}
+                    className="p-3.5 sm:p-4 rounded-xl bg-[#080E17] border border-white/10 hover:border-white/20 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className="font-extrabold text-white text-sm">{lead.customer_name}</span>
+                        <span
+                          className={`text-[9px] font-black uppercase px-2 py-0.5 rounded ${
+                            lead.status === 'New'
+                              ? 'bg-red-950 text-red-300 border border-red-800'
+                              : lead.status === 'Contacted'
+                              ? 'bg-blue-950 text-blue-300 border border-blue-800'
+                              : lead.status === 'Follow-up'
+                              ? 'bg-amber-950 text-amber-300 border border-amber-800'
+                              : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                          }`}
+                        >
+                          {lead.status}
+                        </span>
+                        {lead.service_type && (
+                          <span className="text-[10px] text-slate-400 bg-[#0F1A2C] px-2 py-0.5 rounded border border-white/5 font-medium">
+                            {lead.service_type}
+                          </span>
+                        )}
+                        <span className="text-[10px] text-slate-500 font-mono ml-auto sm:ml-0">
+                          {new Date(lead.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                        </span>
+                      </div>
+
+                      <div className="text-xs text-slate-300 font-mono flex items-center gap-2 mb-2">
+                        <span>📱 +91 {lead.phone}</span>
+                      </div>
+
+                      {lead.message && (
+                        <div className="text-xs text-slate-400 bg-[#0B1320] p-2.5 rounded-lg border border-white/5 italic">
+                          "{lead.message}"
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quick Connect & Status Actions */}
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
+                      <div className="flex items-center gap-1.5">
+                        <a
+                          href={`tel:${lead.phone}`}
+                          className="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center gap-1 transition"
+                          title="Call Customer"
+                        >
+                          <Phone className="w-3.5 h-3.5" />
+                          <span>Call</span>
+                        </a>
+                        <a
+                          href={getWhatsAppLink(lead.phone, lead.customer_name, selectedBikeForLeads.name)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-2.5 py-1.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 text-xs font-bold flex items-center gap-1 transition"
+                          title="WhatsApp Follow-up"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          <span>WhatsApp</span>
+                        </a>
+                      </div>
+
+                      <select
+                        value={lead.status}
+                        onChange={(e) => {
+                          const newSt = e.target.value as any;
+                          setLeads(prev => prev.map(item => item.id === lead.id ? { ...item, status: newSt } : item));
+                          showToast(`Lead status updated to '${newSt}'`);
+                          logAuditAction(
+                            'lead_status',
+                            'Leads CRM',
+                            `Updated status of lead ${lead.customer_name} to '${newSt}'`,
+                            lead.id,
+                            lead.customer_name,
+                            { field: 'status', after: newSt }
+                          );
+                          supabase.from('leads').update({ status: newSt }).eq('id', lead.id).then();
+                        }}
+                        className="text-[11px] bg-[#0F1A2C] border border-white/10 rounded-lg px-2 py-1 text-slate-300 focus:outline-none"
+                      >
+                        <option value="New">New</option>
+                        <option value="Contacted">Contacted</option>
+                        <option value="Follow-up">Follow-up</option>
+                        <option value="Closed">Closed</option>
+                      </select>
+                    </div>
+                  </div>
+                ));
+              })()}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 sm:p-4 bg-[#080E17]/90 border-t border-white/10 flex items-center justify-between">
+              <span className="text-[11px] text-slate-400">
+                Direct enquiry tracking active for {selectedBikeForLeads.name}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedBikeForLeads(null);
+                  setShowAddLeadForBike(false);
+                }}
+                className="px-4 py-1.5 rounded-xl bg-[#0F1A2C] hover:bg-[#16243C] text-slate-300 text-xs font-semibold transition"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
